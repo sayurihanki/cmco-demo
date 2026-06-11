@@ -94,6 +94,38 @@
           }
         },
         {
+          "title": "Age Gate",
+          "id": "age-gate",
+          "model": "age-gate",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Age Verification",
+          "id": "age-verification",
+          "model": "age-verification",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Blog Post",
+          "id": "blog-post",
+          "plugins": {
+            "da": {
+              "name": "blog-post",
+              "rows": 1,
+              "columns": 1
+            }
+          },
+          "model": "blog-post"
+        },
+        {
           "title": "Cards",
           "id": "cards",
           "model": "cards",
@@ -168,6 +200,50 @@
           }
         },
         {
+          "title": "Catalog Highlights",
+          "id": "catalog-highlights",
+          "model": "catalog-highlights",
+          "plugins": {
+            "da": {
+              "name": "catalog-highlights",
+              "rows": 1,
+              "columns": 8
+            }
+          }
+        },
+        {
+          "title": "Circle Carousel",
+          "id": "circle-carousel",
+          "plugins": {
+            "da": {
+              "name": "circle-carousel",
+              "rows": 8,
+              "columns": 2,
+              "behaviour": "columns"
+            }
+          }
+        },
+        {
+          "title": "Circle Carousel Item",
+          "id": "circle-carousel-item",
+          "plugins": {
+            "da": {
+              "name": "circle-carousel-item",
+              "behaviour": "columns-row"
+            }
+          }
+        },
+        {
+          "title": "Circle Carousel Cell",
+          "id": "circle-carousel-cell",
+          "plugins": {
+            "da": {
+              "unsafeHTML": "<div></div>",
+              "behaviour": "columns-cell"
+            }
+          }
+        },
+        {
           "title": "Columns",
           "id": "columns",
           "model": "columns",
@@ -206,12 +282,124 @@
           }
         },
         {
+          "title": "Customer Segment Personalization Block",
+          "id": "customer-segment-personalization-block",
+          "model": "customer-segment-personalization-block",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Embed",
+          "id": "embed",
+          "model": "embed",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "poster",
+                  "selector": "div>div>picture>img[src]"
+                },
+                {
+                  "name": "posterAlt",
+                  "selector": "div>div>picture>img[alt]"
+                },
+                {
+                  "name": "embedUrl",
+                  "selector": "div>div>p>a[href]"
+                },
+                {
+                  "name": "embedUrlText",
+                  "selector": "div>div>p>a"
+                }
+              ]
+            }
+          }
+        },
+        {
           "title": "Enrichment",
           "id": "enrichment",
           "model": "enrichment",
           "plugins": {
             "da": {
               "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Form",
+          "id": "form",
+          "model": "form",
+          "plugins": {
+            "da": {
+              "rows": 2,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "formUrl",
+                  "selector": "div:nth-child(1)>div>p>a[href]"
+                },
+                {
+                  "name": "formUrlText",
+                  "selector": "div:nth-child(1)>div>p>a"
+                },
+                {
+                  "name": "submitUrl",
+                  "selector": "div:nth-child(2)>div>p>a[href]"
+                },
+                {
+                  "name": "submitUrlText",
+                  "selector": "div:nth-child(2)>div>p>a"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Form 2",
+          "id": "form-2",
+          "plugins": {
+            "da": {
+              "name": "form-2",
+              "rows": 2,
+              "columns": 1
+            }
+          }
+        },
+        {
+          "title": "Form 3",
+          "id": "form-3",
+          "plugins": {
+            "da": {
+              "name": "form-3",
+              "rows": 3,
+              "columns": 1
+            }
+          }
+        },
+        {
+          "title": "Form 4",
+          "id": "form-4",
+          "plugins": {
+            "da": {
+              "name": "form-4",
+              "rows": 3,
+              "columns": 1
+            }
+          }
+        },
+        {
+          "title": "Form MCCS Preferences",
+          "id": "form-mccs-preferences",
+          "plugins": {
+            "da": {
+              "name": "form-mccs-preferences",
+              "rows": 3,
+              "columns": 1
             }
           }
         },
@@ -233,6 +421,16 @@
                   "selector": "div>div>p>a"
                 }
               ]
+            }
+          }
+        },
+        {
+          "title": "Guided Selling Luxe",
+          "id": "guided-selling-luxe",
+          "model": "guided-selling-luxe",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
             }
           }
         },
@@ -262,6 +460,629 @@
           }
         },
         {
+          "title": "Hero 3",
+          "id": "hero-3",
+          "model": "hero-3",
+          "plugins": {
+            "da": {
+              "rows": 9,
+              "columns": 2,
+              "fields": [
+                {
+                  "name": "urgency",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "eyebrow",
+                  "selector": "div:nth-child(1)>div:nth-child(2)"
+                },
+                {
+                  "name": "headline",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "subcopy",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "cta",
+                  "selector": "div:nth-child(4)>div:nth-child(1)"
+                },
+                {
+                  "name": "trust",
+                  "selector": "div:nth-child(5)>div:nth-child(1)"
+                },
+                {
+                  "name": "badges",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "mainImage",
+                  "selector": "div:nth-child(7)>div:nth-child(1)>picture>img[src]"
+                },
+                {
+                  "name": "railText",
+                  "selector": "div:nth-child(7)>div:nth-child(2)"
+                },
+                {
+                  "name": "accent1Image",
+                  "selector": "div:nth-child(8)>div:nth-child(1)>picture>img[src]"
+                },
+                {
+                  "name": "accent1Label",
+                  "selector": "div:nth-child(8)>div:nth-child(2)"
+                },
+                {
+                  "name": "accent2Image",
+                  "selector": "div:nth-child(9)>div:nth-child(1)>picture>img[src]"
+                },
+                {
+                  "name": "accent2Label",
+                  "selector": "div:nth-child(9)>div:nth-child(2)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Hero 5",
+          "id": "hero-5",
+          "model": "hero-5",
+          "plugins": {
+            "da": {
+              "rows": 15,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "eyebrow",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "title",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "subtitle",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "ctaPrimary",
+                  "selector": "div:nth-child(4)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "ctaSecondary",
+                  "selector": "div:nth-child(5)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "trustText",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "badgeValue",
+                  "selector": "div:nth-child(7)>div:nth-child(1)"
+                },
+                {
+                  "name": "badgeLabel",
+                  "selector": "div:nth-child(8)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric1",
+                  "selector": "div:nth-child(9)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric2",
+                  "selector": "div:nth-child(10)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric3",
+                  "selector": "div:nth-child(11)>div:nth-child(1)"
+                },
+                {
+                  "name": "order1",
+                  "selector": "div:nth-child(12)>div:nth-child(1)"
+                },
+                {
+                  "name": "order2",
+                  "selector": "div:nth-child(13)>div:nth-child(1)"
+                },
+                {
+                  "name": "order3",
+                  "selector": "div:nth-child(14)>div:nth-child(1)"
+                },
+                {
+                  "name": "notice",
+                  "selector": "div:nth-child(15)>div:nth-child(1)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Hero 6",
+          "id": "hero-6",
+          "model": "hero-6",
+          "plugins": {
+            "da": {
+              "type": "key-value-block",
+              "rows": 11,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "eyebrow",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "title",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "subtitle",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "ctaPrimary",
+                  "selector": "div:nth-child(4)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "ctaSecondary",
+                  "selector": "div:nth-child(5)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "stat1",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat2",
+                  "selector": "div:nth-child(7)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat3",
+                  "selector": "div:nth-child(8)>div:nth-child(1)"
+                },
+                {
+                  "name": "feature1",
+                  "selector": "div:nth-child(9)>div:nth-child(1)"
+                },
+                {
+                  "name": "feature2",
+                  "selector": "div:nth-child(10)>div:nth-child(1)"
+                },
+                {
+                  "name": "feature3",
+                  "selector": "div:nth-child(11)>div:nth-child(1)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Hero CTA",
+          "id": "hero-cta",
+          "plugins": {
+            "da": {
+              "name": "hero-cta",
+              "rows": 8,
+              "columns": 4
+            }
+          }
+        },
+        {
+          "title": "Hero V2",
+          "id": "hero-v2",
+          "model": "hero-v2",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "image",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>picture:nth-child(1)>img[src]"
+                },
+                {
+                  "name": "imageAlt",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>picture:nth-child(1)>img[alt]"
+                },
+                {
+                  "name": "title",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>h2:nth-child(2)"
+                },
+                {
+                  "name": "subtitle",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>h3:nth-child(3)"
+                },
+                {
+                  "name": "description",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(4)"
+                },
+                {
+                  "name": "ctaLabel",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(5)>a:nth-child(1)"
+                },
+                {
+                  "name": "ctaUrl",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(5)>a:nth-child(1)[href]"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "How It Works + Stats",
+          "id": "how-it-works-stats",
+          "model": "how-it-works-stats",
+          "plugins": {
+            "da": {
+              "rows": 12,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "tag",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "title",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "step1",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "step2",
+                  "selector": "div:nth-child(4)>div:nth-child(1)"
+                },
+                {
+                  "name": "step3",
+                  "selector": "div:nth-child(5)>div:nth-child(1)"
+                },
+                {
+                  "name": "step4",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat1",
+                  "selector": "div:nth-child(7)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat2",
+                  "selector": "div:nth-child(8)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat3",
+                  "selector": "div:nth-child(9)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat4",
+                  "selector": "div:nth-child(10)>div:nth-child(1)"
+                },
+                {
+                  "name": "buttonPrimary",
+                  "selector": "div:nth-child(11)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "buttonSecondary",
+                  "selector": "div:nth-child(12)>div:nth-child(1)>a"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "How It Works + Stats 2",
+          "id": "how-it-works-stats-2",
+          "model": "how-it-works-stats-2",
+          "plugins": {
+            "da": {
+              "rows": 12,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "tag",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "title",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "step1",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "step2",
+                  "selector": "div:nth-child(4)>div:nth-child(1)"
+                },
+                {
+                  "name": "step3",
+                  "selector": "div:nth-child(5)>div:nth-child(1)"
+                },
+                {
+                  "name": "step4",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat1",
+                  "selector": "div:nth-child(7)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat2",
+                  "selector": "div:nth-child(8)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat3",
+                  "selector": "div:nth-child(9)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat4",
+                  "selector": "div:nth-child(10)>div:nth-child(1)"
+                },
+                {
+                  "name": "buttonPrimary",
+                  "selector": "div:nth-child(11)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "buttonSecondary",
+                  "selector": "div:nth-child(12)>div:nth-child(1)>a"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Live Block",
+          "id": "live-block",
+          "model": "live-block",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Live Block Premium",
+          "id": "live-block-premium",
+          "model": "live-block-premium",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Luxury Configurator",
+          "id": "luxury-configurator",
+          "model": "luxury-configurator",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Medal Rack Configurator",
+          "id": "medal-rack-configurator",
+          "model": "medal-rack-configurator",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Newsletter",
+          "id": "newsletter",
+          "plugins": {
+            "da": {
+              "name": "newsletter",
+              "rows": 8,
+              "columns": 1
+            }
+          }
+        },
+        {
+          "title": "Promo Popup Spinner Wheel",
+          "id": "promo-popup",
+          "model": "promo-popup",
+          "plugins": {
+            "da": {
+              "name": "promo-popup",
+              "rows": 20,
+              "columns": 3
+            }
+          }
+        },
+        {
+          "title": "Promotional Hero",
+          "id": "promotional-hero",
+          "plugins": {
+            "da": {
+              "name": "promotional-hero",
+              "rows": 3,
+              "columns": 3
+            }
+          }
+        },
+        {
+          "title": "Quiz Router",
+          "id": "quiz-router",
+          "model": "quiz-router",
+          "filter": "quiz-router",
+          "plugins": {
+            "da": {
+              "name": "quiz-router",
+              "rows": 1,
+              "columns": 3
+            }
+          }
+        },
+        {
+          "title": "Quiz Router MCCS",
+          "id": "quiz-router-mccs",
+          "model": "quiz-router-mccs",
+          "filter": "quiz-router-mccs",
+          "plugins": {
+            "da": {
+              "name": "quiz-router-mccs",
+              "rows": 1,
+              "columns": 3
+            }
+          }
+        },
+        {
+          "title": "Quote",
+          "id": "quote",
+          "model": "quote",
+          "plugins": {
+            "da": {
+              "name": "quote",
+              "rows": 1,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "quote",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)"
+                },
+                {
+                  "name": "author",
+                  "selector": "div:nth-child(2)>div:nth-child(1)>p:nth-child(1)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Search",
+          "id": "search",
+          "model": "search",
+          "plugins": {
+            "da": {
+              "name": "search",
+              "rows": 1,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "searchUrl",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)[href]"
+                },
+                {
+                  "name": "searchUrlText",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Search Bar",
+          "id": "search-bar",
+          "plugins": {
+            "da": {
+              "name": "search-bar",
+              "rows": 3,
+              "columns": 1,
+              "behaviour": "columns"
+            }
+          }
+        },
+        {
+          "title": "Store Locator",
+          "id": "store-locator",
+          "plugins": {
+            "da": {
+              "name": "store-locator",
+              "rows": 20,
+              "columns": 6,
+              "behaviour": "columns"
+            }
+          }
+        },
+        {
+          "title": "Store Locator Item",
+          "id": "store-locator-item",
+          "plugins": {
+            "da": {
+              "name": "store-locator-item",
+              "behaviour": "columns-row"
+            }
+          }
+        },
+        {
+          "title": "Store Locator Cell",
+          "id": "store-locator-cell",
+          "plugins": {
+            "da": {
+              "unsafeHTML": "<div></div>",
+              "behaviour": "columns-cell"
+            }
+          }
+        },
+        {
+          "title": "Table",
+          "id": "table",
+          "model": "table",
+          "filter": "table",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 3,
+              "behaviour": "columns"
+            }
+          }
+        },
+        {
+          "title": "Table Row",
+          "id": "table-row",
+          "plugins": {
+            "da": {
+              "behaviour": "columns-row"
+            }
+          }
+        },
+        {
+          "title": "Table Cell",
+          "id": "table-cell",
+          "plugins": {
+            "da": {
+              "unsafeHTML": "<div></div>",
+              "behaviour": "columns-cell"
+            }
+          }
+        },
+        {
+          "title": "Tabs",
+          "id": "tabs",
+          "model": "tabs",
+          "filter": "tabs",
+          "plugins": {
+            "da": {
+              "columns": 1,
+              "rows": 2
+            }
+          }
+        },
+        {
+          "title": "Tabs Item",
+          "id": "tabs-item",
+          "model": "tabs-item",
+          "plugins": {
+            "da": {
+              "columns": 0,
+              "rows": 2,
+              "fields": [
+                {
+                  "name": "name",
+                  "selector": "div:nth-child(1)>p:nth-child(1)"
+                },
+                {
+                  "name": "content",
+                  "selector": "div:nth-child(2)"
+                }
+              ]
+            }
+          }
+        },
+        {
           "title": "Targeted Block",
           "id": "targeted-block",
           "model": "targeted-block",
@@ -272,9 +1093,384 @@
           }
         },
         {
+          "title": "Top Banner",
+          "id": "top-banner",
+          "plugins": {
+            "da": {
+              "name": "top-banner",
+              "rows": 8,
+              "columns": 4
+            }
+          }
+        },
+        {
+          "title": "Triptych",
+          "id": "triptych",
+          "model": "triptych",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Uniform Configurator",
+          "id": "uniform-configurator",
+          "model": "uniform-configurator",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Video",
+          "id": "video",
+          "model": "video",
+          "plugins": {
+            "da": {
+              "name": "video",
+              "rows": 1,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "videoUrl",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)[href]"
+                },
+                {
+                  "name": "videoUrlText",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)"
+                },
+                {
+                  "name": "posterImage",
+                  "selector": "div:nth-child(1)>div:nth-child(1)>picture:nth-child(2)>img:nth-child(3)[src]"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "VIP Hero Block",
+          "id": "vip-hero-block",
+          "model": "vip-hero-block",
+          "plugins": {
+            "da": {
+              "type": "key-value-block",
+              "rows": 26,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "memberName",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "memberTagline",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "heroNumber",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "headlineLine1",
+                  "selector": "div:nth-child(4)>div:nth-child(1)"
+                },
+                {
+                  "name": "headlineLine2",
+                  "selector": "div:nth-child(5)>div:nth-child(1)"
+                },
+                {
+                  "name": "headlineLine3",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "postscript",
+                  "selector": "div:nth-child(7)>div:nth-child(1)"
+                },
+                {
+                  "name": "description",
+                  "selector": "div:nth-child(8)>div:nth-child(1)"
+                },
+                {
+                  "name": "ctaPrimary",
+                  "selector": "div:nth-child(9)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "ctaSecondary",
+                  "selector": "div:nth-child(10)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "perk1",
+                  "selector": "div:nth-child(11)>div:nth-child(1)"
+                },
+                {
+                  "name": "perk2",
+                  "selector": "div:nth-child(12)>div:nth-child(1)"
+                },
+                {
+                  "name": "perk3",
+                  "selector": "div:nth-child(13)>div:nth-child(1)"
+                },
+                {
+                  "name": "perk4",
+                  "selector": "div:nth-child(14)>div:nth-child(1)"
+                },
+                {
+                  "name": "dashboardEyebrow",
+                  "selector": "div:nth-child(15)>div:nth-child(1)"
+                },
+                {
+                  "name": "dashboardSubline",
+                  "selector": "div:nth-child(16)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric1",
+                  "selector": "div:nth-child(17)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric2",
+                  "selector": "div:nth-child(18)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric3",
+                  "selector": "div:nth-child(19)>div:nth-child(1)"
+                },
+                {
+                  "name": "order1",
+                  "selector": "div:nth-child(20)>div:nth-child(1)"
+                },
+                {
+                  "name": "order2",
+                  "selector": "div:nth-child(21)>div:nth-child(1)"
+                },
+                {
+                  "name": "order3",
+                  "selector": "div:nth-child(22)>div:nth-child(1)"
+                },
+                {
+                  "name": "footerItem1",
+                  "selector": "div:nth-child(23)>div:nth-child(1)"
+                },
+                {
+                  "name": "footerItem2",
+                  "selector": "div:nth-child(24)>div:nth-child(1)"
+                },
+                {
+                  "name": "footerItem3",
+                  "selector": "div:nth-child(25)>div:nth-child(1)"
+                },
+                {
+                  "name": "footerRightText",
+                  "selector": "div:nth-child(26)>div:nth-child(1)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "VIP Hero MCCS",
+          "id": "vip-hero-mccs",
+          "model": "vip-hero-mccs",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "VIP Member Block",
+          "id": "vip-member-block",
+          "model": "vip-member-block",
+          "plugins": {
+            "da": {
+              "name": "vip-member-block",
+              "rows": 39,
+              "columns": 1,
+              "fields": [
+                {
+                  "name": "eyebrowText",
+                  "selector": "div:nth-child(1)>div:nth-child(1)"
+                },
+                {
+                  "name": "title",
+                  "selector": "div:nth-child(2)>div:nth-child(1)"
+                },
+                {
+                  "name": "subtitle",
+                  "selector": "div:nth-child(3)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat1",
+                  "selector": "div:nth-child(4)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat2",
+                  "selector": "div:nth-child(5)>div:nth-child(1)"
+                },
+                {
+                  "name": "stat3",
+                  "selector": "div:nth-child(6)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredLabel",
+                  "selector": "div:nth-child(7)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredDiscount",
+                  "selector": "div:nth-child(8)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredCategory",
+                  "selector": "div:nth-child(9)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredTitle",
+                  "selector": "div:nth-child(10)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredDesc",
+                  "selector": "div:nth-child(11)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredPrice",
+                  "selector": "div:nth-child(12)>div:nth-child(1)"
+                },
+                {
+                  "name": "featuredCtaPrimary",
+                  "selector": "div:nth-child(13)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "featuredCtaSecondary",
+                  "selector": "div:nth-child(14)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "benefit1",
+                  "selector": "div:nth-child(15)>div:nth-child(1)"
+                },
+                {
+                  "name": "benefit2",
+                  "selector": "div:nth-child(16)>div:nth-child(1)"
+                },
+                {
+                  "name": "benefit3",
+                  "selector": "div:nth-child(17)>div:nth-child(1)"
+                },
+                {
+                  "name": "benefit4",
+                  "selector": "div:nth-child(18)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightLabel",
+                  "selector": "div:nth-child(19)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightCount",
+                  "selector": "div:nth-child(20)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightItem1",
+                  "selector": "div:nth-child(21)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightItem2",
+                  "selector": "div:nth-child(22)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightItem3",
+                  "selector": "div:nth-child(23)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightFooterText",
+                  "selector": "div:nth-child(24)>div:nth-child(1)"
+                },
+                {
+                  "name": "spotlightFooterLink",
+                  "selector": "div:nth-child(25)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "accountName",
+                  "selector": "div:nth-child(26)>div:nth-child(1)"
+                },
+                {
+                  "name": "accountOrg",
+                  "selector": "div:nth-child(27)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric1",
+                  "selector": "div:nth-child(28)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric2",
+                  "selector": "div:nth-child(29)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric3",
+                  "selector": "div:nth-child(30)>div:nth-child(1)"
+                },
+                {
+                  "name": "metric4",
+                  "selector": "div:nth-child(31)>div:nth-child(1)"
+                },
+                {
+                  "name": "action1",
+                  "selector": "div:nth-child(32)>div:nth-child(1)"
+                },
+                {
+                  "name": "action2",
+                  "selector": "div:nth-child(33)>div:nth-child(1)"
+                },
+                {
+                  "name": "action3",
+                  "selector": "div:nth-child(34)>div:nth-child(1)"
+                },
+                {
+                  "name": "proof1",
+                  "selector": "div:nth-child(35)>div:nth-child(1)"
+                },
+                {
+                  "name": "proof2",
+                  "selector": "div:nth-child(36)>div:nth-child(1)"
+                },
+                {
+                  "name": "proof3",
+                  "selector": "div:nth-child(37)>div:nth-child(1)"
+                },
+                {
+                  "name": "proofCtaPrimary",
+                  "selector": "div:nth-child(38)>div:nth-child(1)>a"
+                },
+                {
+                  "name": "proofCtaSub",
+                  "selector": "div:nth-child(39)>div:nth-child(1)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "VIP Member Block Real V2",
+          "id": "vip-member-block-real-v2",
+          "model": "vip-member-block-real-v2",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
           "title": "Commerce Account Header",
           "id": "commerce-account-header",
           "model": "commerce-account-header",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Commerce Account Hub",
+          "id": "commerce-account-hub",
+          "model": "commerce-account-hub",
           "plugins": {
             "da": {
               "type": "key-value-block"
@@ -571,252 +1767,6 @@
               "type": "key-value-block"
             }
           }
-        },
-        {
-          "title": "Hero V2",
-          "id": "hero-v2",
-          "model": "hero-v2",
-          "plugins": {
-            "da": {
-              "rows": 1,
-              "columns": 1,
-              "fields": [
-                {
-                  "name": "image",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>picture:nth-child(1)>img[src]"
-                },
-                {
-                  "name": "imageAlt",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>picture:nth-child(1)>img[alt]"
-                },
-                {
-                  "name": "title",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>h2:nth-child(2)"
-                },
-                {
-                  "name": "subtitle",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>h3:nth-child(3)"
-                },
-                {
-                  "name": "description",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(4)"
-                },
-                {
-                  "name": "ctaLabel",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(5)>a:nth-child(1)"
-                },
-                {
-                  "name": "ctaUrl",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(5)>a:nth-child(1)[href]"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "title": "Quote",
-          "id": "quote",
-          "model": "quote",
-          "plugins": {
-            "da": {
-              "name": "quote",
-              "rows": 1,
-              "columns": 1,
-              "fields": [
-                {
-                  "name": "quote",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)"
-                },
-                {
-                  "name": "author",
-                  "selector": "div:nth-child(2)>div:nth-child(1)>p:nth-child(1)"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "title": "Tabs",
-          "id": "tabs",
-          "model": "tabs",
-          "filter": "tabs",
-          "plugins": {
-            "da": {
-              "columns": 1,
-              "rows": 2
-            }
-          }
-        },
-        {
-          "title": "Tabs Item",
-          "id": "tabs-item",
-          "model": "tabs-item",
-          "plugins": {
-            "da": {
-              "columns": 0,
-              "rows": 2,
-              "fields": [
-                {
-                  "name": "name",
-                  "selector": "div:nth-child(1)>p:nth-child(1)"
-                },
-                {
-                  "name": "content",
-                  "selector": "div:nth-child(2)"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "title": "Video",
-          "id": "video",
-          "model": "video",
-          "plugins": {
-            "da": {
-              "name": "video",
-              "rows": 1,
-              "columns": 1,
-              "fields": [
-                {
-                  "name": "videoUrl",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)[href]"
-                },
-                {
-                  "name": "videoUrlText",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)"
-                },
-                {
-                  "name": "posterImage",
-                  "selector": "div:nth-child(1)>div:nth-child(1)>picture:nth-child(2)>img:nth-child(3)[src]"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "title": "Blog Post",
-          "id": "blog-post",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"blog-post\"><div><div><p>Layout</p></div></div></div>"
-            }
-          }
-        },
-        {
-          "title": "Blog Tiles",
-          "id": "blog-tiles",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"blog-tiles\"><div><div><p>Category</p></div></div></div>"
-            }
-          }
-        },
-        {
-          "title": "Circle Carousel",
-          "id": "circle-carousel",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"circle-carousel\"><div><div><picture><source type=\"image/webp\" srcset=\"\"><source type=\"image/jpeg\" srcset=\"\"><img loading=\"lazy\"></picture></div><div><p></p></div></div></div>",
-              "behaviour": "columns"
-            }
-          }
-        },
-        {
-          "title": "Circle Carousel Item",
-          "id": "circle-carousel-item",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div><div><picture><source type=\"image/webp\" srcset=\"\"><source type=\"image/jpeg\" srcset=\"\"><img loading=\"lazy\"></picture></div><div><p></p></div></div>",
-              "behaviour": "columns-row"
-            }
-          }
-        },
-        {
-          "title": "Circle Carousel Cell",
-          "id": "circle-carousel-cell",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div></div>",
-              "behaviour": "columns-cell"
-            }
-          }
-        },
-        {
-          "title": "Hero CTA",
-          "id": "hero-cta",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"hero-cta\"><div><div><picture><source type=\"image/webp\" srcset=\"\"><source type=\"image/jpeg\" srcset=\"\"><img loading=\"lazy\"></picture></div><div><h1></h1><p></p></div></div></div>"
-            }
-          }
-        },
-        {
-          "title": "Newsletter",
-          "id": "newsletter",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"newsletter\"><div><div><p>Heading</p></div></div><div><div><p>Subheading</p></div></div></div>"
-            }
-          }
-        },
-        {
-          "title": "Promotional Hero",
-          "id": "promotional-hero",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"promotional-hero\"><div><div><picture><source type=\"image/webp\" srcset=\"\"><source type=\"image/jpeg\" srcset=\"\"><img loading=\"lazy\"></picture></div><div><h2></h2><p></p></div><div><p></p></div></div></div>"
-            }
-          }
-        },
-        {
-          "title": "Search Bar",
-          "id": "search-bar",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"search-bar\"><div><div><p>Search Products</p></div></div></div>",
-              "behaviour": "columns"
-            }
-          }
-        },
-        {
-          "title": "Store Locator",
-          "id": "store-locator",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"store-locator\"><div><div><p>Store Name</p></div><div><p>Address</p></div><div><p>City</p></div><div><p>State</p></div><div><p>Zip</p></div><div><p>Phone</p></div></div></div>",
-              "behaviour": "columns"
-            }
-          }
-        },
-        {
-          "title": "Store Locator Item",
-          "id": "store-locator-item",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div><div><p>Store Name</p></div><div><p>Address</p></div><div><p>City</p></div><div><p>State</p></div><div><p>Zip</p></div><div><p>Phone</p></div></div>",
-              "behaviour": "columns-row"
-            }
-          }
-        },
-        {
-          "title": "Store Locator Cell",
-          "id": "store-locator-cell",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div></div>",
-              "behaviour": "columns-cell"
-            }
-          }
-        },
-        {
-          "title": "Top Banner",
-          "id": "top-banner",
-          "plugins": {
-            "da": {
-              "unsafeHTML": "<div class=\"top-banner\"><div><div><p>Message</p></div><div><p></p></div><div><p></p></div><div><p></p></div></div></div>"
-            }
-          }
         }
       ]
     },
@@ -825,12 +1775,34 @@
       "id": "product",
       "components": [
         {
+          "title": "Product Configurator Luxe",
+          "id": "product-configurator-luxe",
+          "model": "product-configurator-luxe",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
           "title": "Product Details",
           "id": "product-details",
           "model": "product-details",
           "plugins": {
             "da": {
               "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Product Highlights",
+          "id": "product-highlights",
+          "model": "product-highlights",
+          "plugins": {
+            "da": {
+              "name": "product-highlights",
+              "rows": 4,
+              "columns": 2
             }
           }
         },
@@ -858,6 +1830,16 @@
           "title": "Product Teaser",
           "id": "product-teaser",
           "model": "product-teaser",
+          "plugins": {
+            "da": {
+              "type": "key-value-block"
+            }
+          }
+        },
+        {
+          "title": "Product Technical Details",
+          "id": "product-technical-details",
+          "model": "product-technical-details",
           "plugins": {
             "da": {
               "type": "key-value-block"
