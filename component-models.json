@@ -523,6 +523,440 @@
     ]
   },
   {
+    "id": "cmco-brands",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "brands",
+        "label": "Brands (comma or line separated)",
+        "value": "CM, Yale, Magnetek, Dorner, Duff-Norton, Stahl, Garvey, Pfaff-Silberblau, Camlok, Coffing, Shaw-Box, Montratec"
+      }
+    ]
+  },
+  {
+    "id": "cmco-cta",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "name": "actions",
+        "label": "Primary and Secondary Links"
+      }
+    ]
+  },
+  {
+    "id": "cmco-hero",
+    "fields": [
+      {
+        "component": "text",
+        "name": "badge",
+        "label": "Badge",
+        "value": "Est. 1875 · Intelligent Motion · 50+ Countries"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading (use line breaks to control reveal lines)"
+      },
+      {
+        "component": "richtext",
+        "name": "lead",
+        "label": "Lead"
+      },
+      {
+        "component": "richtext",
+        "name": "actions",
+        "label": "Primary and Secondary Links"
+      },
+      {
+        "component": "text",
+        "name": "stat1",
+        "label": "Stat 1 (value | label)"
+      },
+      {
+        "component": "text",
+        "name": "stat2",
+        "label": "Stat 2 (value | label)"
+      },
+      {
+        "component": "text",
+        "name": "stat3",
+        "label": "Stat 3 (value | label)"
+      },
+      {
+        "component": "text",
+        "name": "stat4",
+        "label": "Stat 4 (value | label)"
+      }
+    ]
+  },
+  {
+    "id": "cmco-industries",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description"
+      },
+      {
+        "component": "richtext",
+        "name": "viewAll",
+        "label": "View All Link"
+      },
+      {
+        "component": "text",
+        "name": "industry1",
+        "label": "Industry 1"
+      },
+      {
+        "component": "richtext",
+        "name": "industry1Link",
+        "label": "Industry 1 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry2",
+        "label": "Industry 2"
+      },
+      {
+        "component": "richtext",
+        "name": "industry2Link",
+        "label": "Industry 2 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry3",
+        "label": "Industry 3"
+      },
+      {
+        "component": "richtext",
+        "name": "industry3Link",
+        "label": "Industry 3 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry4",
+        "label": "Industry 4"
+      },
+      {
+        "component": "richtext",
+        "name": "industry4Link",
+        "label": "Industry 4 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry5",
+        "label": "Industry 5"
+      },
+      {
+        "component": "richtext",
+        "name": "industry5Link",
+        "label": "Industry 5 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry6",
+        "label": "Industry 6"
+      },
+      {
+        "component": "richtext",
+        "name": "industry6Link",
+        "label": "Industry 6 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry7",
+        "label": "Industry 7"
+      },
+      {
+        "component": "richtext",
+        "name": "industry7Link",
+        "label": "Industry 7 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry8",
+        "label": "Industry 8"
+      },
+      {
+        "component": "richtext",
+        "name": "industry8Link",
+        "label": "Industry 8 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry9",
+        "label": "Industry 9"
+      },
+      {
+        "component": "richtext",
+        "name": "industry9Link",
+        "label": "Industry 9 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry10",
+        "label": "Industry 10"
+      },
+      {
+        "component": "richtext",
+        "name": "industry10Link",
+        "label": "Industry 10 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry11",
+        "label": "Industry 11"
+      },
+      {
+        "component": "richtext",
+        "name": "industry11Link",
+        "label": "Industry 11 Link"
+      },
+      {
+        "component": "text",
+        "name": "industry12",
+        "label": "Industry 12"
+      },
+      {
+        "component": "richtext",
+        "name": "industry12Link",
+        "label": "Industry 12 Link"
+      }
+    ]
+  },
+  {
+    "id": "cmco-news",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "name": "viewAll",
+        "label": "View All Link"
+      },
+      {
+        "component": "text",
+        "name": "article1Tag",
+        "label": "Featured Tag"
+      },
+      {
+        "component": "text",
+        "name": "article1Meta",
+        "label": "Featured Date and Category"
+      },
+      {
+        "component": "text",
+        "name": "article1Title",
+        "label": "Featured Title"
+      },
+      {
+        "component": "richtext",
+        "name": "article1Excerpt",
+        "label": "Featured Excerpt"
+      },
+      {
+        "component": "richtext",
+        "name": "article1Link",
+        "label": "Featured Link"
+      },
+      {
+        "component": "text",
+        "name": "article2Tag",
+        "label": "Article 2 Tag"
+      },
+      {
+        "component": "text",
+        "name": "article2Meta",
+        "label": "Article 2 Date and Category"
+      },
+      {
+        "component": "text",
+        "name": "article2Title",
+        "label": "Article 2 Title"
+      },
+      {
+        "component": "richtext",
+        "name": "article2Excerpt",
+        "label": "Article 2 Excerpt (not displayed)"
+      },
+      {
+        "component": "richtext",
+        "name": "article2Link",
+        "label": "Article 2 Link"
+      },
+      {
+        "component": "text",
+        "name": "article3Tag",
+        "label": "Article 3 Tag"
+      },
+      {
+        "component": "text",
+        "name": "article3Meta",
+        "label": "Article 3 Date and Category"
+      },
+      {
+        "component": "text",
+        "name": "article3Title",
+        "label": "Article 3 Title"
+      },
+      {
+        "component": "richtext",
+        "name": "article3Excerpt",
+        "label": "Article 3 Excerpt (not displayed)"
+      },
+      {
+        "component": "richtext",
+        "name": "article3Link",
+        "label": "Article 3 Link"
+      }
+    ]
+  },
+  {
+    "id": "cmco-purpose",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body"
+      },
+      {
+        "component": "richtext",
+        "name": "actions",
+        "label": "Primary and Secondary Links"
+      },
+      {
+        "component": "text",
+        "name": "stat1",
+        "label": "Stat 1 (value | label)",
+        "value": "50+ | Countries"
+      },
+      {
+        "component": "text",
+        "name": "stat2",
+        "label": "Stat 2 (value | label)",
+        "value": "150+ | Years Operating"
+      }
+    ]
+  },
+  {
+    "id": "cmco-solutions",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "name": "pillar1Title",
+        "label": "Automation Title"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar1Description",
+        "label": "Automation Description"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar1Link",
+        "label": "Automation Link"
+      },
+      {
+        "component": "text",
+        "name": "pillar2Title",
+        "label": "Conveyance Title"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar2Description",
+        "label": "Conveyance Description"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar2Link",
+        "label": "Conveyance Link"
+      },
+      {
+        "component": "text",
+        "name": "pillar3Title",
+        "label": "Lifting Title"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar3Description",
+        "label": "Lifting Description"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar3Link",
+        "label": "Lifting Link"
+      },
+      {
+        "component": "text",
+        "name": "pillar4Title",
+        "label": "Linear Motion Title"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar4Description",
+        "label": "Linear Motion Description"
+      },
+      {
+        "component": "richtext",
+        "name": "pillar4Link",
+        "label": "Linear Motion Link"
+      }
+    ]
+  },
+  {
     "id": "columns",
     "fields": [
       {

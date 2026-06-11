@@ -1,0 +1,55 @@
+{
+  "definitions": [
+    {
+      "title": "CMCO Solutions",
+      "id": "cmco-solutions",
+      "model": "cmco-solutions",
+      "plugins": {
+        "da": {
+          "rows": 7,
+          "columns": 3,
+          "fields": [
+            { "name": "eyebrow", "selector": "div:nth-child(1)>div:nth-child(1)" },
+            { "name": "heading", "selector": "div:nth-child(2)>div:nth-child(1)" },
+            { "name": "description", "selector": "div:nth-child(3)>div:nth-child(1)" },
+            { "name": "pillar1Title", "selector": "div:nth-child(4)>div:nth-child(1)" },
+            { "name": "pillar1Description", "selector": "div:nth-child(4)>div:nth-child(2)" },
+            { "name": "pillar1Link", "selector": "div:nth-child(4)>div:nth-child(3)" },
+            { "name": "pillar2Title", "selector": "div:nth-child(5)>div:nth-child(1)" },
+            { "name": "pillar2Description", "selector": "div:nth-child(5)>div:nth-child(2)" },
+            { "name": "pillar2Link", "selector": "div:nth-child(5)>div:nth-child(3)" },
+            { "name": "pillar3Title", "selector": "div:nth-child(6)>div:nth-child(1)" },
+            { "name": "pillar3Description", "selector": "div:nth-child(6)>div:nth-child(2)" },
+            { "name": "pillar3Link", "selector": "div:nth-child(6)>div:nth-child(3)" },
+            { "name": "pillar4Title", "selector": "div:nth-child(7)>div:nth-child(1)" },
+            { "name": "pillar4Description", "selector": "div:nth-child(7)>div:nth-child(2)" },
+            { "name": "pillar4Link", "selector": "div:nth-child(7)>div:nth-child(3)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "cmco-solutions",
+      "fields": [
+        { "component": "text", "name": "eyebrow", "label": "Eyebrow" },
+        { "component": "richtext", "name": "heading", "label": "Heading" },
+        { "component": "richtext", "name": "description", "label": "Description" },
+        { "component": "text", "name": "pillar1Title", "label": "Automation Title" },
+        { "component": "richtext", "name": "pillar1Description", "label": "Automation Description" },
+        { "component": "richtext", "name": "pillar1Link", "label": "Automation Link" },
+        { "component": "text", "name": "pillar2Title", "label": "Conveyance Title" },
+        { "component": "richtext", "name": "pillar2Description", "label": "Conveyance Description" },
+        { "component": "richtext", "name": "pillar2Link", "label": "Conveyance Link" },
+        { "component": "text", "name": "pillar3Title", "label": "Lifting Title" },
+        { "component": "richtext", "name": "pillar3Description", "label": "Lifting Description" },
+        { "component": "richtext", "name": "pillar3Link", "label": "Lifting Link" },
+        { "component": "text", "name": "pillar4Title", "label": "Linear Motion Title" },
+        { "component": "richtext", "name": "pillar4Description", "label": "Linear Motion Description" },
+        { "component": "richtext", "name": "pillar4Link", "label": "Linear Motion Link" }
+      ]
+    }
+  ],
+  "filters": []
+}

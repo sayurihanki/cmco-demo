@@ -50,6 +50,27 @@
           "...": "../blocks/circle-carousel/_*.json#/definitions"
         },
         {
+          "...": "../blocks/cmco-brands/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/cmco-cta/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/cmco-hero/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/cmco-industries/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/cmco-news/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/cmco-purpose/_*.json#/definitions"
+        },
+        {
+          "...": "../blocks/cmco-solutions/_*.json#/definitions"
+        },
+        {
           "...": "../blocks/columns/_*.json#/definitions"
         },
         {

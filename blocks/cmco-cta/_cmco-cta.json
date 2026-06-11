@@ -1,0 +1,31 @@
+{
+  "definitions": [
+    {
+      "title": "CMCO CTA",
+      "id": "cmco-cta",
+      "model": "cmco-cta",
+      "plugins": {
+        "da": {
+          "rows": 3,
+          "columns": 1,
+          "fields": [
+            { "name": "eyebrow", "selector": "div:nth-child(1)>div:nth-child(1)" },
+            { "name": "heading", "selector": "div:nth-child(2)>div:nth-child(1)" },
+            { "name": "actions", "selector": "div:nth-child(3)>div:nth-child(1)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "cmco-cta",
+      "fields": [
+        { "component": "text", "name": "eyebrow", "label": "Eyebrow" },
+        { "component": "richtext", "name": "heading", "label": "Heading" },
+        { "component": "richtext", "name": "actions", "label": "Primary and Secondary Links" }
+      ]
+    }
+  ],
+  "filters": []
+}

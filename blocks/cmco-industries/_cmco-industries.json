@@ -1,0 +1,81 @@
+{
+  "definitions": [
+    {
+      "title": "CMCO Industries",
+      "id": "cmco-industries",
+      "model": "cmco-industries",
+      "plugins": {
+        "da": {
+          "rows": 16,
+          "columns": 2,
+          "fields": [
+            { "name": "eyebrow", "selector": "div:nth-child(1)>div:nth-child(1)" },
+            { "name": "heading", "selector": "div:nth-child(2)>div:nth-child(1)" },
+            { "name": "description", "selector": "div:nth-child(3)>div:nth-child(1)" },
+            { "name": "viewAll", "selector": "div:nth-child(4)>div:nth-child(1)" },
+            { "name": "industry1", "selector": "div:nth-child(5)>div:nth-child(1)" },
+            { "name": "industry1Link", "selector": "div:nth-child(5)>div:nth-child(2)" },
+            { "name": "industry2", "selector": "div:nth-child(6)>div:nth-child(1)" },
+            { "name": "industry2Link", "selector": "div:nth-child(6)>div:nth-child(2)" },
+            { "name": "industry3", "selector": "div:nth-child(7)>div:nth-child(1)" },
+            { "name": "industry3Link", "selector": "div:nth-child(7)>div:nth-child(2)" },
+            { "name": "industry4", "selector": "div:nth-child(8)>div:nth-child(1)" },
+            { "name": "industry4Link", "selector": "div:nth-child(8)>div:nth-child(2)" },
+            { "name": "industry5", "selector": "div:nth-child(9)>div:nth-child(1)" },
+            { "name": "industry5Link", "selector": "div:nth-child(9)>div:nth-child(2)" },
+            { "name": "industry6", "selector": "div:nth-child(10)>div:nth-child(1)" },
+            { "name": "industry6Link", "selector": "div:nth-child(10)>div:nth-child(2)" },
+            { "name": "industry7", "selector": "div:nth-child(11)>div:nth-child(1)" },
+            { "name": "industry7Link", "selector": "div:nth-child(11)>div:nth-child(2)" },
+            { "name": "industry8", "selector": "div:nth-child(12)>div:nth-child(1)" },
+            { "name": "industry8Link", "selector": "div:nth-child(12)>div:nth-child(2)" },
+            { "name": "industry9", "selector": "div:nth-child(13)>div:nth-child(1)" },
+            { "name": "industry9Link", "selector": "div:nth-child(13)>div:nth-child(2)" },
+            { "name": "industry10", "selector": "div:nth-child(14)>div:nth-child(1)" },
+            { "name": "industry10Link", "selector": "div:nth-child(14)>div:nth-child(2)" },
+            { "name": "industry11", "selector": "div:nth-child(15)>div:nth-child(1)" },
+            { "name": "industry11Link", "selector": "div:nth-child(15)>div:nth-child(2)" },
+            { "name": "industry12", "selector": "div:nth-child(16)>div:nth-child(1)" },
+            { "name": "industry12Link", "selector": "div:nth-child(16)>div:nth-child(2)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "cmco-industries",
+      "fields": [
+        { "component": "text", "name": "eyebrow", "label": "Eyebrow" },
+        { "component": "richtext", "name": "heading", "label": "Heading" },
+        { "component": "richtext", "name": "description", "label": "Description" },
+        { "component": "richtext", "name": "viewAll", "label": "View All Link" },
+        { "component": "text", "name": "industry1", "label": "Industry 1" },
+        { "component": "richtext", "name": "industry1Link", "label": "Industry 1 Link" },
+        { "component": "text", "name": "industry2", "label": "Industry 2" },
+        { "component": "richtext", "name": "industry2Link", "label": "Industry 2 Link" },
+        { "component": "text", "name": "industry3", "label": "Industry 3" },
+        { "component": "richtext", "name": "industry3Link", "label": "Industry 3 Link" },
+        { "component": "text", "name": "industry4", "label": "Industry 4" },
+        { "component": "richtext", "name": "industry4Link", "label": "Industry 4 Link" },
+        { "component": "text", "name": "industry5", "label": "Industry 5" },
+        { "component": "richtext", "name": "industry5Link", "label": "Industry 5 Link" },
+        { "component": "text", "name": "industry6", "label": "Industry 6" },
+        { "component": "richtext", "name": "industry6Link", "label": "Industry 6 Link" },
+        { "component": "text", "name": "industry7", "label": "Industry 7" },
+        { "component": "richtext", "name": "industry7Link", "label": "Industry 7 Link" },
+        { "component": "text", "name": "industry8", "label": "Industry 8" },
+        { "component": "richtext", "name": "industry8Link", "label": "Industry 8 Link" },
+        { "component": "text", "name": "industry9", "label": "Industry 9" },
+        { "component": "richtext", "name": "industry9Link", "label": "Industry 9 Link" },
+        { "component": "text", "name": "industry10", "label": "Industry 10" },
+        { "component": "richtext", "name": "industry10Link", "label": "Industry 10 Link" },
+        { "component": "text", "name": "industry11", "label": "Industry 11" },
+        { "component": "richtext", "name": "industry11Link", "label": "Industry 11 Link" },
+        { "component": "text", "name": "industry12", "label": "Industry 12" },
+        { "component": "richtext", "name": "industry12Link", "label": "Industry 12 Link" }
+      ]
+    }
+  ],
+  "filters": []
+}

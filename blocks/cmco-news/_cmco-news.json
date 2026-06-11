@@ -1,0 +1,61 @@
+{
+  "definitions": [
+    {
+      "title": "CMCO News",
+      "id": "cmco-news",
+      "model": "cmco-news",
+      "plugins": {
+        "da": {
+          "rows": 6,
+          "columns": 5,
+          "fields": [
+            { "name": "eyebrow", "selector": "div:nth-child(1)>div:nth-child(1)" },
+            { "name": "heading", "selector": "div:nth-child(2)>div:nth-child(1)" },
+            { "name": "viewAll", "selector": "div:nth-child(3)>div:nth-child(1)" },
+            { "name": "article1Tag", "selector": "div:nth-child(4)>div:nth-child(1)" },
+            { "name": "article1Meta", "selector": "div:nth-child(4)>div:nth-child(2)" },
+            { "name": "article1Title", "selector": "div:nth-child(4)>div:nth-child(3)" },
+            { "name": "article1Excerpt", "selector": "div:nth-child(4)>div:nth-child(4)" },
+            { "name": "article1Link", "selector": "div:nth-child(4)>div:nth-child(5)" },
+            { "name": "article2Tag", "selector": "div:nth-child(5)>div:nth-child(1)" },
+            { "name": "article2Meta", "selector": "div:nth-child(5)>div:nth-child(2)" },
+            { "name": "article2Title", "selector": "div:nth-child(5)>div:nth-child(3)" },
+            { "name": "article2Excerpt", "selector": "div:nth-child(5)>div:nth-child(4)" },
+            { "name": "article2Link", "selector": "div:nth-child(5)>div:nth-child(5)" },
+            { "name": "article3Tag", "selector": "div:nth-child(6)>div:nth-child(1)" },
+            { "name": "article3Meta", "selector": "div:nth-child(6)>div:nth-child(2)" },
+            { "name": "article3Title", "selector": "div:nth-child(6)>div:nth-child(3)" },
+            { "name": "article3Excerpt", "selector": "div:nth-child(6)>div:nth-child(4)" },
+            { "name": "article3Link", "selector": "div:nth-child(6)>div:nth-child(5)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "cmco-news",
+      "fields": [
+        { "component": "text", "name": "eyebrow", "label": "Eyebrow" },
+        { "component": "richtext", "name": "heading", "label": "Heading" },
+        { "component": "richtext", "name": "viewAll", "label": "View All Link" },
+        { "component": "text", "name": "article1Tag", "label": "Featured Tag" },
+        { "component": "text", "name": "article1Meta", "label": "Featured Date and Category" },
+        { "component": "text", "name": "article1Title", "label": "Featured Title" },
+        { "component": "richtext", "name": "article1Excerpt", "label": "Featured Excerpt" },
+        { "component": "richtext", "name": "article1Link", "label": "Featured Link" },
+        { "component": "text", "name": "article2Tag", "label": "Article 2 Tag" },
+        { "component": "text", "name": "article2Meta", "label": "Article 2 Date and Category" },
+        { "component": "text", "name": "article2Title", "label": "Article 2 Title" },
+        { "component": "richtext", "name": "article2Excerpt", "label": "Article 2 Excerpt (not displayed)" },
+        { "component": "richtext", "name": "article2Link", "label": "Article 2 Link" },
+        { "component": "text", "name": "article3Tag", "label": "Article 3 Tag" },
+        { "component": "text", "name": "article3Meta", "label": "Article 3 Date and Category" },
+        { "component": "text", "name": "article3Title", "label": "Article 3 Title" },
+        { "component": "richtext", "name": "article3Excerpt", "label": "Article 3 Excerpt (not displayed)" },
+        { "component": "richtext", "name": "article3Link", "label": "Article 3 Link" }
+      ]
+    }
+  ],
+  "filters": []
+}

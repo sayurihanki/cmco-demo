@@ -1,0 +1,32 @@
+{
+  "definitions": [
+    {
+      "title": "CMCO Brands",
+      "id": "cmco-brands",
+      "model": "cmco-brands",
+      "plugins": {
+        "da": {
+          "rows": 1,
+          "columns": 1,
+          "fields": [
+            { "name": "brands", "selector": "div:nth-child(1)>div:nth-child(1)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "cmco-brands",
+      "fields": [
+        {
+          "component": "richtext",
+          "name": "brands",
+          "label": "Brands (comma or line separated)",
+          "value": "CM, Yale, Magnetek, Dorner, Duff-Norton, Stahl, Garvey, Pfaff-Silberblau, Camlok, Coffing, Shaw-Box, Montratec"
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

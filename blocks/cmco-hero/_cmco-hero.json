@@ -1,0 +1,41 @@
+{
+  "definitions": [
+    {
+      "title": "CMCO Hero",
+      "id": "cmco-hero",
+      "model": "cmco-hero",
+      "plugins": {
+        "da": {
+          "rows": 8,
+          "columns": 1,
+          "fields": [
+            { "name": "badge", "selector": "div:nth-child(1)>div:nth-child(1)" },
+            { "name": "heading", "selector": "div:nth-child(2)>div:nth-child(1)" },
+            { "name": "lead", "selector": "div:nth-child(3)>div:nth-child(1)" },
+            { "name": "actions", "selector": "div:nth-child(4)>div:nth-child(1)" },
+            { "name": "stat1", "selector": "div:nth-child(5)>div:nth-child(1)" },
+            { "name": "stat2", "selector": "div:nth-child(6)>div:nth-child(1)" },
+            { "name": "stat3", "selector": "div:nth-child(7)>div:nth-child(1)" },
+            { "name": "stat4", "selector": "div:nth-child(8)>div:nth-child(1)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "cmco-hero",
+      "fields": [
+        { "component": "text", "name": "badge", "label": "Badge", "value": "Est. 1875 · Intelligent Motion · 50+ Countries" },
+        { "component": "richtext", "name": "heading", "label": "Heading (use line breaks to control reveal lines)" },
+        { "component": "richtext", "name": "lead", "label": "Lead" },
+        { "component": "richtext", "name": "actions", "label": "Primary and Secondary Links" },
+        { "component": "text", "name": "stat1", "label": "Stat 1 (value | label)" },
+        { "component": "text", "name": "stat2", "label": "Stat 2 (value | label)" },
+        { "component": "text", "name": "stat3", "label": "Stat 3 (value | label)" },
+        { "component": "text", "name": "stat4", "label": "Stat 4 (value | label)" }
+      ]
+    }
+  ],
+  "filters": []
+}

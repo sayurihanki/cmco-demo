@@ -1,0 +1,119 @@
+.cmco-brands-container {
+  margin: 0;
+}
+
+.cmco-brands-container > div,
+.cmco-brands-container .cmco-brands-wrapper {
+  max-width: none;
+  padding: 0;
+}
+
+.cmco-brands {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  border-top: 1px solid rgb(255 255 255 / 6%);
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+  background: var(--cmco-blue-ink);
+  font-family: var(--cmco-font-body);
+}
+
+.cmco-brands::before,
+.cmco-brands::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  pointer-events: none;
+}
+
+.cmco-brands::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--cmco-blue-ink), transparent);
+}
+
+.cmco-brands::after {
+  right: 0;
+  background: linear-gradient(-90deg, var(--cmco-blue-ink), transparent);
+}
+
+.cmco-brands-wrap {
+  overflow: hidden;
+  padding: 18px 0;
+}
+
+.cmco-brands-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: cmco-brands-scroll 34s linear infinite;
+}
+
+.cmco-brands-track:hover {
+  animation-play-state: paused;
+}
+
+.cmco-brands-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 44px;
+  padding: 0 22px;
+}
+
+.cmco-brands-group::after {
+  content: "";
+  flex: none;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cmco-orange);
+  opacity: 0.5;
+}
+
+.cmco-brands-name {
+  color: rgb(255 255 255 / 28%);
+  font-family: var(--cmco-font-display);
+  font-size: 16.5px;
+  font-variation-settings: "opsz" 16, "wght" 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.cmco-brands-name:hover {
+  color: rgb(255 255 255 / 80%);
+}
+
+@keyframes cmco-brands-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 720px) {
+  .cmco-brands::before,
+  .cmco-brands::after {
+    width: 44px;
+  }
+
+  .cmco-brands-group {
+    gap: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmco-brands-track {
+    flex-wrap: wrap;
+    width: auto;
+    white-space: normal;
+    animation: none;
+  }
+
+  .cmco-brands-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+}
