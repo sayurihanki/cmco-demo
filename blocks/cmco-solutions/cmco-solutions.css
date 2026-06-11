@@ -24,8 +24,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  align-items: end;
-  margin-bottom: 60px;
+  align-items: start;
+  margin-bottom: 120px;
 }
 
 .cmco-solutions-eyebrow,
@@ -92,9 +92,9 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 350px;
+  min-height: 380px;
   overflow: hidden;
-  padding: 38px 30px 36px;
+  padding: 38px 32px 44px;
   background: #fff;
   color: inherit;
   text-decoration: none;
@@ -156,7 +156,7 @@
   display: grid;
   width: 50px;
   height: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
   place-items: center;
   border-radius: 13px;
   background: var(--cmco-blue-soft);
