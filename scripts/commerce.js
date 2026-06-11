@@ -658,8 +658,10 @@ export async function commerceEndpointWithQueryParams(customHeaders = {}) {
  */
 function getSkuFromUrl() {
   const path = window.location.pathname;
-  const result = path.match(/\/products\/[\w|-]+\/([\w|-]+)$/);
-  return result?.[1];
+  // Allow __ (encoded forward slash) in the SKU segment, then decode
+  // __ back to / so the Commerce API receives the original SKU.
+  const result = path.match(/\/products\/[^/]+\/([^/]+)$/);
+  return result?.[1] ? result[1].replace(/__/g, '/') : null;
 }
 
 /**
@@ -703,7 +705,12 @@ export function getProductLink(urlKey, sku) {
     console.warn('getProductLink: sku is missing or empty', { urlKey, sku });
   }
   const sanitizedUrlKey = urlKey ? sanitizeName(urlKey) : '';
-  const sanitizedSku = sku ? sanitizeName(sku) : '';
+  // SKUs may contain forward slashes (e.g. "apple-iphone-se/iphone-se").
+  // sanitizeName() would destroy the slash, so split on /, sanitize each
+  // part, and rejoin with __ as the delimiter (getSkuFromUrl decodes it).
+  const sanitizedSku = sku
+    ? sku.split('/').map((part) => sanitizeName(part)).join('__')
+    : '';
   return rootLink(`/products/${sanitizedUrlKey}/${sanitizedSku}`);
 }
 
