@@ -128,7 +128,7 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
 
 const subMenuHeader = document.createElement('div');
 subMenuHeader.classList.add('submenu-header');
-subMenuHeader.innerHTML = '<h5 class="back-link">All Categories</h5><hr />';
+subMenuHeader.innerHTML = '<h5 class="back-link">CMCO Products</h5><hr />';
 
 /**
  * Sets up the submenu
@@ -136,17 +136,14 @@ subMenuHeader.innerHTML = '<h5 class="back-link">All Categories</h5><hr />';
  */
 function setupSubmenu(navSection) {
   if (navSection.querySelector('ul')) {
-    let label;
-    if (navSection.childNodes.length) {
-      [label] = navSection.childNodes;
-    }
+    const labelEl = navSection.querySelector(':scope > p') || navSection.querySelector(':scope > a');
 
     const submenu = navSection.querySelector('ul');
     const wrapper = document.createElement('div');
     const header = subMenuHeader.cloneNode(true);
     const title = document.createElement('h6');
     title.classList.add('submenu-title');
-    title.textContent = label.textContent;
+    title.textContent = labelEl ? labelEl.textContent.trim() : '';
 
     wrapper.classList.add('submenu-wrapper');
     wrapper.appendChild(header);
