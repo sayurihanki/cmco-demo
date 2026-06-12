@@ -323,14 +323,6 @@ export default async function decorate(block) {
             }
             navSection.setAttribute('aria-expanded', 'true');
             overlay.classList.add('show');
-            // Snap mega menu flush under the sticky nav — overlap 3px to seal gap
-            const nw = document.querySelector('.nav-wrapper');
-            if (nw) {
-              const bottom = nw.getBoundingClientRect().bottom;
-              navSection.querySelectorAll('.submenu-wrapper').forEach((el) => {
-                el.style.top = `${bottom - 3}px`;
-              });
-            }
           }
         });
       });
