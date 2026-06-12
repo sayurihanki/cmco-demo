@@ -36,6 +36,26 @@ function sanitizeName(name) {
     .replace(/^-|-$/g, '');
 }
 
+function encodeSkuForUrl(sku) {
+  return `sku-${Array.from(new TextEncoder().encode(sku))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+
+function decodeSkuFromUrl(value) {
+  if (value?.startsWith('sku-')) {
+    const hex = value.slice(4);
+    if (hex.length % 2 === 0 && /^[0-9a-f]+$/i.test(hex)) {
+      const bytes = new Uint8Array(hex.match(/.{2}/g).map((pair) => parseInt(pair, 16)));
+      return new TextDecoder().decode(bytes);
+    }
+  }
+
+  // Legacy fallback for older slug-style URLs and slash-encoded SKUs.
+  return value?.replace(/__/g, '/')
+    ?? null;
+}
+
 /**
  * Fetch GraphQL Instances
  */
@@ -658,10 +678,8 @@ export async function commerceEndpointWithQueryParams(customHeaders = {}) {
  */
 function getSkuFromUrl() {
   const path = window.location.pathname;
-  // Allow __ (encoded forward slash) in the SKU segment, then decode
-  // __ back to / so the Commerce API receives the original SKU.
   const result = path.match(/\/products\/[^/]+\/([^/]+)$/);
-  return result?.[1] ? result[1].replace(/__/g, '/') : null;
+  return result?.[1] ? decodeSkuFromUrl(result[1]) : null;
 }
 
 /**
@@ -705,12 +723,9 @@ export function getProductLink(urlKey, sku) {
     console.warn('getProductLink: sku is missing or empty', { urlKey, sku });
   }
   const sanitizedUrlKey = urlKey ? sanitizeName(urlKey) : '';
-  // SKUs may contain forward slashes (e.g. "apple-iphone-se/iphone-se").
-  // sanitizeName() would destroy the slash, so split on /, sanitize each
-  // part, and rejoin with __ as the delimiter (getSkuFromUrl decodes it).
-  const sanitizedSku = sku
-    ? sku.split('/').map((part) => sanitizeName(part)).join('__')
-    : '';
+  // SKUs can contain spaces, mixed case, punctuation, and slashes, so they
+  // need a reversible encoding instead of slugification.
+  const sanitizedSku = sku ? encodeSkuForUrl(sku) : '';
   return rootLink(`/products/${sanitizedUrlKey}/${sanitizedSku}`);
 }
 
