@@ -130,29 +130,127 @@ const subMenuHeader = document.createElement('div');
 subMenuHeader.classList.add('submenu-header');
 subMenuHeader.innerHTML = '<h5 class="back-link">CMCO Products</h5><hr />';
 
+const CMCO_CAT_ICONS = [
+  '<path d="M12 2v8M9 7l3 4 3-4M7 15a5 5 0 0010 0" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<path d="M3 8h18M3 8v5M21 8l-5 7M16 15H7M7 15v3" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<path d="M8 7a4 4 0 018 0M12 11v5M8 16a4 4 0 008 0" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>',
+  '<path d="M3 17h18M3 17a3 3 0 106 0M21 17a3 3 0 11-6 0M3 7h18M3 12h18" stroke-linecap="round"/>',
+  '<path d="M12 2C7 8 5 12 5 15a7 7 0 0014 0c0-3-2-7-7-13z" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<path d="M3 8h18M3 16h18M6 8v8M10 8v8M14 8v8M18 8v8" stroke-linecap="round"/>',
+  '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke-linecap="round" stroke-linejoin="round"/>',
+];
+
+const CMCO_CAT_COUNTS = [84, 36, 112, 58, 47, 29, 22, 15];
+
+const CMCO_FEAT_PANEL_HTML = `
+<div class="cmco-feat-panel">
+  <div class="cmco-feat-grid-bg"></div>
+  <div class="cmco-feat-body">
+    <span class="cmco-feat-eye">Featured · Intelligent Systems</span>
+    <p class="cmco-feat-title">Motion.<br>Precision.<br>Control.</p>
+    <p class="cmco-feat-desc">Integrated lifting and conveying systems engineered for the world's most demanding industrial environments.</p>
+    <div class="cmco-feat-stats">
+      <div class="cmco-fchip">
+        <span class="cmco-fchip-lbl">Load Cap.</span>
+        <span class="cmco-fchip-val">2.5<span class="cmco-fchip-unit"> T</span></span>
+      </div>
+      <div class="cmco-fchip">
+        <span class="cmco-fchip-lbl">Uptime</span>
+        <span class="cmco-fchip-val">99.97<span class="cmco-fchip-unit">%</span></span>
+      </div>
+      <div class="cmco-fchip">
+        <span class="cmco-fchip-lbl">Precision</span>
+        <span class="cmco-fchip-val">±0.01<span class="cmco-fchip-unit">mm</span></span>
+      </div>
+      <div class="cmco-fchip">
+        <span class="cmco-fchip-lbl">Countries</span>
+        <span class="cmco-fchip-val">50<span class="cmco-fchip-unit">+</span></span>
+      </div>
+    </div>
+    <a href="/products" class="cmco-feat-cta">
+      Explore Solutions
+      <svg class="cmco-feat-arr" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 8h11M9 4l4 4-4 4"/>
+      </svg>
+    </a>
+  </div>
+</div>`;
+
 /**
- * Sets up the submenu
- * @param {navSection} navSection The nav section element
+ * Sets up the submenu for a nav section.
+ * Mobile: back header + title + plain ul.
+ * Desktop: two-column mega layout with icon rows + feature panel.
+ * @param {Element} navSection
  */
 function setupSubmenu(navSection) {
-  if (navSection.querySelector('ul')) {
-    const labelEl = navSection.querySelector(':scope > p') || navSection.querySelector(':scope > a');
+  const submenu = navSection.querySelector('ul');
+  if (!submenu) return;
 
-    const submenu = navSection.querySelector('ul');
-    const wrapper = document.createElement('div');
-    const header = subMenuHeader.cloneNode(true);
-    const title = document.createElement('h6');
-    title.classList.add('submenu-title');
-    title.textContent = labelEl ? labelEl.textContent.trim() : '';
+  const labelEl = navSection.querySelector(':scope > p') || navSection.querySelector(':scope > a');
+  const labelText = labelEl ? labelEl.textContent.trim() : '';
 
-    wrapper.classList.add('submenu-wrapper');
-    wrapper.appendChild(header);
-    wrapper.appendChild(title);
-    wrapper.appendChild(submenu.cloneNode(true));
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('submenu-wrapper');
 
-    navSection.appendChild(wrapper);
-    navSection.removeChild(submenu);
-  }
+  // ── Mobile ───────────────────────────────────────────────────────
+  const mobileHeader = subMenuHeader.cloneNode(true);
+  const mobileTitle = document.createElement('h6');
+  mobileTitle.classList.add('submenu-title');
+  mobileTitle.textContent = labelText;
+  const mobileUl = submenu.cloneNode(true);
+
+  wrapper.appendChild(mobileHeader);
+  wrapper.appendChild(mobileTitle);
+  wrapper.appendChild(mobileUl);
+
+  // ── Desktop mega ─────────────────────────────────────────────────
+  const inner = document.createElement('div');
+  inner.className = 'cmco-mega-inner';
+
+  const leftCol = document.createElement('div');
+  leftCol.className = 'cmco-mega-left';
+
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'cmco-mega-lbl';
+  eyebrow.textContent = 'Product Categories';
+  leftCol.appendChild(eyebrow);
+
+  const catsGrid = document.createElement('div');
+  catsGrid.className = 'cmco-cats-grid';
+
+  submenu.querySelectorAll('li').forEach((li, i) => {
+    const a = li.querySelector('a');
+    if (!a) return;
+    const iconPath = CMCO_CAT_ICONS[i] || CMCO_CAT_ICONS[0];
+    const count = CMCO_CAT_COUNTS[i] !== undefined ? CMCO_CAT_COUNTS[i] : '';
+    const row = document.createElement('a');
+    row.className = 'cmco-cat-row';
+    row.href = a.getAttribute('href') || '#';
+    row.innerHTML = `<div class="cmco-cat-ico">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${iconPath}</svg>
+      </div>
+      <div class="cmco-cat-info">
+        <span class="cmco-cat-name">${a.textContent.trim()}</span>
+        <span class="cmco-cat-count">${count} products</span>
+      </div>
+      <svg class="cmco-cat-arr" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 8h11M9 4l4 4-4 4"/>
+      </svg>`;
+    catsGrid.appendChild(row);
+  });
+
+  leftCol.appendChild(catsGrid);
+  inner.appendChild(leftCol);
+
+  const rightCol = document.createElement('div');
+  rightCol.className = 'cmco-mega-right';
+  rightCol.innerHTML = CMCO_FEAT_PANEL_HTML;
+  inner.appendChild(rightCol);
+
+  wrapper.appendChild(inner);
+  navSection.appendChild(wrapper);
+  navSection.removeChild(submenu);
 }
 
 /**
@@ -184,6 +282,21 @@ export default async function decorate(block) {
     brandLink.closest('.button-container').className = '';
   }
 
+  // ── Logo mark (desktop) ──────────────────────────────────────────
+  const brandA = navBrand.querySelector('a');
+  if (brandA) {
+    const brandText = brandA.textContent.trim() || 'CMCO';
+    brandA.innerHTML = `<div class="cmco-logo-mark">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.88)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v8M9 7l3 4 3-4M7 15a5 5 0 0010 0"/>
+      </svg>
+    </div>
+    <div class="cmco-logo-text">
+      <span class="cmco-logo-name">${brandText}</span>
+      <span class="cmco-logo-tagline">Intelligent Motion</span>
+    </div>`;
+  }
+
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections
@@ -206,6 +319,14 @@ export default async function decorate(block) {
             }
             navSection.setAttribute('aria-expanded', 'true');
             overlay.classList.add('show');
+            // Position mega menu below the sticky nav wrapper
+            const nw = document.querySelector('.nav-wrapper');
+            if (nw) {
+              const bottom = nw.getBoundingClientRect().bottom;
+              navSection.querySelectorAll('.submenu-wrapper').forEach((el) => {
+                el.style.top = `${bottom}px`;
+              });
+            }
           }
         });
       });
@@ -505,6 +626,28 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // ── Utility topbar ───────────────────────────────────────────────
+  const topbar = document.createElement('div');
+  topbar.className = 'cmco-topbar';
+  topbar.innerHTML = `<div class="cmco-topbar-inner">
+    <div class="cmco-topbar-left">
+      <span>13320 Ballantyne Corporate Place, Charlotte, NC 28277</span>
+      <a href="tel:+17166895400">+1 (716) 689-5400</a>
+    </div>
+    <div class="cmco-topbar-right">
+      <span class="cmco-ticker"><span class="cmco-ticker-dot"></span>CMCO · NYSE</span>
+      <a href="#">Investor Relations</a>
+      <a href="#">Careers</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>`;
+  block.prepend(topbar);
+
+  // ── Scroll shadow on sticky nav ──────────────────────────────────
+  window.addEventListener('scroll', () => {
+    navWrapper.classList.toggle('cmco-scrolled', window.scrollY > 40);
+  }, { passive: true });
 
   navWrapper.addEventListener('mouseout', (e) => {
     if (isDesktop.matches && !nav.contains(e.relatedTarget)) {
