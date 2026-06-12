@@ -297,6 +297,9 @@ export default async function decorate(block) {
     </div>`;
   }
 
+  // Shared timer — cancelled on mouseenter, fires close on mouseout
+  let closeMenuTimer;
+
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections
@@ -311,6 +314,7 @@ export default async function decorate(block) {
           }
         });
         navSection.addEventListener('mouseenter', () => {
+          clearTimeout(closeMenuTimer);
           toggleAllNavSections(navSections);
           if (isDesktop.matches) {
             if (!navSection.classList.contains('nav-drop')) {
@@ -319,12 +323,12 @@ export default async function decorate(block) {
             }
             navSection.setAttribute('aria-expanded', 'true');
             overlay.classList.add('show');
-            // Position mega menu below the sticky nav wrapper
+            // Snap mega menu flush under the sticky nav — overlap 3px to seal gap
             const nw = document.querySelector('.nav-wrapper');
             if (nw) {
               const bottom = nw.getBoundingClientRect().bottom;
               navSection.querySelectorAll('.submenu-wrapper').forEach((el) => {
-                el.style.top = `${bottom}px`;
+                el.style.top = `${bottom - 3}px`;
               });
             }
           }
@@ -651,10 +655,16 @@ export default async function decorate(block) {
 
   navWrapper.addEventListener('mouseout', (e) => {
     if (isDesktop.matches && !nav.contains(e.relatedTarget)) {
-      toggleAllNavSections(navSections);
-      overlay.classList.remove('show');
+      clearTimeout(closeMenuTimer);
+      closeMenuTimer = setTimeout(() => {
+        toggleAllNavSections(navSections);
+        overlay.classList.remove('show');
+      }, 200);
     }
   });
+
+  // Keep menu alive when mouse re-enters any part of the nav
+  navWrapper.addEventListener('mouseover', () => clearTimeout(closeMenuTimer));
 
   window.addEventListener('resize', () => {
     navWrapper.classList.remove('active');

@@ -651,6 +651,17 @@ header nav .nav-sections ul>li:empty {
     z-index: 100;
   }
 
+  /* Invisible bridge above the mega menu seals any sub-pixel gap against the nav bar */
+  header nav .nav-sections .default-content-wrapper > ul > li .submenu-wrapper::before {
+    background: transparent;
+    content: '';
+    height: 6px;
+    left: 0;
+    position: absolute;
+    top: -6px;
+    width: 100%;
+  }
+
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] .submenu-wrapper {
     opacity: 1;
     pointer-events: all;
