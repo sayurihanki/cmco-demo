@@ -27,13 +27,24 @@
   padding-block: clamp(2.4rem, 3vw, 5.6rem);
 }
 
+body.page-product-details {
+  background:
+    radial-gradient(circle at top left, rgb(0 82 155 / 9%), transparent 28%),
+    linear-gradient(180deg, var(--product-details-surface-soft) 0%, var(--product-details-surface-paper) 100%);
+}
+
+body.page-product-details main,
+body.page-product-details main .section {
+  background: transparent;
+}
+
 .product-details::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
     radial-gradient(circle at top left, rgb(0 82 155 / 9%), transparent 32%),
-    linear-gradient(180deg, var(--product-details-surface-soft) 0%, var(--product-details-surface-paper) 44%, transparent 100%);
+    linear-gradient(180deg, var(--product-details-surface-soft) 0%, var(--product-details-surface-paper) 100%);
   pointer-events: none;
   z-index: 0;
 }

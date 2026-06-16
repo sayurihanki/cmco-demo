@@ -652,6 +652,7 @@ export default async function decorate(block) {
   const $tabLinks = [...fragment.querySelectorAll('.product-details__tab-link')];
 
   block.replaceChildren(fragment);
+  document.body.classList.add('page-product-details');
   block.classList.toggle(
     'product-details--presentation-auto-immersive',
     config.presentation === PRODUCT_DETAILS_PRESENTATIONS.AUTO_IMMERSIVE,
