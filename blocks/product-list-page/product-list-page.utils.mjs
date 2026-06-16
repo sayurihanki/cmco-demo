@@ -83,13 +83,17 @@ export function buildRequestFilters({ urlpath, userFilters = [] } = {}) {
 }
 
 export function normalizeSearchRequest({ request = {}, urlpath = '', pageSize = 9 } = {}) {
+  const sort = request.sort?.length ? cloneSort(request.sort) : [];
+
+  if (!sort.length && urlpath) {
+    sort.push(...cloneSort(DEFAULT_CATEGORY_SORT));
+  }
+
   return {
     phrase: request.phrase ?? '',
     currentPage: Number(request.currentPage) || 1,
     pageSize: Number(request.pageSize) || pageSize,
-    sort: request.sort?.length
-      ? cloneSort(request.sort)
-      : (urlpath ? cloneSort(DEFAULT_CATEGORY_SORT) : []),
+    sort,
     filter: buildRequestFilters({
       urlpath,
       userFilters: getUserFilters(request.filter),
@@ -123,7 +127,12 @@ export function buildFacetMetadataMap(facets = []) {
   }));
 }
 
-function formatRangeLabel({ range, attribute, facetTitle, bucket }) {
+function formatRangeLabel({
+  range,
+  attribute,
+  facetTitle,
+  bucket,
+}) {
   if (bucket?.name) {
     return bucket.name;
   }
@@ -180,8 +189,8 @@ export function buildActiveFilterChips(filters = [], facetMetadata = new Map()) 
   return chips;
 }
 
-export function getNextUserFiltersForChip(filters = [], chip) {
-  return getUserFilters(filters).reduce((nextFilters, filter) => {
+export function getNextUserFiltersForChip(filters, chip) {
+  return getUserFilters(filters || []).reduce((nextFilters, filter) => {
     if (filter.attribute !== chip.attribute) {
       nextFilters.push(filter);
       return nextFilters;

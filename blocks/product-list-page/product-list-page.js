@@ -24,13 +24,14 @@ import { events } from '@dropins/tools/event-bus.js';
 import { readBlockConfig } from '../../scripts/aem.js';
 import { fetchPlaceholders, getProductLink } from '../../scripts/commerce.js';
 import { getSearchStateFromUrl, applySearchStateToUrl } from './search-url.js';
+/* eslint-disable import/extensions */
 import {
   buildActiveFilterChips,
   buildFacetMetadataMap,
   getNextUserFiltersForChip,
-  getUserFilters,
   normalizeSearchRequest,
 } from './product-list-page.utils.mjs';
+/* eslint-enable import/extensions */
 
 // Initializers
 import '../../scripts/initializers/search.js';
@@ -375,7 +376,7 @@ export default async function decorate(block) {
 
       chipButton.append(chipLabel, chipDismiss);
       chipButton.addEventListener('click', () => {
-        void runSearch({
+        runSearch({
           ...latestRequest,
           currentPage: 1,
           filter: getNextUserFiltersForChip(latestRequest.filter, chip),
@@ -389,7 +390,7 @@ export default async function decorate(block) {
     clearButton.className = 'search__clear-filters';
     clearButton.textContent = 'Clear all';
     clearButton.addEventListener('click', () => {
-      void runSearch({
+      runSearch({
         ...latestRequest,
         currentPage: 1,
         filter: [],

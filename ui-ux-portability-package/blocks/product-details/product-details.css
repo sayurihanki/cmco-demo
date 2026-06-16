@@ -59,17 +59,42 @@
 }
 
 .product-details__gallery .pdp-carousel {
-  max-height: 60vh;
+  --height: 60vh;
+
+  max-height: var(--height);
+}
+
+.product-details__gallery .pdp-carousel__wrapper,
+.product-details__gallery .pdp-carousel__controls__container--thumbnailsColumn,
+.product-details__gallery .pdp-carousel__controls__container--thumbnailsRow {
+  --height: 60vh !important;
 }
 
 .product-details__gallery .pdp-carousel--thumbnailsRow {
-  max-height: 80vh;
+  --height: 80vh;
+
+  max-height: var(--height);
+}
+
+.product-details__gallery .pdp-carousel--thumbnailsRow .pdp-carousel__wrapper,
+.product-details__gallery .pdp-carousel--thumbnailsRow .pdp-carousel__controls__container--thumbnailsColumn,
+.product-details__gallery .pdp-carousel--thumbnailsRow .pdp-carousel__controls__container--thumbnailsRow {
+  --height: 80vh !important;
 }
 
 .product-details__gallery .pdp-overlay__content .pdp-carousel,
 .product-details__gallery .pdp-overlay__content .pdp-carousel--thumbnailsRow
 {
-  max-height: unset;;
+  --height: 100%;
+
+  max-height: unset;
+}
+
+.product-details__gallery .pdp-overlay__content .pdp-carousel__wrapper,
+.product-details__gallery .pdp-overlay__content .pdp-carousel__controls__container--thumbnailsColumn,
+.product-details__gallery .pdp-overlay__content .pdp-carousel__controls__container--thumbnailsRow
+{
+  --height: 100% !important;
 }
 
 

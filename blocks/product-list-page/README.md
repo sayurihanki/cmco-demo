@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Product List Page block powers search and category listing pages using the storefront-product-discovery dropin. It renders faceted search results with sort, filters, pagination, product cards (with add-to-cart and wishlist), and keeps the URL in sync with search state. The block supports two modes: **search page** (full-text search with optional filters) and **category page** (products in a category, optionally filtered).
+The Product List Page block powers search and category listing pages using the storefront-product-discovery dropin. It renders a faceted results shell with a dedicated sidebar, active-filter chips, sort, pagination, product cards (with add-to-cart and wishlist), and keeps the URL in sync with search state. The block supports two modes: **search page** (full-text search with optional filters) and **category page** (products in a category, optionally filtered).
 
 ## Configuration Options
 
@@ -15,6 +15,23 @@ Block configuration is read via `readBlockConfig(block)`.
 
 ## Integration
 
+### Layout Contract
+
+The block owns the commerce listing shell only. Category-page editorial content such as breadcrumbs, eyebrow, headline, body copy, CTAs, tags, and stats must stay authored in the page HTML above the block.
+
+The block renders these internal structural wrappers:
+
+- `.search__layout`
+- `.search__sidebar`
+- `.search__main`
+- `.search__toolbar`
+- `.search__active-filters`
+- `.search__active-filter`
+- `.search__clear-filters`
+- `.search__facets-drawer`
+- `.search__facets-backdrop`
+- `.search__facets-close`
+
 ### URL Parameters
 
 Search state is read from and written to the URL by this project (see `search-url.js`). The dropin does not parse the URL.
@@ -26,13 +43,14 @@ Search state is read from and written to the URL by this project (see `search-ur
 | `sort`    | Sort spec: comma-separated `attribute_DIRECTION` (e.g. `price_ASC,name_DESC`). |
 | `filter`  | Filters: pipe-separated segments. Each segment is `attribute:value`; multiple values for the same attribute use multiple segments (e.g. `categories:val1\|categories:val2`). Supports `in` (single/multi-value) and numeric `range` (e.g. `price:0-100`). |
 
-On load, the block normalizes the URL (e.g. filter format) with `replaceState`. After each search result, it updates the URL with `pushState` so the address bar reflects the current request.
+On load, the block normalizes the URL (e.g. filter format) with `replaceState`. After each search result, it updates the URL with `pushState` so the address bar reflects the current request. Hidden/default filters (`visibility`, `categoryPath`) are owned by the block and are not written to the URL.
 
 ### Events
 
 #### Event Listeners
 
 - `events.on('search/result', callback, { eager: true })` – Runs before the block re-renders. Updates empty-state class, result count text, and the facets button’s filter count.
+- `events.on('search/result', callback, { eager: true })` – Also rebuilds the active-filter chip row from the latest request and facet metadata.
 - `events.on('search/result', callback, { eager: false })` – Runs after the block is rendered. Writes the search request (phrase, page, sort, filter) to the URL and calls `history.pushState`.
 
 The block does not emit events; it calls the dropin’s `search()` API and reacts to `search/result`.
@@ -55,8 +73,15 @@ A visibility filter `{ attribute: 'visibility', in: ['Search', 'Catalog, Search'
 1. **Initial load**: Block reads URL via `getSearchStateFromUrl`, normalizes the URL, then calls `search()` with phrase, page, sort, and filter (including visibility and, on category pages, categoryPath).
 2. **Sort change**: User changes sort via SortBy; dropin calls `search()` with updated sort; block receives `search/result` and updates the URL.
 3. **Filter change**: User toggles facets; dropin calls `search()` with updated filter; block updates result count and URL.
-4. **Pagination**: User changes page; dropin calls `search()` with new page; block scrolls to top and URL is updated.
-5. **Add to cart / wishlist**: Product cards include add-to-cart and wishlist actions; cart and wishlist behavior are handled by their respective dropins.
+4. **Active filters**: Applied facets are mirrored into dismissible chips in the toolbar. Removing one chip or clearing all chips re-runs search while preserving hidden category/visibility filters.
+5. **Pagination**: User changes page; dropin calls `search()` with new page; block scrolls to top and URL is updated.
+6. **Add to cart / wishlist**: Product cards include add-to-cart, wishlist, and requisition-list actions; cart and wishlist behavior are handled by their respective dropins.
+
+### Mobile Facets Drawer
+
+- Below desktop width, the sidebar becomes an off-canvas drawer.
+- The filter trigger opens the drawer, applies `aria-expanded`, focuses the close button, and locks body scroll.
+- The drawer closes on the close button, backdrop click, Escape, or when the viewport switches back to desktop.
 
 ### Error Handling
 

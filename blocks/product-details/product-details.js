@@ -108,6 +108,20 @@ function hideRedundantShortDescription($header, $shortDescription) {
   $shortDescription.setAttribute('aria-hidden', isDuplicate ? 'true' : 'false');
 }
 
+function hideRedundantHeaderSku($header) {
+  if (!$header) return;
+
+  const title = $header.querySelector('.pdp-header__title')?.textContent?.trim();
+  const $sku = $header.querySelector('.pdp-header__sku');
+
+  if (!$sku || !title) return;
+
+  const skuText = $sku.textContent?.trim();
+  const isDuplicate = skuText && title.localeCompare(skuText, undefined, { sensitivity: 'accent' }) === 0;
+  $sku.hidden = isDuplicate;
+  $sku.setAttribute('aria-hidden', isDuplicate ? 'true' : 'false');
+}
+
 function resolveProductDetailsSvgUrl(value = '') {
   const normalized = String(value || '').trim();
 
@@ -703,6 +717,7 @@ export default async function decorate(block) {
   syncProductMedia(product);
   scheduleOptionalCardSync();
   hideRedundantShortDescription($header, $shortDescription);
+  hideRedundantHeaderSku($header);
 
   const addToCart = await UI.render(Button, {
     children: labels.Global?.AddProductToCart,
@@ -858,6 +873,7 @@ export default async function decorate(block) {
     syncProductMedia(product);
     scheduleOptionalCardSync();
     hideRedundantShortDescription($header, $shortDescription);
+  hideRedundantHeaderSku($header);
 
     if (wishlistToggleBtn && product) {
       wishlistToggleBtn.setProps((prev) => ({

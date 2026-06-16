@@ -6,6 +6,7 @@
   --plp-border-strong: rgb(10 41 24 / 18%);
   --plp-surface: rgb(255 255 255 / 92%);
   --plp-surface-muted: rgb(246 249 246 / 96%);
+
   margin-block: clamp(1.6rem, 3vw, 3.2rem) clamp(3.2rem, 5vw, 5.2rem);
 }
 
@@ -122,6 +123,10 @@
   align-items: center;
 }
 
+.block.product-list-page .search__clear-filters {
+  color: var(--green-700);
+}
+
 .block.product-list-page .search__active-filter:hover,
 .block.product-list-page .search__clear-filters:hover {
   border-color: var(--green-600);
@@ -133,10 +138,6 @@
   color: var(--green-700);
   font-size: 1.8rem;
   line-height: 1;
-}
-
-.block.product-list-page .search__clear-filters {
-  color: var(--green-700);
 }
 
 .block.product-list-page .search__facets-backdrop {
@@ -185,7 +186,7 @@
   align-items: flex-start;
   padding-bottom: 1.6rem;
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 98%) 0%, rgb(255 255 255 / 98%) 72%, rgb(255 255 255 / 0) 100%);
+    linear-gradient(180deg, rgb(255 255 255 / 98%) 0%, rgb(255 255 255 / 98%) 72%, rgb(255 255 255 / 0%) 100%);
 }
 
 .block.product-list-page .search__facets-header-copy {

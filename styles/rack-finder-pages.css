@@ -162,6 +162,10 @@ body.page-category-plp .section {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.rack-page-support__panel a {
+  width: fit-content;
+}
+
 .rack-category-entry__actions a:hover {
   transform: translateY(-0.2rem);
 }
@@ -230,10 +234,6 @@ body.page-category-plp .section {
   border-radius: 2.6rem;
   background: rgb(255 255 255 / 82%);
   box-shadow: 0 20px 40px rgb(8 12 10 / 8%);
-}
-
-.rack-page-support__panel a {
-  width: fit-content;
 }
 
 .rack-page-support__panel p {
