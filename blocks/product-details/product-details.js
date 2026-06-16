@@ -95,6 +95,19 @@ function formatNumericAttributeValue(value) {
   return new Intl.NumberFormat(document.documentElement.lang).format(Number(trimmed));
 }
 
+function hideRedundantShortDescription($header, $shortDescription) {
+  if (!$header || !$shortDescription) return;
+
+  const title = $header.querySelector('.pdp-header__title')?.textContent?.trim();
+  const shortText = $shortDescription.textContent?.trim();
+
+  if (!title || !shortText) return;
+
+  const isDuplicate = title.localeCompare(shortText, undefined, { sensitivity: 'accent' }) === 0;
+  $shortDescription.hidden = isDuplicate;
+  $shortDescription.setAttribute('aria-hidden', isDuplicate ? 'true' : 'false');
+}
+
 function resolveProductDetailsSvgUrl(value = '') {
   const normalized = String(value || '').trim();
 
@@ -308,9 +321,11 @@ export default async function decorate(block) {
           </div>
         </section>
         <section class="product-details__details-card">
+          <h2 class="product-details__section-heading">Description</h2>
           <div class="product-details__description"></div>
         </section>
         <section class="product-details__attributes-card">
+          <h2 class="product-details__section-heading">Specifications</h2>
           <div class="product-details__attributes"></div>
         </section>
       </div>
@@ -687,6 +702,7 @@ export default async function decorate(block) {
 
   syncProductMedia(product);
   scheduleOptionalCardSync();
+  hideRedundantShortDescription($header, $shortDescription);
 
   const addToCart = await UI.render(Button, {
     children: labels.Global?.AddProductToCart,
@@ -841,6 +857,7 @@ export default async function decorate(block) {
     product = nextProduct?.sku ? nextProduct : null;
     syncProductMedia(product);
     scheduleOptionalCardSync();
+    hideRedundantShortDescription($header, $shortDescription);
 
     if (wishlistToggleBtn && product) {
       wishlistToggleBtn.setProps((prev) => ({
