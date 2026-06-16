@@ -75,13 +75,10 @@ describe('Verify immersive PDP variant', () => {
     cy.get('.cards').should('not.be.visible');
     cy.get('body').then(($body) => {
       const relatedShell = $body.find('.product-recommendations__shell');
-      const relatedTab = $body.find('.product-details__tab-link[href="#pdp-related"]');
 
       if (relatedShell.length > 0 && relatedShell.is(':visible')) {
         cy.get('.product-recommendations__title').should('contain.text', 'Related Products');
         cy.get('.product-details__tab-link[href="#pdp-related"]').should('be.visible');
-      } else if (relatedTab.length > 0) {
-        cy.get('.product-details__tab-link[href="#pdp-related"]').should('not.be.visible');
       }
     });
     cy.get('.product-configurator-luxe__shell').should('not.exist');

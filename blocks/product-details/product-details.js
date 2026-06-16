@@ -458,6 +458,22 @@ function bindSectionLinks(links) {
   });
 }
 
+async function renderInlineError(error, alertContainer) {
+  const inlineAlert = await UI.render(InLineAlert, {
+    heading: 'Error',
+    description: error.message,
+    icon: h(Icon, { source: 'Warning' }),
+    'aria-live': 'assertive',
+    role: 'alert',
+    onDismiss: () => {
+      inlineAlert.remove();
+    },
+  })(alertContainer);
+
+  scrollElementIntoView(alertContainer);
+  return inlineAlert;
+}
+
 export default async function decorate(block) {
   let product = events.lastPayload('pdp/data') ?? null;
   // bug: the pdp sends an object with event data even if product is not found.
@@ -687,6 +703,12 @@ export default async function decorate(block) {
   );
   bindSectionLinks($tabLinks);
 
+  const featureTabLink = $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.FEATURES);
+  const specificationsTabLink = $tabLinks.find(
+    (link) => link.dataset.target === PDP_SECTION_IDS.SPECIFICATIONS,
+  );
+  const relatedTabLink = $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.RELATED);
+
   let relatedVisible = Boolean(document.querySelector('.product-recommendations'));
 
   const syncOptionalCards = () => {
@@ -697,17 +719,13 @@ export default async function decorate(block) {
     $detailsCard.hidden = !hasDescription;
     $attributesCard.hidden = !hasAttributes;
     $specificationsSection.hidden = !hasSpecifications;
-    setCollectionVisibility(
-      $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.SPECIFICATIONS),
-      hasSpecifications,
-    );
+    setCollectionVisibility(specificationsTabLink, hasSpecifications);
     setCollectionVisibility(supportCards.specifications, hasSpecifications);
   };
 
   const updateRelatedTargets = (isVisible) => {
     relatedVisible = isVisible;
-    const relatedTab = $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.RELATED);
-    setCollectionVisibility(relatedTab, relatedVisible);
+    setCollectionVisibility(relatedTabLink, relatedVisible);
     setCollectionVisibility(supportCards.related, relatedVisible);
     block.classList.toggle('product-details--related-hidden', !relatedVisible);
   };
@@ -830,18 +848,10 @@ export default async function decorate(block) {
 
     const featurePillars = collectFeaturePillars($description, $shortDescription);
     $featureGrid.replaceChildren(...featurePillars.map(createFeatureCard));
-    $featureGrid.childNodes.forEach((node, index) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        node.querySelector('.product-details__feature-index').textContent = `${index + 1}`.padStart(2, '0');
-      }
-    });
 
     const hasFeatures = featurePillars.length > 0;
     $featureSection.hidden = !hasFeatures;
-    setCollectionVisibility(
-      $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.FEATURES),
-      hasFeatures,
-    );
+    setCollectionVisibility(featureTabLink, hasFeatures);
     hidePdpCardsBlock(block, hasFeatures);
   };
 
@@ -1049,18 +1059,7 @@ export default async function decorate(block) {
                   gridOrderingSelectedVariants = [];
                   inlineAlert?.remove();
                 } catch (error) {
-                  inlineAlert = await UI.render(InLineAlert, {
-                    heading: 'Error',
-                    description: error.message,
-                    icon: h(Icon, { source: 'Warning' }),
-                    'aria-live': 'assertive',
-                    role: 'alert',
-                    onDismiss: () => {
-                      inlineAlert.remove();
-                    },
-                  })($alert);
-
-                  scrollElementIntoView($alert);
+                  inlineAlert = await renderInlineError(error, $alert);
                 } finally {
                   gridOrderingAddToCartButton.setProps((prev) => ({
                     ...prev,
@@ -1146,18 +1145,7 @@ export default async function decorate(block) {
 
         inlineAlert?.remove();
       } catch (error) {
-        inlineAlert = await UI.render(InLineAlert, {
-          heading: 'Error',
-          description: error.message,
-          icon: h(Icon, { source: 'Warning' }),
-          'aria-live': 'assertive',
-          role: 'alert',
-          onDismiss: () => {
-            inlineAlert.remove();
-          },
-        })($alert);
-
-        scrollElementIntoView($alert);
+        inlineAlert = await renderInlineError(error, $alert);
       } finally {
         updateAddToCartButtonText(addToCart, isUpdateMode, labels);
         addToCart.setProps((prev) => ({

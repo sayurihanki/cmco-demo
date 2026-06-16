@@ -136,6 +136,15 @@ export default async function decorate(block) {
 
   syncShellVisibility(true);
 
+  let recommendationsData = null;
+  events.on(
+    'recommendations/data',
+    (data) => {
+      recommendationsData = data;
+    },
+    { eager: true },
+  );
+
   async function loadRecommendation(
     context,
     isVisible,
@@ -174,110 +183,94 @@ export default async function decorate(block) {
     // Get purchase history
     context.userPurchaseHistory = getPurchaseHistory(storeViewCode);
 
-    let recommendationsData = null;
-
-    // Get data from the event bus to set publish events
-    events.on(
-      'recommendations/data',
-      (data) => {
-        recommendationsData = data;
-        if (data?.items?.length) {
-          recommendationsData = data;
-        }
-      },
-      { eager: true },
-    );
-
     try {
-      await Promise.all([
-        provider.render(ProductList, {
-          routeProduct: createProductLink,
-          recId: recid,
-          currentSku: currentsku || context.currentSku,
-          userViewHistory: context.userViewHistory,
-          userPurchaseHistory: context.userPurchaseHistory,
-          slots: {
-            Footer: (ctx) => {
-              const wrapper = document.createElement('div');
-              wrapper.className = 'footer__wrapper';
+      await provider.render(ProductList, {
+        routeProduct: createProductLink,
+        recId: recid,
+        currentSku: currentsku || context.currentSku,
+        userViewHistory: context.userViewHistory,
+        userPurchaseHistory: context.userPurchaseHistory,
+        slots: {
+          Footer: (ctx) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'footer__wrapper';
 
-              const addToCart = document.createElement('div');
-              addToCart.className = 'footer__button--add-to-cart';
-              wrapper.appendChild(addToCart);
+            const addToCart = document.createElement('div');
+            addToCart.className = 'footer__button--add-to-cart';
+            wrapper.appendChild(addToCart);
 
-              if (ctx.item.itemType === 'SimpleProductView') {
-                // Add to Cart Button
-                UI.render(Button, {
-                  children: labels.Global?.AddProductToCart,
-                  icon: Icon({ source: 'Cart' }),
-                  onClick: (event) => {
-                    cartApi.addProductsToCart([
-                      { sku: ctx.item.sku, quantity: 1 },
-                    ]);
-                    // Prevent the click event from bubbling up to the parent span
-                    // to avoid triggering the recs-item-click event
-                    event.stopPropagation();
-                    // Publish ACDL event for add to cart click
-                    const recommendationUnit = recommendationsData?.find(
-                      (unit) => unit.items?.some(
-                        (unitItem) => unitItem.sku === ctx.item.sku,
-                      ),
-                    );
-                    publishRecsItemAddToCartClick({
-                      recommendationUnit,
-                      pagePlacement: 'product-list',
-                      yOffsetTop: addToCart.getBoundingClientRect().top ?? 0,
-                      yOffsetBottom:
-                        addToCart.getBoundingClientRect().bottom ?? 0,
-                      productId: ctx.index,
-                    });
-                  },
-                  variant: 'primary',
-                })(addToCart);
-              } else {
-                // Select Options Button
-                UI.render(Button, {
-                  children:
-                    labels.Global?.SelectProductOptions,
-                  href: createProductLink(ctx.item),
-                  variant: 'tertiary',
-                })(addToCart);
-              }
-
-              // Wishlist Button
-              const $wishlistToggle = document.createElement('div');
-              $wishlistToggle.classList.add('footer__button--wishlist-toggle');
-
-              // Render Icon
-              wishlistRender.render(WishlistToggle, {
-                product: ctx.item,
-              })($wishlistToggle);
-
-              // Append to Cart Item
-              wrapper.appendChild($wishlistToggle);
-
-              ctx.replaceWith(wrapper);
-            },
-
-            Thumbnail: (ctx) => {
-              const { item, defaultImageProps } = ctx;
-              const wrapper = document.createElement('a');
-              wrapper.href = createProductLink(item);
-
-              tryRenderAemAssetsImage(ctx, {
-                alias: item.sku,
-                imageProps: defaultImageProps,
-                wrapper,
-
-                params: {
-                  width: defaultImageProps.width,
-                  height: defaultImageProps.height,
+            if (ctx.item.itemType === 'SimpleProductView') {
+              // Add to Cart Button
+              UI.render(Button, {
+                children: labels.Global?.AddProductToCart,
+                icon: Icon({ source: 'Cart' }),
+                onClick: (event) => {
+                  cartApi.addProductsToCart([
+                    { sku: ctx.item.sku, quantity: 1 },
+                  ]);
+                  // Prevent the click event from bubbling up to the parent span
+                  // to avoid triggering the recs-item-click event
+                  event.stopPropagation();
+                  // Publish ACDL event for add to cart click
+                  const recommendationUnit = recommendationsData?.find(
+                    (unit) => unit.items?.some(
+                      (unitItem) => unitItem.sku === ctx.item.sku,
+                    ),
+                  );
+                  publishRecsItemAddToCartClick({
+                    recommendationUnit,
+                    pagePlacement: 'product-list',
+                    yOffsetTop: addToCart.getBoundingClientRect().top ?? 0,
+                    yOffsetBottom:
+                      addToCart.getBoundingClientRect().bottom ?? 0,
+                    productId: ctx.index,
+                  });
                 },
-              });
-            },
+                variant: 'primary',
+              })(addToCart);
+            } else {
+              // Select Options Button
+              UI.render(Button, {
+                children:
+                  labels.Global?.SelectProductOptions,
+                href: createProductLink(ctx.item),
+                variant: 'tertiary',
+              })(addToCart);
+            }
+
+            // Wishlist Button
+            const $wishlistToggle = document.createElement('div');
+            $wishlistToggle.classList.add('footer__button--wishlist-toggle');
+
+            // Render Icon
+            wishlistRender.render(WishlistToggle, {
+              product: ctx.item,
+            })($wishlistToggle);
+
+            // Append to Cart Item
+            wrapper.appendChild($wishlistToggle);
+
+            ctx.replaceWith(wrapper);
           },
-        })($list),
-      ]);
+
+          Thumbnail: (ctx) => {
+            const { item, defaultImageProps } = ctx;
+            const wrapper = document.createElement('a');
+            wrapper.href = createProductLink(item);
+
+            tryRenderAemAssetsImage(ctx, {
+              alias: item.sku,
+              imageProps: defaultImageProps,
+              wrapper,
+
+              params: {
+                width: defaultImageProps.width,
+                height: defaultImageProps.height,
+              },
+            });
+          },
+        },
+      })($list);
 
       const hasProducts = Boolean(
         container.querySelector('.product-grid-item, .recommendations-product-list__content > *'),
