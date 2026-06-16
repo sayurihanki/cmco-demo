@@ -108,7 +108,17 @@ export function evaluateConditions(conditions = [], selections = {}) {
 }
 
 function getProductType(product = {}) {
-  return product?.__typename || product?.productType || '';
+  const rawType = product?.__typename || product?.productType || '';
+
+  if (rawType === 'complex') {
+    return 'ComplexProductView';
+  }
+
+  if (rawType === 'simple') {
+    return 'SimpleProductView';
+  }
+
+  return rawType;
 }
 
 function getAllSchemaControls(schema = {}) {

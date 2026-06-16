@@ -9,6 +9,9 @@ The Product Details block provides comprehensive product detail page functionali
 | Configuration Key     | Type   | Default  | Description                                                    | Required | Side Effects                                                                                                 |
 | --------------------- |--------|----------| -------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------ |
 | `grid-ordering-enabled` | string | `'false'` | Enables Grid Ordering functionality for configurable products. | No       | When enabled, product variants are displayed in a grid with quantity inputs and bulk add-to-cart capability. |
+| `presentation` | string | `'default'` | Supports the standard PDP shell or `auto-immersive` activation. | No | In `auto-immersive`, the block listens for `pdp/configurator-ready` to toggle immersive states. |
+| `svg-url` | string | `''` | Optional repo-relative path to a technical SVG media view. | No | When valid, adds a switchable SVG media pane alongside the Commerce photo gallery. |
+| `svg-label` | string | `'Technical view'` | Label for the SVG media selector. | No | Only shown when `svg-url` resolves successfully. |
 
 
 ### URL Parameters
@@ -29,6 +32,7 @@ No localStorage keys are used by this block. -->
 - `events.on('wishlist/alert', callback)` - Listens for wishlist action alerts to show notifications
 - `events.on('cart/data', callback)` - Listens for cart data changes to determine update mode
 - `events.on('aem/lcp', callback)` - Listens for AEM LCP event to set JSON-LD and meta tags
+- `events.on('pdp/configurator-ready', callback)` - Activates configurator and immersive presentation states when the luxe configurator is ready
 
 <!-- #### Event Emitters
 
@@ -50,7 +54,8 @@ No events are emitted by this block. -->
 3. **Add to Cart**: Users can add products to cart or update existing cart items
 4. **Wishlist Management**: Users can add/remove products from wishlist
 5. **Image Gallery**: Users can view product images in desktop thumbnail or mobile carousel format
-6. **SEO Optimization**: Sets JSON-LD structured data and meta tags for search engines
+6. **Technical SVG Media**: Pages can optionally surface a switchable technical SVG view alongside the real product images
+7. **SEO Optimization**: Sets JSON-LD structured data and meta tags for search engines
 
 ### Error Handling
 

@@ -369,6 +369,7 @@ function getHeaderMountedVisibleBanners() {
 function applyPortableHeaderOffsets(totalHeight, gapToken) {
   const navWrapper = document.querySelector('header .nav-wrapper');
   const main = document.querySelector('main');
+  const headerEl = document.querySelector('header');
   const safeHeight = Math.max(0, Math.round(totalHeight));
   const gapValue = resolveContentGapValue(gapToken);
 
@@ -392,7 +393,18 @@ function applyPortableHeaderOffsets(totalHeight, gapToken) {
   }
 
   if (main) {
-    main.style.paddingTop = `calc(${safeHeight}px + ${gapValue})`;
+    // With auto-height header (min-height: var(--nav-height)), the header already
+    // reserves space for any in-flow elements (e.g. topbar). Only add padding when
+    // the sticky nav pushed down by the banner would extend below the header's
+    // reserved height, which happens when bannerHeight > in-flow-content-above-nav.
+    const headerHeight = headerEl ? Math.round(headerEl.getBoundingClientRect().height) : 0;
+    const navHeight = navWrapper ? Math.round(navWrapper.getBoundingClientRect().height) : 0;
+    const extraPadding = Math.max(0, safeHeight + navHeight - headerHeight);
+    if (extraPadding > 0) {
+      main.style.paddingTop = `calc(${extraPadding}px + ${gapValue})`;
+    } else {
+      main.style.removeProperty('padding-top');
+    }
   }
 
   return {

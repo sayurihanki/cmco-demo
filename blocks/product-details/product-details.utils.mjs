@@ -3,6 +3,8 @@ export const PRODUCT_DETAILS_PRESENTATIONS = Object.freeze({
   AUTO_IMMERSIVE: 'auto-immersive',
 });
 
+export const PRODUCT_DETAILS_DEFAULT_SVG_LABEL = 'Technical view';
+
 export function normalizeProductDetailsPresentation(value = '') {
   const normalized = String(value || '').trim().toLowerCase();
 
@@ -27,4 +29,20 @@ export function shouldActivateImmersivePresentation(
     && payload?.status === 'ready'
     && payload?.presentation === 'rack-immersive'
   );
+}
+
+export function normalizeProductDetailsSvgUrl(value = '') {
+  return String(value || '').trim();
+}
+
+export function normalizeProductDetailsSvgLabel(value = '') {
+  return String(value || '').trim() || PRODUCT_DETAILS_DEFAULT_SVG_LABEL;
+}
+
+export function normalizeProductDetailsConfig(config = {}) {
+  return {
+    presentation: normalizeProductDetailsPresentation(config.presentation),
+    svgUrl: normalizeProductDetailsSvgUrl(config['svg-url']),
+    svgLabel: normalizeProductDetailsSvgLabel(config['svg-label']),
+  };
 }

@@ -163,3 +163,51 @@ test('getConfiguratorCompatibility rejects missing required commerce options', (
   assert.equal(compatibility.compatible, false);
   assert.equal(compatibility.code, 'missing-commerce-options');
 });
+
+test('getConfiguratorCompatibility accepts transformed complex product types', () => {
+  const compatibility = getConfiguratorCompatibility({
+    productTypes: ['ComplexProductView'],
+    steps: [
+      {
+        controls: [
+          {
+            source: 'commerce-option',
+            required: true,
+            commerceOptionLabel: 'U',
+          },
+        ],
+      },
+    ],
+  }, {
+    productType: 'complex',
+    options: [
+      {
+        id: 'attr_u',
+        title: 'U',
+        values: [
+          {
+            id: 'u-12',
+            title: '12U',
+          },
+        ],
+      },
+    ],
+    inputOptions: [],
+  }, normalizeProductOptions({
+    options: [
+      {
+        id: 'attr_u',
+        title: 'U',
+        values: [
+          {
+            id: 'u-12',
+            title: '12U',
+          },
+        ],
+      },
+    ],
+  }));
+
+  assert.equal(compatibility.compatible, true);
+  assert.equal(compatibility.code, 'compatible');
+});

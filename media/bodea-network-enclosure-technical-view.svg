@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 520" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Bodea network enclosure technical view</title>
+  <desc id="desc">A front technical elevation of a Bodea network enclosure rack cabinet.</desc>
+  <defs>
+    <linearGradient id="cabinet" x1="70" y1="40" x2="270" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#254135"/>
+      <stop offset="1" stop-color="#10231c"/>
+    </linearGradient>
+    <linearGradient id="door" x1="98" y1="84" x2="250" y2="414" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e7f1eb" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#c4d8cc" stop-opacity=".72"/>
+    </linearGradient>
+    <linearGradient id="rail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9a84c"/>
+      <stop offset="1" stop-color="#8d6f23"/>
+    </linearGradient>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#203830"/>
+      <stop offset="1" stop-color="#0c1713"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="360" height="520" rx="28" fill="#f5faf6"/>
+  <path d="M38 98h44M38 260h44M278 98h44M278 260h44" stroke="#b8cec1" stroke-width="2" stroke-dasharray="6 6"/>
+  <path d="M58 42v40M302 42v40M58 438v40M302 438v40" stroke="#b8cec1" stroke-width="2"/>
+  <rect x="74" y="46" width="212" height="404" rx="24" fill="url(#cabinet)" stroke="#365445" stroke-width="3"/>
+  <rect x="88" y="68" width="184" height="360" rx="16" fill="#12231c" stroke="#4f6f5f" stroke-width="2"/>
+  <rect x="96" y="80" width="168" height="336" rx="12" fill="url(#door)" stroke="#5b796b" stroke-width="1.5"/>
+
+  <rect x="112" y="92" width="8" height="312" rx="4" fill="url(#rail)"/>
+  <rect x="240" y="92" width="8" height="312" rx="4" fill="url(#rail)"/>
+
+  <g stroke="#5e7f70" stroke-width="1.2">
+    <line x1="130" y1="118" x2="230" y2="118"/>
+    <line x1="130" y1="142" x2="230" y2="142"/>
+    <line x1="130" y1="166" x2="230" y2="166"/>
+    <line x1="130" y1="190" x2="230" y2="190"/>
+    <line x1="130" y1="214" x2="230" y2="214"/>
+    <line x1="130" y1="238" x2="230" y2="238"/>
+    <line x1="130" y1="262" x2="230" y2="262"/>
+    <line x1="130" y1="286" x2="230" y2="286"/>
+    <line x1="130" y1="310" x2="230" y2="310"/>
+    <line x1="130" y1="334" x2="230" y2="334"/>
+    <line x1="130" y1="358" x2="230" y2="358"/>
+    <line x1="130" y1="382" x2="230" y2="382"/>
+  </g>
+
+  <g fill="#1a6640">
+    <rect x="132" y="108" width="96" height="48" rx="6" opacity=".18"/>
+    <rect x="132" y="180" width="96" height="60" rx="6" opacity=".12"/>
+    <rect x="132" y="264" width="96" height="72" rx="6" opacity=".12"/>
+  </g>
+
+  <g stroke="#d8e7de" stroke-width="1.4">
+    <path d="M112 110h-34"/>
+    <path d="M112 402h-34"/>
+    <path d="M248 110h34"/>
+    <path d="M248 402h34"/>
+  </g>
+
+  <g fill="#143326">
+    <circle cx="258" cy="248" r="4"/>
+    <circle cx="258" cy="262" r="4"/>
+  </g>
+
+  <rect x="118" y="426" width="124" height="14" rx="7" fill="url(#base)"/>
+  <rect x="104" y="440" width="152" height="18" rx="9" fill="#152a22"/>
+  <rect x="118" y="456" width="124" height="12" rx="6" fill="#09120f" opacity=".8"/>
+
+  <g fill="#0f1d17">
+    <circle cx="118" cy="466" r="8"/>
+    <circle cx="242" cy="466" r="8"/>
+  </g>
+  <g fill="#2e4c3e">
+    <circle cx="118" cy="466" r="4"/>
+    <circle cx="242" cy="466" r="4"/>
+  </g>
+
+  <g font-family="monospace" font-size="10" fill="#6f8b7d" letter-spacing="1.6">
+    <text x="42" y="34">BODEA / TECHNICAL PROFILE</text>
+    <text x="226" y="34">FRONT ELEVATION</text>
+    <text x="38" y="94">2000 mm</text>
+    <text x="286" y="94">600 mm</text>
+    <text x="38" y="432">1000 mm depth profile</text>
+  </g>
+
+  <g stroke="#9eb8ac" stroke-width="1.5">
+    <path d="M62 86v322"/>
+    <path d="M60 86h6M60 408h6"/>
+    <path d="M298 86v322"/>
+    <path d="M295 86h6M295 408h6"/>
+    <path d="M96 30h168"/>
+    <path d="M96 28v6M264 28v6"/>
+  </g>
+</svg>

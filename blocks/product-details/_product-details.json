@@ -17,6 +17,39 @@
         "name": "defaultSku",
         "label": "Default SKU",
         "description": "Optional: Specify a default product SKU if this is a template page"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "presentation",
+        "label": "Presentation",
+        "value": "default",
+        "options": [
+          {
+            "name": "Default",
+            "value": "default"
+          },
+          {
+            "name": "Auto Immersive",
+            "value": "auto-immersive"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "svg-url",
+        "label": "SVG URL",
+        "value": "",
+        "description": "Optional repo-relative path to a technical SVG media view."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "svg-label",
+        "label": "SVG Label",
+        "value": "Technical view",
+        "description": "Optional label for the technical SVG media selector."
       }
     ]
   }],

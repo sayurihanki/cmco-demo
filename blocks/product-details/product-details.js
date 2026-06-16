@@ -43,6 +43,14 @@ import {
   initializeRequisitionListForProduct,
   createRequisitionListRenderer,
 } from './requisition-list.js';
+/* eslint-disable import/extensions */
+import {
+  PRODUCT_DETAILS_PRESENTATIONS,
+  normalizeProductDetailsConfig,
+  shouldActivateConfigurator,
+  shouldActivateImmersivePresentation,
+} from './product-details.utils.mjs';
+/* eslint-enable import/extensions */
 
 /**
  * Checks if the page has prerendered product JSON-LD data
@@ -87,13 +95,137 @@ function formatNumericAttributeValue(value) {
   return new Intl.NumberFormat(document.documentElement.lang).format(Number(trimmed));
 }
 
-export default async function decorate(block) {
-  const eventProduct = events.lastPayload('pdp/data') ?? null;
-  // bug: the pdp sends an object with event data even if product is not found.
-  const product = eventProduct?.sku ? eventProduct : null;
+function resolveProductDetailsSvgUrl(value = '') {
+  const normalized = String(value || '').trim();
 
-  const { 'grid-ordering-enabled': gridOrderingEnabledString = 'false' } = readBlockConfig(block);
+  if (!normalized) {
+    return '';
+  }
+
+  try {
+    return new URL(normalized, window.location.href).toString();
+  } catch (error) {
+    console.warn('product-details: invalid svg-url value', error);
+    return '';
+  }
+}
+
+function loadProductDetailsSvgMedia(url = '') {
+  if (!url) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve({ url });
+    image.onerror = () => resolve(null);
+    image.src = url;
+  });
+}
+
+function getPrimaryProductImageUrl(product = {}) {
+  const mainImage = product?.images?.find((image) => image?.roles?.includes('thumbnail'));
+  return mainImage?.url || product?.images?.[0]?.url || '';
+}
+
+function getScrollBehavior() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
+function scrollElementIntoView(element) {
+  if (!element) {
+    return;
+  }
+
+  element.scrollIntoView({
+    behavior: getScrollBehavior(),
+    block: 'center',
+  });
+}
+
+function createMediaOptionButton({
+  view,
+  label,
+  meta,
+  previewUrl,
+  isActive,
+  onSelect,
+}) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'product-details__media-option';
+  button.dataset.mediaView = view;
+  button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+
+  if (isActive) {
+    button.classList.add('is-active');
+  }
+
+  const preview = document.createElement('span');
+  preview.className = 'product-details__media-option-preview';
+
+  if (previewUrl) {
+    const image = document.createElement('img');
+    image.src = previewUrl;
+    image.alt = '';
+    image.loading = 'lazy';
+    preview.append(image);
+  } else {
+    const fallback = document.createElement('span');
+    fallback.className = 'product-details__media-option-fallback';
+    fallback.textContent = label.slice(0, 1).toUpperCase();
+    preview.append(fallback);
+  }
+
+  const copy = document.createElement('span');
+  copy.className = 'product-details__media-option-copy';
+
+  const title = document.createElement('span');
+  title.className = 'product-details__media-option-title';
+  title.textContent = label;
+
+  const metaText = document.createElement('span');
+  metaText.className = 'product-details__media-option-meta';
+  metaText.textContent = meta;
+
+  copy.append(title, metaText);
+  button.append(preview, copy);
+  button.addEventListener('click', () => onSelect(view));
+
+  return button;
+}
+
+function hasRenderedContent(element) {
+  return [...element.childNodes].some((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent.trim().length > 0;
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return false;
+    }
+
+    if (['IMG', 'VIDEO', 'IFRAME', 'TABLE', 'UL', 'OL', 'DL'].includes(node.nodeName)) {
+      return true;
+    }
+
+    return node.textContent.trim().length > 0 || Boolean(
+      node.querySelector('img, video, iframe, table, ul, ol, dl, li, p, div, section, article'),
+    );
+  });
+}
+
+export default async function decorate(block) {
+  let product = events.lastPayload('pdp/data') ?? null;
+  // bug: the pdp sends an object with event data even if product is not found.
+  product = product?.sku ? product : null;
+
+  const blockConfig = readBlockConfig(block);
+  const config = normalizeProductDetailsConfig(blockConfig);
+  const { 'grid-ordering-enabled': gridOrderingEnabledString = 'false' } = blockConfig;
   const gridOrderingEnabled = gridOrderingEnabledString === 'true';
+  const svgMediaUrl = resolveProductDetailsSvgUrl(config.svgUrl);
+  const svgMediaPromise = loadProductDetailsSvgMedia(svgMediaUrl);
 
   // Grid Ordering B2B feature (Quick Order Drop-in) - enabled only for Configurable Products
   const isConfigurableProduct = (product?.productType === 'complex' || !!product?.externalParentId) && !product?.isBundle;
@@ -118,35 +250,79 @@ export default async function decorate(block) {
     <div class="product-details__alert"></div>
     <div class="product-details__wrapper">
       <div class="product-details__left-column">
-        <div class="product-details__gallery"></div>
-      </div>
-      <div class="product-details__right-column">
-        <div class="product-details__header"></div>
-        <div class="product-details__price"></div>
-        <div class="product-details__gallery"></div>
-        <div class="product-details__short-description"></div>
-        <div class="product-details__gift-card-options"></div>
-        <div class="product-details__configuration">
-          <div class="product-details__options"></div>
-          <div class="product-details__quantity"></div>
-          <div class="product-details__buttons">
-            <div class="product-details__buttons__add-to-cart"></div>
-            <div class="product-details__buttons__add-to-wishlist"></div>
-            <div class="product-details__buttons__add-to-req-list"></div>
+        <div class="product-details__media-shell product-details__media-shell--desktop">
+          <div class="product-details__media-card">
+            <div class="product-details__media-header">
+              <span class="product-details__media-eyebrow">Product media</span>
+              <span class="product-details__media-caption">Live catalog view</span>
+            </div>
+            <div class="product-details__media-frame">
+              <div class="product-details__media-view product-details__media-view--photos">
+                <div class="product-details__gallery product-details__gallery--desktop"></div>
+              </div>
+              <div class="product-details__media-view product-details__media-view--technical" hidden>
+                <div class="product-details__svg-stage">
+                  <img class="product-details__svg-image product-details__svg-image--desktop" alt="" loading="lazy">
+                </div>
+              </div>
+            </div>
+            <div class="product-details__media-selector product-details__media-selector--desktop" hidden></div>
           </div>
         </div>
-        <div class="product-details__description"></div>
-        <div class="product-details__attributes"></div>
+      </div>
+      <div class="product-details__right-column">
+        <section class="product-details__intro-card">
+          <div class="product-details__header"></div>
+          <div class="product-details__price"></div>
+          <div class="product-details__media-shell product-details__media-shell--mobile">
+            <div class="product-details__media-card">
+              <div class="product-details__media-header">
+                <span class="product-details__media-eyebrow">Product media</span>
+                <span class="product-details__media-caption">Live catalog view</span>
+              </div>
+              <div class="product-details__media-frame">
+                <div class="product-details__media-view product-details__media-view--photos">
+                  <div class="product-details__gallery product-details__gallery--mobile"></div>
+                </div>
+                <div class="product-details__media-view product-details__media-view--technical" hidden>
+                  <div class="product-details__svg-stage">
+                    <img class="product-details__svg-image product-details__svg-image--mobile" alt="" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <div class="product-details__media-selector product-details__media-selector--mobile" hidden></div>
+            </div>
+          </div>
+          <div class="product-details__short-description"></div>
+        </section>
+        <section class="product-details__configuration-card">
+          <div class="product-details__gift-card-options"></div>
+          <div class="product-details__configuration">
+            <div class="product-details__options"></div>
+            <div class="product-details__quantity"></div>
+            <div class="product-details__buttons">
+              <div class="product-details__buttons__add-to-cart"></div>
+              <div class="product-details__buttons__add-to-wishlist"></div>
+              <div class="product-details__buttons__add-to-req-list"></div>
+            </div>
+          </div>
+        </section>
+        <section class="product-details__details-card">
+          <div class="product-details__description"></div>
+        </section>
+        <section class="product-details__attributes-card">
+          <div class="product-details__attributes"></div>
+        </section>
       </div>
     </div>
     <div class="product-details__grid-ordering ${isGridOrderingView ? 'product-details__grid-ordering--enabled' : 'product-details__grid-ordering--disabled'}"></div>
   `);
 
   const $alert = fragment.querySelector('.product-details__alert');
-  const $gallery = fragment.querySelector('.product-details__gallery');
+  const $gallery = fragment.querySelector('.product-details__gallery--desktop');
   const $header = fragment.querySelector('.product-details__header');
   const $price = fragment.querySelector('.product-details__price');
-  const $galleryMobile = fragment.querySelector('.product-details__right-column .product-details__gallery');
+  const $galleryMobile = fragment.querySelector('.product-details__gallery--mobile');
   const $shortDescription = fragment.querySelector('.product-details__short-description');
   const $options = fragment.querySelector('.product-details__options');
   const $quantity = fragment.querySelector('.product-details__quantity');
@@ -157,8 +333,119 @@ export default async function decorate(block) {
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
   const $gridOrderingContainer = fragment.querySelector('.product-details__grid-ordering');
+  const $detailsCard = fragment.querySelector('.product-details__details-card');
+  const $attributesCard = fragment.querySelector('.product-details__attributes-card');
+  const $desktopPhotoView = fragment.querySelector('.product-details__left-column .product-details__media-view--photos');
+  const $desktopTechnicalView = fragment.querySelector('.product-details__left-column .product-details__media-view--technical');
+  const $mobilePhotoView = fragment.querySelector('.product-details__right-column .product-details__media-shell--mobile .product-details__media-view--photos');
+  const $mobileTechnicalView = fragment.querySelector('.product-details__right-column .product-details__media-shell--mobile .product-details__media-view--technical');
+  const $desktopSelector = fragment.querySelector('.product-details__media-selector--desktop');
+  const $mobileSelector = fragment.querySelector('.product-details__media-selector--mobile');
+  const $desktopSvgImage = fragment.querySelector('.product-details__svg-image--desktop');
+  const $mobileSvgImage = fragment.querySelector('.product-details__svg-image--mobile');
 
   block.replaceChildren(fragment);
+  block.classList.toggle(
+    'product-details--presentation-auto-immersive',
+    config.presentation === PRODUCT_DETAILS_PRESENTATIONS.AUTO_IMMERSIVE,
+  );
+  block.dataset.presentation = config.presentation;
+  block.dataset.mediaView = 'photos';
+
+  const mediaState = {
+    currentView: 'photos',
+    photoCount: product?.images?.length || 0,
+    photoPreviewUrl: getPrimaryProductImageUrl(product),
+    svgLabel: config.svgLabel,
+    svgReady: false,
+    svgUrl: '',
+  };
+
+  const mediaRefs = {
+    selectors: [$desktopSelector, $mobileSelector],
+    photoViews: [$desktopPhotoView, $mobilePhotoView],
+    technicalViews: [$desktopTechnicalView, $mobileTechnicalView],
+    svgImages: [$desktopSvgImage, $mobileSvgImage],
+  };
+
+  const syncOptionalCards = () => {
+    $detailsCard.hidden = !hasRenderedContent($description);
+    $attributesCard.hidden = !hasRenderedContent($attributes);
+  };
+
+  const scheduleOptionalCardSync = () => {
+    window.requestAnimationFrame(syncOptionalCards);
+  };
+
+  const renderMediaSelectors = () => {
+    if (!mediaState.svgReady && mediaState.currentView === 'technical') {
+      mediaState.currentView = 'photos';
+    }
+
+    block.dataset.mediaView = mediaState.currentView;
+    block.classList.toggle('product-details--svg-media-ready', mediaState.svgReady);
+
+    mediaRefs.photoViews.forEach((node) => {
+      node.hidden = mediaState.currentView !== 'photos';
+    });
+
+    mediaRefs.technicalViews.forEach((node) => {
+      node.hidden = mediaState.currentView !== 'technical';
+    });
+
+    mediaRefs.selectors.forEach((selector) => {
+      selector.hidden = !mediaState.svgReady;
+      selector.replaceChildren();
+
+      if (!mediaState.svgReady) {
+        return;
+      }
+
+      const photoMeta = mediaState.photoCount > 0
+        ? `${mediaState.photoCount} image${mediaState.photoCount === 1 ? '' : 's'}`
+        : 'Gallery';
+
+      selector.append(
+        createMediaOptionButton({
+          view: 'photos',
+          label: 'Photos',
+          meta: photoMeta,
+          previewUrl: mediaState.photoPreviewUrl,
+          isActive: mediaState.currentView === 'photos',
+          onSelect: (nextView) => {
+            mediaState.currentView = nextView;
+            renderMediaSelectors();
+          },
+        }),
+        createMediaOptionButton({
+          view: 'technical',
+          label: mediaState.svgLabel,
+          meta: 'SVG',
+          previewUrl: mediaState.svgUrl,
+          isActive: mediaState.currentView === 'technical',
+          onSelect: (nextView) => {
+            mediaState.currentView = nextView;
+            renderMediaSelectors();
+          },
+        }),
+      );
+    });
+  };
+
+  const syncProductMedia = (nextProduct = null) => {
+    mediaState.photoCount = nextProduct?.images?.length || 0;
+    mediaState.photoPreviewUrl = getPrimaryProductImageUrl(nextProduct);
+
+    const altText = nextProduct?.name
+      ? `${nextProduct.name} ${mediaState.svgLabel.toLowerCase()}`
+      : mediaState.svgLabel;
+
+    mediaRefs.svgImages.forEach((image) => {
+      image.alt = altText;
+    });
+
+    renderMediaSelectors();
+  };
 
   const gallerySlots = {
     CarouselThumbnail: (ctx) => {
@@ -196,6 +483,7 @@ export default async function decorate(block) {
     _attributes,
     _gridOrdering,
     wishlistToggleBtn,
+    svgMediaAsset,
   ] = await Promise.all([
     // Gallery (Mobile)
     pdpRendered.render(ProductGallery, {
@@ -204,11 +492,10 @@ export default async function decorate(block) {
       peak: false,
       gap: 'small',
       loop: false,
-      videos: true, // Display videos if available
+      videos: true,
       imageParams: {
         ...IMAGES_SIZES,
       },
-
       slots: gallerySlots,
     })($galleryMobile),
 
@@ -219,24 +506,16 @@ export default async function decorate(block) {
       peak: true,
       gap: 'small',
       loop: false,
-      videos: true, // Display videos if available
+      videos: true,
       imageParams: {
         ...IMAGES_SIZES,
       },
-
       slots: gallerySlots,
     })($gallery),
 
-    // Header
     pdpRendered.render(ProductHeader, {})($header),
-
-    // Price
     pdpRendered.render(ProductPrice, {})($price),
-
-    // Short Description
     pdpRendered.render(ProductShortDescription, {})($shortDescription),
-
-    // Configuration - Swatches
     pdpRendered.render(ProductOptions, {
       hideSelectedValue: false,
       slots: {
@@ -248,22 +527,12 @@ export default async function decorate(block) {
         },
       },
     })($options),
-
-    // Configuration - Quantity
     pdpRendered.render(ProductQuantity, {})($quantity),
-
-    // Configuration - Gift Card Options
     pdpRendered.render(ProductGiftCardOptions, {})($giftCardOptions),
-
-    // Description
     pdpRendered.render(ProductDescription, {})($description),
-
-    // Attributes
     pdpRendered.render(ProductAttributes, {
       formatValue: formatNumericAttributeValue,
     })($attributes),
-
-    // Grid Ordering
     isGridOrderingView && !isUpdateMode
       ? quickOrderProvider.render(QuickOrderVariantsGrid, {
         className: 'quick-order-variants-grid',
@@ -293,12 +562,14 @@ export default async function decorate(block) {
             ctx.appendChild(variantSelectorContainer);
 
             const matchedVariant = gridOrderingVariants.find(
-              (v) => v?.product?.sku?.toLowerCase() === variant.product.sku.toLowerCase(),
+              (variantMatch) => (
+                variantMatch?.product?.sku?.toLowerCase() === variant.product.sku.toLowerCase()
+              ),
             );
 
             const buildProductData = (quantity) => ({
               ...variant.product,
-              sku: product.sku, // Parent SKU for configurable product
+              sku: product.sku,
               quantity,
               optionUIDs: matchedVariant?.selections || [],
               options: product.options,
@@ -316,7 +587,6 @@ export default async function decorate(block) {
               currentProductData.optionUIDs,
             );
 
-            // Handle quantity changes
             ctx.onChange(async (nextState) => {
               currentProductData = buildProductData(nextState.quantity);
 
@@ -335,29 +605,23 @@ export default async function decorate(block) {
 
             variantOptionAttributes.forEach((attr) => {
               const attributeWrapper = document.createElement('div');
-              attributeWrapper.classList.add(
-                'product-details__variants-grid-attribute',
-              );
+              attributeWrapper.classList.add('product-details__variants-grid-attribute');
 
               const label = document.createElement('strong');
               label.textContent = `${attr.label}:`;
               const value = document.createElement('span');
               value.textContent = attr.value;
-              attributeWrapper.appendChild(label);
-              attributeWrapper.appendChild(value);
-
-              cellWrapper.appendChild(attributeWrapper);
+              attributeWrapper.append(label, value);
+              cellWrapper.append(attributeWrapper);
             });
 
             ctx.appendChild(cellWrapper);
           },
           Actions: async (ctx) => {
             const { isDisabled } = ctx;
-
             const buttonContainer = document.createElement('div');
             buttonContainer.classList.add('product-details__variants-grid-actions');
 
-            // Create a new Button instance for Grid Ordering
             gridOrderingAddToCartButton = await UI.render(Button, {
               children: labels.Global?.AddProductToCart,
               disabled: isDisabled,
@@ -374,11 +638,8 @@ export default async function decorate(block) {
                   const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
                   await addProductsToCart(gridOrderingSelectedVariants);
 
-                  // Reset Grid Ordering state after adding variants to cart
                   events.emit('quick-order/grid-ordering-reset-selected-variants');
                   gridOrderingSelectedVariants = [];
-
-                  // Reset any previous alerts if successful
                   inlineAlert?.remove();
                 } catch (error) {
                   inlineAlert = await UI.render(InLineAlert, {
@@ -392,10 +653,7 @@ export default async function decorate(block) {
                     },
                   })($alert);
 
-                  $alert.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                  });
+                  scrollElementIntoView($alert);
                 } finally {
                   gridOrderingAddToCartButton.setProps((prev) => ({
                     ...prev,
@@ -411,14 +669,25 @@ export default async function decorate(block) {
         },
       })($gridOrderingContainer)
       : null,
-
-    // Wishlist button - WishlistToggle Container
     wishlistRender.render(WishlistToggle, {
       product,
     })($wishlistToggleBtn),
+    svgMediaPromise,
   ]);
 
-  // Configuration – Button - Add to Cart
+  if (svgMediaAsset) {
+    mediaState.svgReady = true;
+    mediaState.svgUrl = svgMediaAsset.url;
+    mediaRefs.svgImages.forEach((image) => {
+      image.src = svgMediaAsset.url;
+    });
+  } else if (config.svgUrl) {
+    console.warn('product-details: unable to load svg-url media, falling back to photos only.');
+  }
+
+  syncProductMedia(product);
+  scheduleOptionalCardSync();
+
   const addToCart = await UI.render(Button, {
     children: labels.Global?.AddProductToCart,
     icon: h(Icon, { source: 'Cart' }),
@@ -433,14 +702,11 @@ export default async function decorate(block) {
           disabled: true,
         }));
 
-        // get the current selection values
         const values = pdpApi.getProductConfigurationValues();
         const valid = pdpApi.isProductConfigurationValid();
 
-        // add or update the product in the cart
         if (valid) {
           if (isUpdateMode) {
-            // --- Update existing item ---
             const { updateProductsFromCart } = await import('@dropins/storefront-cart/api.js');
 
             await updateProductsFromCart([{
@@ -448,7 +714,6 @@ export default async function decorate(block) {
               uid: itemUidFromUrl,
             }]);
 
-            // --- START REDIRECT ON UPDATE ---
             const updatedSku = values?.sku;
             if (updatedSku) {
               const cartRedirectUrl = new URL(
@@ -458,7 +723,6 @@ export default async function decorate(block) {
               cartRedirectUrl.searchParams.set('itemUid', itemUidFromUrl);
               window.location.href = cartRedirectUrl.toString();
             } else {
-              // Fallback if SKU is somehow missing (shouldn't happen in normal flow)
               console.warn(
                 'Could not retrieve SKU for updated item. Redirecting to cart without parameter.',
               );
@@ -466,15 +730,13 @@ export default async function decorate(block) {
             }
             return;
           }
-          // --- Add new item ---
+
           const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
           await addProductsToCart([{ ...values }]);
         }
 
-        // reset any previous alerts if successful
         inlineAlert?.remove();
       } catch (error) {
-        // add alert message
         inlineAlert = await UI.render(InLineAlert, {
           heading: 'Error',
           description: error.message,
@@ -486,15 +748,9 @@ export default async function decorate(block) {
           },
         })($alert);
 
-        // Scroll the alertWrapper into view
-        $alert.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
+        scrollElementIntoView($alert);
       } finally {
-        // Reset button text using the helper function which respects the current mode
         updateAddToCartButtonText(addToCart, isUpdateMode, labels);
-        // Re-enable button
         addToCart.setProps((prev) => ({
           ...prev,
           disabled: false,
@@ -503,27 +759,22 @@ export default async function decorate(block) {
     },
   })($addToCart);
 
-  // Lifecycle Events
   events.on('pdp/valid', (valid) => {
-    // update add to cart button disabled state based on product selection validity
     addToCart.setProps((prev) => ({
       ...prev,
       disabled: !valid,
     }));
   }, { eager: true });
 
-  // Grid Ordering flow - Sync state and update Add To Cart button text on variants selection change
   events.on('quick-order/grid-ordering-selected-variants', (selectedVariants) => {
     if (!isGridOrderingView) return;
 
-    // Replace child SKU with parent SKU for configurable products
     gridOrderingSelectedVariants = selectedVariants.map((variant) => ({
       optionsUIDs: variant.optionsUIDs,
       quantity: variant.quantity,
       sku: product.sku,
     }));
 
-    // Update grid ordering button with total quantity
     if (gridOrderingAddToCartButton) {
       const totalQuantity = selectedVariants.reduce(
         (acc, variant) => acc + (variant.quantity || 0),
@@ -541,16 +792,11 @@ export default async function decorate(block) {
     }
   }, { eager: true });
 
-  // Handle option changes
   events.on('pdp/values', async () => {
     const configValues = pdpApi.getProductConfigurationValues();
-
-    // Check URL parameter for empty optionsUIDs
     const urlOptionsUIDs = urlParams.get('optionsUIDs');
 
-    // Get optionsUIDs - prioritize actual selected values from configValues
     let optionUIDs = null;
-    // First priority: actual selected options from configValues
     const hasConfigOptions = configValues?.optionsUIDs
       && Array.isArray(configValues.optionsUIDs)
       && configValues.optionsUIDs.length > 0;
@@ -558,7 +804,6 @@ export default async function decorate(block) {
     if (hasConfigOptions) {
       optionUIDs = configValues.optionsUIDs;
     } else if (urlOptionsUIDs === '') {
-      // Second priority: URL has explicit empty optionsUIDs parameter
       optionUIDs = null;
     }
 
@@ -588,14 +833,26 @@ export default async function decorate(block) {
     }, 5000);
 
     setTimeout(() => {
-      $alert.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+      scrollElementIntoView($alert);
     }, 0);
   });
 
-  // Initialize requisition list functionality for main PDP view
+  events.on('pdp/data', (nextProduct) => {
+    product = nextProduct?.sku ? nextProduct : null;
+    syncProductMedia(product);
+    scheduleOptionalCardSync();
+
+    if (wishlistToggleBtn && product) {
+      wishlistToggleBtn.setProps((prev) => ({
+        ...prev,
+        product: {
+          ...product,
+          optionUIDs: prev?.product?.optionUIDs,
+        },
+      }));
+    }
+  }, { eager: true });
+
   await initializeRequisitionListForProduct({
     product,
     $alert,
@@ -604,7 +861,6 @@ export default async function decorate(block) {
     urlParams,
   });
 
-  // --- Add new event listener for cart/data ---
   events.on(
     'cart/data',
     (cartData) => {
@@ -614,16 +870,13 @@ export default async function decorate(block) {
           (item) => item.uid === itemUidFromUrl,
         );
       }
-      // Set the update mode state
-      isUpdateMode = itemIsInCart;
 
-      // Update button text based on whether the item is in the cart
+      isUpdateMode = itemIsInCart;
       updateAddToCartButtonText(addToCart, itemIsInCart, labels);
     },
     { eager: true },
   );
 
-  // Set JSON-LD and Meta Tags
   events.on('aem/lcp', async () => {
     if (!product) return;
 
@@ -645,6 +898,18 @@ export default async function decorate(block) {
       setMetaTags(product);
       document.title = product.name;
     }
+  }, { eager: true });
+
+  events.on('pdp/configurator-ready', (payload) => {
+    block.classList.toggle(
+      'product-details--configurator-active',
+      shouldActivateConfigurator(payload)
+        || block.classList.contains('product-details--configurator-active'),
+    );
+    block.classList.toggle(
+      'product-details--immersive-active',
+      shouldActivateImmersivePresentation(config.presentation, payload),
+    );
   }, { eager: true });
 
   return Promise.resolve();
