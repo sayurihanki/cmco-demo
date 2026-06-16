@@ -475,6 +475,7 @@
 .block.product-list-page .product-discovery-product-copy {
   display: grid;
   gap: 0.7rem;
+  text-align: left;
 }
 
 .block.product-list-page .product-discovery-product-copy__sku {
@@ -521,6 +522,7 @@
 .block.product-list-page .product-discovery-product-price-block {
   display: grid;
   gap: 0.7rem;
+  text-align: left;
 }
 
 .block.product-list-page .product-discovery-product-price-block__label {
