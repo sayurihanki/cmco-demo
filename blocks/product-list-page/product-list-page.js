@@ -220,7 +220,6 @@ export default async function decorate(block) {
   const $activeFilters = fragment.querySelector('.search__active-filters');
   const $viewFacets = fragment.querySelector('.search__view-facets');
   const $facetsBackdrop = fragment.querySelector('.search__facets-backdrop');
-  const $sidebar = fragment.querySelector('.search__sidebar');
   const $facetsDrawer = fragment.querySelector('.search__facets-drawer');
   const $facetsClose = fragment.querySelector('.search__facets-close');
   const $facets = fragment.querySelector('.search__facets');
@@ -262,10 +261,18 @@ export default async function decorate(block) {
       $facetsDrawer.setAttribute('role', 'dialog');
       $facetsDrawer.setAttribute('aria-modal', 'true');
       $facetsDrawer.setAttribute('aria-labelledby', `${blockId}-facets-title`);
+      $facetsDrawer.setAttribute(
+        'aria-hidden',
+        block.classList.contains('product-list-page--filters-open') ? 'false' : 'true',
+      );
 
       if (triggerButton) {
         triggerButton.setAttribute('aria-haspopup', 'dialog');
         triggerButton.setAttribute('aria-controls', blockId);
+        triggerButton.setAttribute(
+          'aria-expanded',
+          block.classList.contains('product-list-page--filters-open') ? 'true' : 'false',
+        );
       }
       return;
     }
@@ -356,10 +363,17 @@ export default async function decorate(block) {
       chipButton.type = 'button';
       chipButton.className = 'search__active-filter';
       chipButton.setAttribute('aria-label', `Remove ${chip.label} filter`);
-      chipButton.innerHTML = `
-        <span class="search__active-filter-label">${chip.label}</span>
-        <span class="search__active-filter-dismiss" aria-hidden="true">&times;</span>
-      `;
+
+      const chipLabel = document.createElement('span');
+      chipLabel.className = 'search__active-filter-label';
+      chipLabel.textContent = chip.label;
+
+      const chipDismiss = document.createElement('span');
+      chipDismiss.className = 'search__active-filter-dismiss';
+      chipDismiss.setAttribute('aria-hidden', 'true');
+      chipDismiss.textContent = '×';
+
+      chipButton.append(chipLabel, chipDismiss);
       chipButton.addEventListener('click', () => {
         void runSearch({
           ...latestRequest,
@@ -512,7 +526,6 @@ export default async function decorate(block) {
 
   events.on('search/result', (payload) => {
     const totalCount = payload.result?.totalCount || 0;
-    const activeChips = buildActiveFilterChips(payload.request?.filter, latestFacetMetadata);
     const countFormatter = new Intl.NumberFormat('en-US');
 
     latestRequest = normalizeSearchRequest({
@@ -531,7 +544,7 @@ export default async function decorate(block) {
       : `${countFormatter.format(totalCount)} products`;
 
     renderActiveFilters(chips);
-    setFilterTriggerCount(chips.length || activeChips.length);
+    setFilterTriggerCount(chips.length);
   }, { eager: true });
 
   events.on('search/result', (payload) => {
