@@ -242,6 +242,222 @@ function hasRenderedContent(element) {
   });
 }
 
+const PDP_SECTION_IDS = Object.freeze({
+  OVERVIEW: 'pdp-overview',
+  PURCHASE: 'pdp-purchase-controls',
+  FEATURES: 'pdp-features',
+  SPECIFICATIONS: 'pdp-specifications',
+  RELATED: 'pdp-related',
+});
+
+function normalizeText(value = '') {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function getProductTitle(product, header) {
+  return normalizeText(
+    product?.name || header?.querySelector('.pdp-header__title')?.textContent || '',
+  );
+}
+
+function getStockLabel(product) {
+  return product?.inStock ? 'In stock' : 'Unavailable';
+}
+
+function getGalleryCount(product) {
+  return Array.isArray(product?.images) ? product.images.length : 0;
+}
+
+function getViewsLabel({ svgReady, svgLabel }) {
+  return svgReady ? `Photos + ${svgLabel}` : 'Photos only';
+}
+
+function getOptionGroupCount(product) {
+  return Array.isArray(product?.options) ? product.options.length : 0;
+}
+
+function splitSentences(value = '') {
+  return normalizeText(value)
+    .match(/[^.!?]+[.!?]?/g)?.map((sentence) => normalizeText(sentence))?.filter(Boolean) ?? [];
+}
+
+function extractDescriptionBullets(container) {
+  return [...container.querySelectorAll('li')]
+    .map((item) => normalizeText(item.textContent))
+    .filter(Boolean);
+}
+
+function extractShortDescriptionSentences(container) {
+  return [...container.querySelectorAll('p')]
+    .flatMap((paragraph) => splitSentences(paragraph.textContent))
+    .filter(Boolean);
+}
+
+function createFeaturePillar(copy) {
+  const normalized = normalizeText(copy);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const separator = [' : ', ': ', ' - ', ' – ', ' — ']
+    .find((token) => normalized.includes(token));
+
+  if (separator) {
+    const [rawTitle, ...rest] = normalized.split(separator);
+    const title = normalizeText(rawTitle);
+    const body = normalizeText(rest.join(separator));
+
+    if (title && body) {
+      return { title, body };
+    }
+  }
+
+  const sentences = splitSentences(normalized);
+  if (sentences.length > 1 && sentences[0].split(' ').length <= 12) {
+    return {
+      title: sentences[0],
+      body: normalizeText(sentences.slice(1).join(' ')),
+    };
+  }
+
+  return {
+    title: normalized,
+    body: '',
+  };
+}
+
+function collectFeaturePillars(descriptionContainer, shortDescriptionContainer) {
+  const bullets = extractDescriptionBullets(descriptionContainer);
+  const fallbacks = extractShortDescriptionSentences(shortDescriptionContainer);
+  const copies = [];
+
+  bullets.forEach((bullet) => {
+    if (copies.length < 4 && !copies.includes(bullet)) {
+      copies.push(bullet);
+    }
+  });
+
+  fallbacks.forEach((sentence) => {
+    if (copies.length < 4 && !copies.includes(sentence)) {
+      copies.push(sentence);
+    }
+  });
+
+  return copies.map(createFeaturePillar).filter(Boolean);
+}
+
+function createStateBadge(text, modifier = 'info') {
+  const badge = document.createElement('li');
+  badge.className = `product-details__state-badge product-details__state-badge--${modifier}`;
+  badge.textContent = text;
+  return badge;
+}
+
+function createMiniSpecCard(label, value) {
+  const item = document.createElement('li');
+  item.className = 'product-details__mini-spec';
+
+  const heading = document.createElement('span');
+  heading.className = 'product-details__mini-spec-label';
+  heading.textContent = label;
+
+  const copy = document.createElement('strong');
+  copy.className = 'product-details__mini-spec-value';
+  copy.textContent = value;
+
+  item.append(heading, copy);
+  return item;
+}
+
+function createFeatureCard(pillar, index) {
+  const card = document.createElement('article');
+  card.className = 'product-details__feature-card';
+
+  const count = document.createElement('span');
+  count.className = 'product-details__feature-index';
+  count.textContent = `${index + 1}`.padStart(2, '0');
+
+  const title = document.createElement('h3');
+  title.className = 'product-details__feature-title';
+  title.textContent = pillar.title;
+
+  card.append(count, title);
+
+  if (pillar.body) {
+    const body = document.createElement('p');
+    body.className = 'product-details__feature-copy';
+    body.textContent = pillar.body;
+    card.append(body);
+  }
+
+  return card;
+}
+
+function createSupportCard({
+  href,
+  title,
+  description,
+  target,
+}) {
+  const link = document.createElement('a');
+  link.className = 'product-details__support-card';
+  link.href = href;
+  link.dataset.target = target;
+
+  const heading = document.createElement('strong');
+  heading.className = 'product-details__support-card-title';
+  heading.textContent = title;
+
+  const body = document.createElement('span');
+  body.className = 'product-details__support-card-copy';
+  body.textContent = description;
+
+  link.append(heading, body);
+  return link;
+}
+
+function setCollectionVisibility(element, isVisible) {
+  if (!element) {
+    return;
+  }
+
+  element.hidden = !isVisible;
+  element.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+}
+
+function hidePdpCardsBlock(block, shouldHide) {
+  const scope = block.closest('main');
+  if (!scope) {
+    return;
+  }
+
+  scope.querySelectorAll('.cards').forEach((cardsBlock) => {
+    const section = cardsBlock.closest('.section');
+    if (section) {
+      section.hidden = shouldHide;
+    } else {
+      cardsBlock.hidden = shouldHide;
+    }
+  });
+}
+
+function activateSectionLink(links, nextId) {
+  links.forEach((link) => {
+    const isActive = link.dataset.target === nextId;
+    link.classList.toggle('is-active', isActive);
+    link.setAttribute('aria-current', isActive ? 'true' : 'false');
+  });
+}
+
+function bindSectionLinks(links) {
+  links.forEach((link) => {
+    link.addEventListener('click', () => {
+      activateSectionLink(links, link.dataset.target);
+    });
+  });
+}
+
 export default async function decorate(block) {
   let product = events.lastPayload('pdp/data') ?? null;
   // bug: the pdp sends an object with event data even if product is not found.
@@ -275,14 +491,21 @@ export default async function decorate(block) {
   const fragment = document.createRange()
     .createContextualFragment(`
     <div class="product-details__alert"></div>
-    <div class="product-details__wrapper">
+    <nav class="product-details__breadcrumbs" aria-label="Breadcrumb">
+      <a class="product-details__breadcrumb-link" href="${rootLink('/')}">Home</a>
+      <span class="product-details__breadcrumb-separator" aria-hidden="true">/</span>
+      <a class="product-details__breadcrumb-link" href="${rootLink('/products')}">Products</a>
+      <span class="product-details__breadcrumb-separator" aria-hidden="true">/</span>
+      <span class="product-details__breadcrumb-current" aria-current="page"></span>
+    </nav>
+    <div class="product-details__wrapper" id="${PDP_SECTION_IDS.OVERVIEW}">
       <div class="product-details__left-column">
         <div class="product-details__media-shell product-details__media-shell--desktop">
           <div class="product-details__media-card">
-            <div class="product-details__media-header">
-              <span class="product-details__media-eyebrow">Product media</span>
-              <span class="product-details__media-caption">Live catalog view</span>
+            <div class="product-details__media-corners" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
             </div>
+            <div class="product-details__media-state-chips product-details__media-state-chips--desktop"></div>
             <div class="product-details__media-frame">
               <div class="product-details__media-view product-details__media-view--photos">
                 <div class="product-details__gallery product-details__gallery--desktop"></div>
@@ -298,61 +521,93 @@ export default async function decorate(block) {
         </div>
       </div>
       <div class="product-details__right-column">
-        <section class="product-details__intro-card">
-          <div class="product-details__header"></div>
-          <div class="product-details__price"></div>
-          <div class="product-details__media-shell product-details__media-shell--mobile">
-            <div class="product-details__media-card">
-              <div class="product-details__media-header">
-                <span class="product-details__media-eyebrow">Product media</span>
-                <span class="product-details__media-caption">Live catalog view</span>
-              </div>
-              <div class="product-details__media-frame">
-                <div class="product-details__media-view product-details__media-view--photos">
-                  <div class="product-details__gallery product-details__gallery--mobile"></div>
+        <div class="product-details__purchase-panel" id="${PDP_SECTION_IDS.PURCHASE}">
+          <section class="product-details__intro-card">
+            <p class="product-details__eyebrow">Product overview</p>
+            <div class="product-details__header"></div>
+            <ul class="product-details__state-badges" aria-label="Product status"></ul>
+            <div class="product-details__price"></div>
+            <div class="product-details__media-shell product-details__media-shell--mobile">
+              <div class="product-details__media-card">
+                <div class="product-details__media-corners" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span>
                 </div>
-                <div class="product-details__media-view product-details__media-view--technical" hidden>
-                  <div class="product-details__svg-stage">
-                    <img class="product-details__svg-image product-details__svg-image--mobile" alt="" loading="lazy">
+                <div class="product-details__media-state-chips product-details__media-state-chips--mobile"></div>
+                <div class="product-details__media-frame">
+                  <div class="product-details__media-view product-details__media-view--photos">
+                    <div class="product-details__gallery product-details__gallery--mobile"></div>
+                  </div>
+                  <div class="product-details__media-view product-details__media-view--technical" hidden>
+                    <div class="product-details__svg-stage">
+                      <img class="product-details__svg-image product-details__svg-image--mobile" alt="" loading="lazy">
+                    </div>
                   </div>
                 </div>
+                <div class="product-details__media-selector product-details__media-selector--mobile" hidden></div>
               </div>
-              <div class="product-details__media-selector product-details__media-selector--mobile" hidden></div>
             </div>
-          </div>
-          <div class="product-details__short-description"></div>
-        </section>
-        <section class="product-details__configuration-card">
-          <div class="product-details__gift-card-options"></div>
-          <div class="product-details__configuration">
-            <div class="product-details__options"></div>
-            <div class="product-details__quantity"></div>
-            <div class="product-details__buttons">
-              <div class="product-details__buttons__add-to-cart"></div>
-              <div class="product-details__buttons__add-to-wishlist"></div>
-              <div class="product-details__buttons__add-to-req-list"></div>
+            <div class="product-details__short-description"></div>
+            <ul class="product-details__mini-specs" aria-label="Product quick facts"></ul>
+          </section>
+          <section class="product-details__configuration-card">
+            <div class="product-details__gift-card-options"></div>
+            <div class="product-details__configuration">
+              <div class="product-details__options"></div>
+              <div class="product-details__quantity"></div>
+              <div class="product-details__buttons">
+                <div class="product-details__buttons__add-to-cart"></div>
+                <div class="product-details__buttons__add-to-wishlist"></div>
+                <div class="product-details__buttons__add-to-req-list"></div>
+              </div>
             </div>
-          </div>
-        </section>
-        <section class="product-details__details-card">
-          <h2 class="product-details__section-heading">Description</h2>
-          <div class="product-details__description"></div>
-        </section>
-        <section class="product-details__attributes-card">
-          <h2 class="product-details__section-heading">Specifications</h2>
-          <div class="product-details__attributes"></div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
+    <nav class="product-details__tabs" aria-label="Product detail sections">
+      <a class="product-details__tab-link is-active" href="#${PDP_SECTION_IDS.OVERVIEW}" data-target="${PDP_SECTION_IDS.OVERVIEW}" aria-current="true">Overview</a>
+      <a class="product-details__tab-link" href="#${PDP_SECTION_IDS.FEATURES}" data-target="${PDP_SECTION_IDS.FEATURES}" aria-current="false">Features</a>
+      <a class="product-details__tab-link" href="#${PDP_SECTION_IDS.SPECIFICATIONS}" data-target="${PDP_SECTION_IDS.SPECIFICATIONS}" aria-current="false">Specifications</a>
+      <a class="product-details__tab-link" href="#${PDP_SECTION_IDS.RELATED}" data-target="${PDP_SECTION_IDS.RELATED}" aria-current="false">Related</a>
+    </nav>
+    <section class="product-details__feature-section" id="${PDP_SECTION_IDS.FEATURES}">
+      <div class="product-details__section-intro">
+        <p class="product-details__section-kicker">Product features</p>
+        <h2 class="product-details__section-heading">Features</h2>
+      </div>
+      <div class="product-details__feature-pillars"></div>
+    </section>
+    <section class="product-details__specifications-section" id="${PDP_SECTION_IDS.SPECIFICATIONS}">
+      <div class="product-details__section-intro">
+        <p class="product-details__section-kicker">Live product details</p>
+        <h2 class="product-details__section-heading">Specifications</h2>
+      </div>
+      <section class="product-details__details-card">
+        <div class="product-details__description"></div>
+      </section>
+      <section class="product-details__attributes-card">
+        <div class="product-details__attributes"></div>
+      </section>
+    </section>
+    <section class="product-details__support-band">
+      <div class="product-details__support-copy">
+        <p class="product-details__section-kicker">Need a faster path?</p>
+        <h2 class="product-details__section-heading">Move through the PDP with support-oriented shortcuts.</h2>
+      </div>
+      <div class="product-details__support-links"></div>
+    </section>
     <div class="product-details__grid-ordering ${isGridOrderingView ? 'product-details__grid-ordering--enabled' : 'product-details__grid-ordering--disabled'}"></div>
   `);
 
   const $alert = fragment.querySelector('.product-details__alert');
+  const $breadcrumbsCurrent = fragment.querySelector('.product-details__breadcrumb-current');
   const $gallery = fragment.querySelector('.product-details__gallery--desktop');
   const $header = fragment.querySelector('.product-details__header');
+  const $stateBadges = fragment.querySelector('.product-details__state-badges');
   const $price = fragment.querySelector('.product-details__price');
   const $galleryMobile = fragment.querySelector('.product-details__gallery--mobile');
   const $shortDescription = fragment.querySelector('.product-details__short-description');
+  const $miniSpecs = fragment.querySelector('.product-details__mini-specs');
   const $options = fragment.querySelector('.product-details__options');
   const $quantity = fragment.querySelector('.product-details__quantity');
   const $giftCardOptions = fragment.querySelector('.product-details__gift-card-options');
@@ -362,6 +617,10 @@ export default async function decorate(block) {
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
   const $gridOrderingContainer = fragment.querySelector('.product-details__grid-ordering');
+  const $featureSection = fragment.querySelector('.product-details__feature-section');
+  const $featureGrid = fragment.querySelector('.product-details__feature-pillars');
+  const $specificationsSection = fragment.querySelector('.product-details__specifications-section');
+  const $supportLinks = fragment.querySelector('.product-details__support-links');
   const $detailsCard = fragment.querySelector('.product-details__details-card');
   const $attributesCard = fragment.querySelector('.product-details__attributes-card');
   const $desktopPhotoView = fragment.querySelector('.product-details__left-column .product-details__media-view--photos');
@@ -372,6 +631,9 @@ export default async function decorate(block) {
   const $mobileSelector = fragment.querySelector('.product-details__media-selector--mobile');
   const $desktopSvgImage = fragment.querySelector('.product-details__svg-image--desktop');
   const $mobileSvgImage = fragment.querySelector('.product-details__svg-image--mobile');
+  const $desktopMediaChips = fragment.querySelector('.product-details__media-state-chips--desktop');
+  const $mobileMediaChips = fragment.querySelector('.product-details__media-state-chips--mobile');
+  const $tabLinks = [...fragment.querySelectorAll('.product-details__tab-link')];
 
   block.replaceChildren(fragment);
   block.classList.toggle(
@@ -397,14 +659,60 @@ export default async function decorate(block) {
     svgImages: [$desktopSvgImage, $mobileSvgImage],
   };
 
-  const syncOptionalCards = () => {
-    $detailsCard.hidden = !hasRenderedContent($description);
-    $attributesCard.hidden = !hasRenderedContent($attributes);
+  const supportCards = {
+    purchase: createSupportCard({
+      href: `#${PDP_SECTION_IDS.PURCHASE}`,
+      target: PDP_SECTION_IDS.PURCHASE,
+      title: 'Jump to purchase controls',
+      description: 'Go straight to options, quantity, and cart actions.',
+    }),
+    specifications: createSupportCard({
+      href: `#${PDP_SECTION_IDS.SPECIFICATIONS}`,
+      target: PDP_SECTION_IDS.SPECIFICATIONS,
+      title: 'Jump to specifications/details',
+      description: 'Review the narrative details and structured attributes.',
+    }),
+    related: createSupportCard({
+      href: `#${PDP_SECTION_IDS.RELATED}`,
+      target: PDP_SECTION_IDS.RELATED,
+      title: 'Jump to related products',
+      description: 'Continue into adjacent recommendations from the same PDP.',
+    }),
   };
 
-  const scheduleOptionalCardSync = () => {
-    window.requestAnimationFrame(syncOptionalCards);
+  $supportLinks.append(
+    supportCards.purchase,
+    supportCards.specifications,
+    supportCards.related,
+  );
+  bindSectionLinks($tabLinks);
+
+  let relatedVisible = Boolean(document.querySelector('.product-recommendations'));
+
+  const syncOptionalCards = () => {
+    const hasDescription = hasRenderedContent($description);
+    const hasAttributes = hasRenderedContent($attributes);
+    const hasSpecifications = hasDescription || hasAttributes;
+
+    $detailsCard.hidden = !hasDescription;
+    $attributesCard.hidden = !hasAttributes;
+    $specificationsSection.hidden = !hasSpecifications;
+    setCollectionVisibility(
+      $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.SPECIFICATIONS),
+      hasSpecifications,
+    );
+    setCollectionVisibility(supportCards.specifications, hasSpecifications);
   };
+
+  const updateRelatedTargets = (isVisible) => {
+    relatedVisible = isVisible;
+    const relatedTab = $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.RELATED);
+    setCollectionVisibility(relatedTab, relatedVisible);
+    setCollectionVisibility(supportCards.related, relatedVisible);
+    block.classList.toggle('product-details--related-hidden', !relatedVisible);
+  };
+
+  updateRelatedTargets(relatedVisible);
 
   const renderMediaSelectors = () => {
     if (!mediaState.svgReady && mediaState.currentView === 'technical') {
@@ -474,6 +782,76 @@ export default async function decorate(block) {
     });
 
     renderMediaSelectors();
+  };
+
+  const syncDerivedContent = (nextProduct = product) => {
+    const productTitle = getProductTitle(nextProduct, $header);
+    $breadcrumbsCurrent.textContent = productTitle;
+
+    $stateBadges.replaceChildren();
+    $stateBadges.append(
+      createStateBadge(getStockLabel(nextProduct), nextProduct?.inStock ? 'success' : 'muted'),
+      createStateBadge(`${getGalleryCount(nextProduct)} gallery image${getGalleryCount(nextProduct) === 1 ? '' : 's'}`),
+    );
+
+    if (mediaState.svgReady) {
+      $stateBadges.append(createStateBadge(mediaState.svgLabel));
+    }
+
+    const optionCount = getOptionGroupCount(nextProduct);
+    const viewsLabel = getViewsLabel(mediaState);
+
+    $miniSpecs.replaceChildren(
+      createMiniSpecCard('Gallery', `${getGalleryCount(nextProduct)}`),
+      createMiniSpecCard('Availability', getStockLabel(nextProduct)),
+      createMiniSpecCard('Views', viewsLabel),
+    );
+
+    if (optionCount > 0) {
+      $miniSpecs.append(createMiniSpecCard('Options', `${optionCount}`));
+    }
+
+    const mediaChipText = [
+      `${getGalleryCount(nextProduct)} photo${getGalleryCount(nextProduct) === 1 ? '' : 's'}`,
+      mediaState.svgReady ? mediaState.svgLabel : '',
+    ].filter(Boolean);
+
+    [$desktopMediaChips, $mobileMediaChips].forEach((chipContainer) => {
+      chipContainer.replaceChildren(...mediaChipText.map((text, index) => {
+        const chip = document.createElement('span');
+        chip.className = 'product-details__media-state-chip';
+        if (index === 1) {
+          chip.classList.add('product-details__media-state-chip--accent');
+        }
+        chip.textContent = text;
+        return chip;
+      }));
+    });
+
+    const featurePillars = collectFeaturePillars($description, $shortDescription);
+    $featureGrid.replaceChildren(...featurePillars.map(createFeatureCard));
+    $featureGrid.childNodes.forEach((node, index) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        node.querySelector('.product-details__feature-index').textContent = `${index + 1}`.padStart(2, '0');
+      }
+    });
+
+    const hasFeatures = featurePillars.length > 0;
+    $featureSection.hidden = !hasFeatures;
+    setCollectionVisibility(
+      $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.FEATURES),
+      hasFeatures,
+    );
+    hidePdpCardsBlock(block, hasFeatures);
+  };
+
+  const scheduleDerivedContentSync = () => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        syncDerivedContent(product);
+        syncOptionalCards();
+      });
+    });
   };
 
   const gallerySlots = {
@@ -715,7 +1093,7 @@ export default async function decorate(block) {
   }
 
   syncProductMedia(product);
-  scheduleOptionalCardSync();
+  scheduleDerivedContentSync();
   hideRedundantShortDescription($header, $shortDescription);
   hideRedundantHeaderSku($header);
 
@@ -871,9 +1249,9 @@ export default async function decorate(block) {
   events.on('pdp/data', (nextProduct) => {
     product = nextProduct?.sku ? nextProduct : null;
     syncProductMedia(product);
-    scheduleOptionalCardSync();
+    scheduleDerivedContentSync();
     hideRedundantShortDescription($header, $shortDescription);
-  hideRedundantHeaderSku($header);
+    hideRedundantHeaderSku($header);
 
     if (wishlistToggleBtn && product) {
       wishlistToggleBtn.setProps((prev) => ({
@@ -944,6 +1322,22 @@ export default async function decorate(block) {
       shouldActivateImmersivePresentation(config.presentation, payload),
     );
   }, { eager: true });
+
+  const contentObserver = new MutationObserver(() => {
+    scheduleDerivedContentSync();
+  });
+
+  [$header, $shortDescription, $description, $attributes].forEach((node) => {
+    contentObserver.observe(node, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  });
+
+  document.addEventListener('product-recommendations:visibility', (event) => {
+    updateRelatedTargets(Boolean(event.detail?.visible));
+  });
 
   return Promise.resolve();
 }

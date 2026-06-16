@@ -44,9 +44,25 @@ describe('Verify immersive PDP variant', () => {
       .should('not.have.class', 'product-details--configurator-active')
       .and('not.have.class', 'product-details--immersive-active')
       .and('not.have.class', 'product-details--svg-media-ready');
+    cy.get('.product-details__breadcrumbs')
+      .should('contain.text', 'Home')
+      .and('contain.text', 'Products');
     cy.get('.product-details__left-column .product-details__media-card').should('be.visible');
-    cy.get('.product-details__configuration-card', { timeout: 20000 }).should('be.visible');
+    cy.get('.product-details__purchase-panel', { timeout: 20000 }).should('be.visible');
     cy.get('.product-details__intro-card').should('contain.text', 'Network Enclosures NE 12U GlassFront');
+    cy.get('.product-details__state-badge').should('have.length.at.least', 2);
+    cy.get('.product-details__mini-spec').should('have.length.at.least', 3);
+    cy.get('.product-details__tabs')
+      .should('contain.text', 'Overview')
+      .and('contain.text', 'Features')
+      .and('contain.text', 'Specifications');
+    cy.get('.product-details__feature-section').should('be.visible');
+    cy.get('.product-details__feature-card').should('have.length.at.least', 1);
+    cy.get('.product-details__support-card').should('have.length.at.least', 2);
+    cy.get('.product-details__tab-link[href="#pdp-features"]').click();
+    cy.location('hash').should('eq', '#pdp-features');
+    cy.get('.product-details__support-card[href="#pdp-specifications"]').click();
+    cy.location('hash').should('eq', '#pdp-specifications');
     cy.get('.product-details__media-selector--desktop .product-details__media-option').should('not.exist');
     cy.get('.product-details__media-card img').then(($images) => {
       const realImageSources = [...$images]
@@ -54,6 +70,18 @@ describe('Verify immersive PDP variant', () => {
         .filter((src) => src && !src.startsWith('data:image/gif'));
       if (realImageSources.length === 0) {
         throw new Error('Expected at least one real product image in the media card.');
+      }
+    });
+    cy.get('.cards').should('not.be.visible');
+    cy.get('body').then(($body) => {
+      const relatedShell = $body.find('.product-recommendations__shell');
+      const relatedTab = $body.find('.product-details__tab-link[href="#pdp-related"]');
+
+      if (relatedShell.length > 0 && relatedShell.is(':visible')) {
+        cy.get('.product-recommendations__title').should('contain.text', 'Related Products');
+        cy.get('.product-details__tab-link[href="#pdp-related"]').should('be.visible');
+      } else if (relatedTab.length > 0) {
+        cy.get('.product-details__tab-link[href="#pdp-related"]').should('not.be.visible');
       }
     });
     cy.get('.product-configurator-luxe__shell').should('not.exist');

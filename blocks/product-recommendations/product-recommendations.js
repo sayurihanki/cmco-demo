@@ -87,6 +87,13 @@ function getPurchaseHistory(storeViewCode) {
 
 export default async function decorate(block) {
   const labels = await fetchPlaceholders();
+  const hostSection = block.closest('.section');
+
+  const notifyVisibility = (visible) => {
+    document.dispatchEvent(new CustomEvent('product-recommendations:visibility', {
+      detail: { visible },
+    }));
+  };
 
   // Hide configuration rows if they exist
   const children = [...block.children];
@@ -99,19 +106,35 @@ export default async function decorate(block) {
 
   // Layout
   const fragment = document.createRange().createContextualFragment(`
-    <div class="recommendations__wrapper">
-      <div class="recommendations__list"></div>
-    </div>
+    <section class="product-recommendations__shell" id="pdp-related" aria-labelledby="product-recommendations-title">
+      <div class="product-recommendations__header">
+        <p class="product-recommendations__eyebrow">Suggested next</p>
+        <h2 class="product-recommendations__title" id="product-recommendations-title">Related Products</h2>
+      </div>
+      <div class="recommendations__wrapper">
+        <div class="recommendations__list"></div>
+      </div>
+    </section>
   `);
 
+  const $shell = fragment.querySelector('.product-recommendations__shell');
   const $list = fragment.querySelector('.recommendations__list');
-  const $wrapper = fragment.querySelector('.recommendations__wrapper');
-
-  block.appendChild(fragment);
+  block.replaceChildren(fragment);
+  block.classList.add('product-recommendations--shell');
 
   let visibility = !isMobile;
   let isLoading = false;
   let loadTimeout = null;
+
+  const syncShellVisibility = (visible) => {
+    $shell.hidden = !visible;
+    if (hostSection) {
+      hostSection.hidden = !visible;
+    }
+    notifyVisibility(visible);
+  };
+
+  syncShellVisibility(true);
 
   async function loadRecommendation(
     context,
@@ -135,10 +158,11 @@ export default async function decorate(block) {
     }
 
     isLoading = true;
+    block.setAttribute('aria-busy', 'true');
 
     // Clear container if reloading
     if (forceReload) {
-      container.innerHTML = '';
+      container.replaceChildren();
     }
 
     const storeViewCode = getConfigValue('headers.cs.Magento-Store-View-Code');
@@ -252,10 +276,16 @@ export default async function decorate(block) {
               });
             },
           },
-        })($wrapper),
+        })($list),
       ]);
+
+      const hasProducts = Boolean(
+        container.querySelector('.product-grid-item, .recommendations-product-list__content > *'),
+      );
+      syncShellVisibility(hasProducts);
     } finally {
       isLoading = false;
+      block.setAttribute('aria-busy', 'false');
     }
   }
 
