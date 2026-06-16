@@ -10,7 +10,7 @@
 .cmco-topbar {
   display: none;
   background: #001a36;
-  color: rgba(143, 170, 204, 0.85);
+  color: rgb(143 170 204 / 85%);
   font-family: var(--cmco-font-mono, 'JetBrains Mono', monospace);
   font-size: 11.5px;
   letter-spacing: 0.04em;
@@ -37,7 +37,7 @@
 }
 
 .cmco-topbar a {
-  color: rgba(143, 170, 204, 0.75);
+  color: rgb(143 170 204 / 75%);
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -51,7 +51,7 @@
   align-items: center;
   gap: 7px;
   padding: 3px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 999px;
   color: #fff;
   font-size: 10.5px;
@@ -77,14 +77,14 @@
   place-items: center;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 6px 18px -4px rgba(0, 82, 155, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 18px -4px rgb(0 82 155 / 48%), inset 0 1px 0 rgb(255 255 255 / 20%);
 }
 
 .cmco-logo-mark::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.18) 50%, transparent 65%);
+  background: linear-gradient(120deg, transparent 35%, rgb(255 255 255 / 18%) 50%, transparent 65%);
   animation: cmcoLogoShimmer 5s ease-in-out 1.5s infinite;
   pointer-events: none;
 }
@@ -126,7 +126,7 @@
   overflow: hidden;
   background: linear-gradient(150deg, #00284f 0%, #00529b 55%, #0066bd 100%);
   color: #fff;
-  box-shadow: 0 32px 72px -20px rgba(0, 40, 100, 0.22), 0 14px 32px -10px rgba(0, 50, 130, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  box-shadow: 0 32px 72px -20px rgb(0 40 100 / 22%), 0 14px 32px -10px rgb(0 50 130 / 14%), inset 0 1px 0 rgb(255 255 255 / 14%);
   position: relative;
 }
 
@@ -138,14 +138,14 @@
   width: 240px;
   height: 240px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(240, 138, 28, 0.38), transparent 62%);
+  background: radial-gradient(circle, rgb(240 138 28 / 38%), transparent 62%);
   pointer-events: none;
 }
 
 .cmco-feat-grid-bg {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-image: linear-gradient(rgb(255 255 255 / 5.5%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 5.5%) 1px, transparent 1px);
   background-size: 28px 28px;
   pointer-events: none;
   border-radius: 20px;
@@ -162,7 +162,7 @@
   font-size: 9px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgb(255 255 255 / 50%);
   display: block;
   margin-bottom: 7px;
 }
@@ -179,7 +179,7 @@
 
 .cmco-feat-desc {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgb(255 255 255 / 62%);
   line-height: 1.62;
   margin: 0 0 22px;
 }
@@ -192,8 +192,8 @@
 }
 
 .cmco-fchip {
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgb(255 255 255 / 9%);
+  border: 1px solid rgb(255 255 255 / 15%);
   border-radius: 12px;
   padding: 11px 14px;
 }
@@ -203,7 +203,7 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgb(255 255 255 / 45%);
   display: block;
   margin-bottom: 4px;
 }
@@ -237,13 +237,13 @@
   font-family: var(--cmco-font-display, 'Bricolage Grotesque', sans-serif);
   text-decoration: none;
   transition: background 0.22s, transform 0.22s, box-shadow 0.22s;
-  box-shadow: 0 6px 18px -5px rgba(240, 138, 28, 0.55);
+  box-shadow: 0 6px 18px -5px rgb(240 138 28 / 55%);
 }
 
 .cmco-feat-cta:hover {
   background: #d4740e;
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px -8px rgba(240, 138, 28, 0.65);
+  box-shadow: 0 12px 24px -8px rgb(240 138 28 / 65%);
   color: #fff;
 }
 
@@ -471,15 +471,15 @@ header nav .nav-sections ul>li:empty {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255, 255, 255, 0.88);
+    background: rgb(255 255 255 / 88%);
     backdrop-filter: saturate(200%) blur(22px);
-    -webkit-backdrop-filter: saturate(200%) blur(22px);
-    border-bottom: 1px solid rgba(196, 215, 238, 0.55);
+    backdrop-filter: saturate(200%) blur(22px);
+    border-bottom: 1px solid rgb(196 215 238 / 55%);
     transition: box-shadow 0.3s;
   }
 
   header .nav-wrapper.cmco-scrolled {
-    box-shadow: 0 4px 28px -8px rgba(0, 40, 100, 0.12);
+    box-shadow: 0 4px 28px -8px rgb(0 40 100 / 12%);
   }
 
   header nav {
@@ -614,10 +614,10 @@ header nav .nav-sections ul>li:empty {
     mask-position: center;
     mask-repeat: no-repeat;
     mask-size: contain;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3.5l3 3 3-3'/%3E%3C/svg%3E");
-    -webkit-mask-position: center;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-size: contain;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3.5l3 3 3-3'/%3E%3C/svg%3E");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
     transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
@@ -637,7 +637,7 @@ header nav .nav-sections ul>li:empty {
     background: #fff;
     border-top: 2.5px solid var(--cmco-orange, #f08a1c);
     border-bottom: 1px solid #dde6f0;
-    box-shadow: 0 32px 72px -20px rgba(0, 40, 100, 0.22), 0 14px 32px -10px rgba(0, 50, 130, 0.14);
+    box-shadow: 0 32px 72px -20px rgb(0 40 100 / 22%), 0 14px 32px -10px rgb(0 50 130 / 14%);
     box-sizing: border-box;
     left: 0;
     opacity: 0;
