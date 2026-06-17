@@ -27,15 +27,33 @@ function parsePermissionKeys(raw) {
 function evaluatePermissions(permissions, keys) {
   const safePermissions = permissions && typeof permissions === 'object' ? permissions : {};
   const normalizedKeys = keys.length > 0 ? keys : ['all'];
+  const hasPermissionPayload = Object.keys(safePermissions).length > 0;
 
   const isExplicitlyDisabled = normalizedKeys.some((key) => safePermissions[key] === false);
 
-  const isGranted = normalizedKeys.includes('all')
+  const isGranted = !hasPermissionPayload
+    || normalizedKeys.includes('all')
     || safePermissions.admin
     || safePermissions.all
-    || normalizedKeys.some((key) => safePermissions[key] === true);
+    || normalizedKeys.some((key) => safePermissions[key] === true)
+    || normalizedKeys.every((key) => safePermissions[key] !== false);
 
   return { isGranted: Boolean(isGranted), isExplicitlyDisabled };
+}
+
+/**
+ * Resolve a URL path without throwing on empty or malformed authoring.
+ * @param {string | undefined} href
+ * @returns {string}
+ */
+function getPathname(href) {
+  if (!href) return '';
+
+  try {
+    return new URL(href, window.location.href).pathname;
+  } catch {
+    return '';
+  }
 }
 
 export default async function decorate(block) {
@@ -56,8 +74,13 @@ export default async function decorate(block) {
     permission: Math.max(0, keys.indexOf('permission') + 1),
   };
 
-  /** Get permissions */
-  events.on('auth/permissions', (permissions) => {
+  /**
+   * Render nav links from the authored rows.
+   * Permission data is used as a refinement: missing/incomplete payloads should
+   * not make the entire B2B rail disappear.
+   * @param {object} permissions
+   */
+  function renderNav(permissions) {
     /** Clear nav */
     $nav.innerHTML = '';
 
@@ -101,10 +124,12 @@ export default async function decorate(block) {
 
       /** Content */
       const $content = $item.querySelector(`:scope > div:nth-child(${rows.label})`)?.children;
+      const $titleContent = $content?.[0];
+      const $descriptionContent = $content?.[1];
 
       /** Link */
-      const link = $content[0]?.querySelector('a')?.href;
-      const isActive = link && new URL(link).pathname === window.location.pathname;
+      const link = $titleContent?.querySelector('a')?.href || '#';
+      const isActive = getPathname(link) === window.location.pathname;
       $link.classList.toggle('commerce-account-nav__item--active', isActive);
       $link.href = link;
 
@@ -113,18 +138,33 @@ export default async function decorate(block) {
 
       if (icon) {
         $link.classList.add('commerce-account-nav__item--has-icon');
-        UI.render(Icon, { source: icon, size: 24 })($icon);
+        try {
+          UI.render(Icon, { source: icon, size: 24 })($icon);
+        } catch {
+          $link.classList.remove('commerce-account-nav__item--has-icon');
+        }
       }
 
       /** Title */
-      $title.textContent = $content[0]?.textContent || '';
+      $title.textContent = $titleContent?.textContent || '';
 
       /** Description */
-      $description.textContent = $content[1]?.textContent || '';
+      $description.textContent = $descriptionContent?.textContent || '';
 
       /** Add link to nav */
       $nav.appendChild($link);
     });
+
+    if (!$nav.children.length && permissions !== null) {
+      renderNav(null);
+    }
+  }
+
+  renderNav(events.lastPayload('auth/permissions') || null);
+
+  /** Get permissions */
+  events.on('auth/permissions', (permissions) => {
+    renderNav(permissions || null);
   }, { eager: true });
 
   block.replaceWith($nav);
