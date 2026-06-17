@@ -268,6 +268,27 @@ function setupSubmenu(navSection) {
   navSection.removeChild(submenu);
 }
 
+function ensureCompassNavItem(navSections) {
+  const navList = navSections?.querySelector(':scope .default-content-wrapper > ul');
+  if (!navList) return;
+
+  const compassLink = [...navList.querySelectorAll('a')]
+    .find((link) => link.textContent.trim().toLowerCase() === 'compass');
+  if (compassLink) {
+    compassLink.href = rootLink('/compass.html');
+    return;
+  }
+
+  const searchOrderItem = [...navList.children]
+    .find((item) => item.textContent.trim().toLowerCase() === 'search order');
+
+  const compassItem = document.createElement('li');
+  compassItem.innerHTML = '<p><a href="/compass.html">Compass</a></p>';
+
+  if (searchOrderItem) navList.insertBefore(compassItem, searchOrderItem);
+  else navList.append(compassItem);
+}
+
 /**
  * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
@@ -316,6 +337,7 @@ export default async function decorate(block) {
   let closeMenuTimer;
 
   const navSections = nav.querySelector('.nav-sections');
+  ensureCompassNavItem(navSections);
   if (navSections) {
     navSections
       .querySelectorAll(':scope .default-content-wrapper > ul > li')
