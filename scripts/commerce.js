@@ -420,24 +420,52 @@ function buildTemplateColumns(doc) {
 }
 
 /**
- * Applies account dashboard classes when legacy content has not set page metadata yet.
+ * Checks whether the page is a customer account page with authored side rail columns.
+ * @param {Element} main The main element
+ * @returns {boolean}
+ */
+function hasAuthoredAccountSideRail(main) {
+  if (!main) return false;
+
+  const columnSections = [
+    ...main.querySelectorAll(':scope > .section[data-column-width], :scope > div[data-column-width]'),
+  ];
+
+  return columnSections.some((section) => {
+    const fragment = section.querySelector('.fragment');
+    const hasAccountNavFragment = fragment?.textContent?.includes('/customer/nav');
+    const hasLoadedAccountNav = section.querySelector('.commerce-account-nav');
+
+    return hasAccountNavFragment || hasLoadedAccountNav;
+  });
+}
+
+/**
+ * Applies account page layout classes when legacy content has not set page metadata yet.
  * @param {Element} doc The document element
  */
-function applyAccountDashboardTemplateFallback(doc) {
+function applyAccountTemplateFallback(doc) {
   const pathname = doc.location?.pathname?.replace(/\/$/, '');
+  const customerPath = rootLink(CUSTOMER_PATH).replace(/\/$/, '');
   const accountPath = rootLink(CUSTOMER_ACCOUNT_PATH).replace(/\/$/, '');
 
-  if (pathname !== accountPath) return;
+  if (pathname !== accountPath && !pathname?.startsWith(`${customerPath}/`)) return;
 
   const main = doc.querySelector('main');
   const hasAccountDashboardBlocks = main?.querySelector(
     '.commerce-account-header, .commerce-orders-list, .commerce-addresses, '
     + '.commerce-customer-information, .commerce-customer-company, .commerce-returns-list',
   );
+  const hasAccountSideRail = hasAuthoredAccountSideRail(main);
+  const isAccountDashboard = pathname === accountPath && hasAccountDashboardBlocks;
 
-  if (!hasAccountDashboardBlocks) return;
+  if (hasAccountSideRail || isAccountDashboard) {
+    doc.body.classList.add('account-sidebar-layout', 'columns');
+  }
 
-  doc.body.classList.add('my-account', 'columns');
+  if (!isAccountDashboard) return;
+
+  doc.body.classList.add('my-account');
 }
 
 /**
@@ -445,7 +473,7 @@ function applyAccountDashboardTemplateFallback(doc) {
  * @param {Element} doc The document element
  */
 export function applyTemplates(doc) {
-  applyAccountDashboardTemplateFallback(doc);
+  applyAccountTemplateFallback(doc);
 
   if (doc.body.classList.contains('columns')) {
     buildTemplateColumns(doc);

@@ -71,6 +71,27 @@ export function mountFragment(host, fragment) {
     && replaceTarget.parentElement === hostSection
     && hostSection.children.length === 1;
 
+  const preserveHostSection = hostSection
+    && (
+      hostSection.hasAttribute('data-column-width')
+      || Boolean(hostSection.style.getPropertyValue('--column-width'))
+    );
+
+  if (preserveHostSection) {
+    const mountedContent = document.createDocumentFragment();
+
+    fragmentSections.forEach((section) => {
+      section.classList.forEach((className) => {
+        if (className !== 'section') hostSection.classList.add(className);
+      });
+
+      mountedContent.append(...section.childNodes);
+    });
+
+    replaceTarget.replaceWith(mountedContent);
+    return true;
+  }
+
   if (dedicatedSection) {
     hostSection.replaceWith(...fragmentSections);
     return true;
