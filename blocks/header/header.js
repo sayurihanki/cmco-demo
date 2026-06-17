@@ -141,7 +141,21 @@ const CMCO_CAT_ICONS = [
   '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke-linecap="round" stroke-linejoin="round"/>',
 ];
 
-const CMCO_CAT_COUNTS = [84, 36, 112, 58, 47, 29, 22, 15];
+const CMCO_CAT_HELPERS = {
+  'Log in': 'Access your account',
+  Registration: 'Create a personal account',
+  'My Account': 'View account dashboard',
+  'Create New Company Account': 'Start a business account',
+  'Quick Order': 'Order quickly by SKU',
+};
+
+const CMCO_CAT_FALLBACK_HELPERS = [
+  'Access your account',
+  'Create a personal account',
+  'View account dashboard',
+  'Start a business account',
+  'Order quickly by SKU',
+];
 
 const CMCO_FEAT_PANEL_HTML = `
 <div class="cmco-feat-panel">
@@ -223,7 +237,8 @@ function setupSubmenu(navSection) {
     const a = li.querySelector('a');
     if (!a) return;
     const iconPath = CMCO_CAT_ICONS[i] || CMCO_CAT_ICONS[0];
-    const count = CMCO_CAT_COUNTS[i] !== undefined ? CMCO_CAT_COUNTS[i] : '';
+    const label = a.textContent.trim();
+    const helper = CMCO_CAT_HELPERS[label] || CMCO_CAT_FALLBACK_HELPERS[i] || '';
     const row = document.createElement('a');
     row.className = 'cmco-cat-row';
     row.href = a.getAttribute('href') || '#';
@@ -231,8 +246,8 @@ function setupSubmenu(navSection) {
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${iconPath}</svg>
       </div>
       <div class="cmco-cat-info">
-        <span class="cmco-cat-name">${a.textContent.trim()}</span>
-        <span class="cmco-cat-count">${count} products</span>
+        <span class="cmco-cat-name">${label}</span>
+        <span class="cmco-cat-count">${helper}</span>
       </div>
       <svg class="cmco-cat-arr" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M2 8h11M9 4l4 4-4 4"/>
