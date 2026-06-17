@@ -420,10 +420,33 @@ function buildTemplateColumns(doc) {
 }
 
 /**
+ * Applies account dashboard classes when legacy content has not set page metadata yet.
+ * @param {Element} doc The document element
+ */
+function applyAccountDashboardTemplateFallback(doc) {
+  const pathname = doc.location?.pathname?.replace(/\/$/, '');
+  const accountPath = rootLink(CUSTOMER_ACCOUNT_PATH).replace(/\/$/, '');
+
+  if (pathname !== accountPath) return;
+
+  const main = doc.querySelector('main');
+  const hasAccountDashboardBlocks = main?.querySelector(
+    '.commerce-account-header, .commerce-orders-list, .commerce-addresses, '
+    + '.commerce-customer-information, .commerce-customer-company, .commerce-returns-list',
+  );
+
+  if (!hasAccountDashboardBlocks) return;
+
+  doc.body.classList.add('my-account', 'columns');
+}
+
+/**
  * Applies templates to the document.
  * @param {Element} doc The document element
  */
 export function applyTemplates(doc) {
+  applyAccountDashboardTemplateFallback(doc);
+
   if (doc.body.classList.contains('columns')) {
     buildTemplateColumns(doc);
   }
