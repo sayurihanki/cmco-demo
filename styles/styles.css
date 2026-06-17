@@ -707,6 +707,73 @@ body.columns main > .section:empty {
   }
 }
 
+/* Account dashboard fallback for legacy content missing Template metadata. */
+body:not(.columns) main:has(> .section .commerce-account-header) {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1264px;
+  margin: 0 auto;
+  padding: var(--spacing-large) var(--spacing-small);
+  box-sizing: border-box;
+}
+
+body:not(.columns) main:has(> .section .commerce-account-header) > .section {
+  flex: 1;
+  flex-basis: 100%;
+  max-width: unset;
+  margin: unset;
+  padding: calc(var(--grid-4-gutters) / 2);
+  box-sizing: border-box;
+}
+
+body:not(.columns) main:has(> .section .commerce-account-header) > .section:first-child {
+  padding-inline-start: 0;
+  padding-block-start: 0;
+}
+
+body:not(.columns) main:has(> .section .commerce-account-header) > .section:last-child {
+  padding-inline-end: 0;
+  padding-block-end: 0;
+}
+
+body:not(.columns) main:has(> .section .commerce-account-header) > .section > div {
+  max-width: unset;
+  padding: unset;
+}
+
+body:not(.columns) main:has(> .section .commerce-account-header) > .section > div:not(:last-child) {
+  margin-bottom: var(--gap, unset);
+}
+
+body:not(.columns) main:has(> .section .commerce-account-header) > .section:empty {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  body:not(.columns) main:has(> .section .commerce-account-header) {
+    padding: var(--spacing-large) var(--spacing-big);
+  }
+}
+
+@media (min-width: 900px) {
+  body:not(.columns) main:has(> .section .commerce-account-header) {
+    flex-flow: row wrap;
+  }
+
+  body:not(.columns) main:has(> .section .commerce-account-header) > .section[data-column-width='30%'] {
+    flex: 1;
+    flex-basis: 30%;
+    max-width: 30%;
+  }
+
+  body:not(.columns) main:has(> .section .commerce-account-header) > .section[data-column-width='70%'] {
+    flex: 1;
+    flex-basis: 70%;
+    max-width: 70%;
+  }
+}
+
 /**
 * Reset main element visibility
 * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden
