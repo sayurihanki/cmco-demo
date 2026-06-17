@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="script-src 'nonce-aem' 'strict-dynamic' 'unsafe-inline' http: https:; base-uri 'self'; object-src 'none';"
+    move-to-http-header="true"
+  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compass Product Configuration</title>
+  <meta
+    name="description"
+    content="Static Compass demo showing a dummy product configuration table for Columbus McKinnon."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script nonce="aem" type="importmap">
+    {
+      "imports": {
+        "@dropins/storefront-account/": "/scripts/__dropins__/storefront-account/",
+        "@dropins/storefront-auth/": "/scripts/__dropins__/storefront-auth/",
+        "@dropins/storefront-cart/": "/scripts/__dropins__/storefront-cart/",
+        "@dropins/storefront-checkout/": "/scripts/__dropins__/storefront-checkout/",
+        "@dropins/storefront-order/": "/scripts/__dropins__/storefront-order/",
+        "@dropins/storefront-payment-services/": "/scripts/__dropins__/storefront-payment-services/",
+        "@dropins/storefront-pdp/": "/scripts/__dropins__/storefront-pdp/",
+        "@dropins/storefront-recommendations/": "/scripts/__dropins__/storefront-recommendations/",
+        "@dropins/storefront-wishlist/": "/scripts/__dropins__/storefront-wishlist/",
+        "@dropins/storefront-personalization/": "/scripts/__dropins__/storefront-personalization/",
+        "@dropins/storefront-product-discovery/": "/scripts/__dropins__/storefront-product-discovery/",
+        "@dropins/storefront-quote-management/": "/scripts/__dropins__/storefront-quote-management/",
+        "@dropins/storefront-company-switcher/": "/scripts/__dropins__/storefront-company-switcher/",
+        "@dropins/storefront-company-management/": "/scripts/__dropins__/storefront-company-management/",
+        "@dropins/storefront-requisition-list/": "/scripts/__dropins__/storefront-requisition-list/",
+        "@dropins/storefront-purchase-order/": "/scripts/__dropins__/storefront-purchase-order/",
+        "@dropins/storefront-quick-order/": "/scripts/__dropins__/storefront-quick-order/",
+        "@dropins/tools/": "/scripts/__dropins__/tools/"
+      }
+    }
+  </script>
+  <script nonce="aem" type="module">
+    if (!(HTMLScriptElement.supports?.('importmap'))) {
+      import('/scripts/__dropins__/tools/shims/importmap.js');
+    }
+  </script>
+  <script nonce="aem" src="/scripts/aem.js" type="module"></script>
+  <script nonce="aem" src="/scripts/scripts.js" type="module"></script>
+  <script nonce="aem" src="/scripts/commerce.js" type="module"></script>
+  <link rel="stylesheet" href="/styles/styles.css" />
+  <style>
+    body.compass-demo {
+      background:
+        radial-gradient(circle at 12% 0%, rgb(0 82 155 / 10%), transparent 30rem),
+        linear-gradient(180deg, var(--cmco-blue-mist, #f2f7fd), var(--cmco-paper, #f4f7fb));
+      color: var(--cmco-ink, #0b0f18);
+      font-family: var(--cmco-font-body, inter, system-ui, sans-serif);
+    }
+
+    .compass-demo main {
+      background: transparent;
+    }
+
+    .compass-demo .sr-only {
+      border: 0;
+      clip: rect(0, 0, 0, 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    .compass-page {
+      display: grid;
+      gap: 2rem;
+      margin: 0 auto;
+      max-width: var(--cmco-max-width, 1300px);
+      padding: 3.2rem 2.4rem 5.6rem;
+    }
+
+    .compass-breadcrumb {
+      align-items: center;
+      color: var(--cmco-slate-light, #8ba3b8);
+      display: flex;
+      flex-wrap: wrap;
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1rem;
+      gap: 0.6rem;
+      letter-spacing: 0.08em;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .compass-breadcrumb a {
+      color: var(--cmco-blue, #00529b);
+      text-decoration: none;
+    }
+
+    .compass-hero {
+      align-items: end;
+      display: grid;
+      gap: 2.4rem;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .compass-eyebrow,
+    .compass-section-label {
+      align-items: center;
+      color: var(--cmco-orange, #f08a1c);
+      display: flex;
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1rem;
+      gap: 1rem;
+      letter-spacing: 0.18em;
+      margin: 0 0 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .compass-eyebrow::before,
+    .compass-section-label::before {
+      background: currentcolor;
+      border-radius: 999px;
+      content: "";
+      height: 0.15rem;
+      width: 2rem;
+    }
+
+    .compass-title {
+      color: var(--cmco-blue-ink, #001a36);
+      font-family: var(--cmco-font-display, "Bricolage Grotesque", sans-serif);
+      font-size: clamp(3.8rem, 7vw, 7.2rem);
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 0.92;
+      margin: 0;
+    }
+
+    .compass-intro {
+      color: var(--cmco-slate, #3d5166);
+      font-size: 1.6rem;
+      line-height: 1.7;
+      margin: 1.4rem 0 0;
+      max-width: 72rem;
+    }
+
+    .compass-summary {
+      background: var(--cmco-white, #fff);
+      border: 1px solid var(--cmco-line, #dde6f0);
+      border-radius: 0.8rem;
+      box-shadow: var(--cmco-shadow-sm, 0 1px 3px rgb(0 30 70 / 6%));
+      display: grid;
+      gap: 0.2rem;
+      min-width: 18rem;
+      padding: 1.6rem 1.8rem;
+    }
+
+    .compass-summary strong {
+      color: var(--cmco-blue, #00529b);
+      font-family: var(--cmco-font-display, "Bricolage Grotesque", sans-serif);
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .compass-summary span {
+      color: var(--cmco-slate-mid, #5c7189);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .compass-toolbar {
+      align-items: center;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: space-between;
+    }
+
+    .compass-search {
+      flex: 1 1 38rem;
+      max-width: 48rem;
+      position: relative;
+    }
+
+    .compass-search svg {
+      color: var(--cmco-slate-light, #8ba3b8);
+      left: 1.3rem;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .compass-search input {
+      background: var(--cmco-white, #fff);
+      border: 1px solid var(--cmco-line, #dde6f0);
+      border-radius: 0.8rem;
+      box-shadow: var(--cmco-shadow-sm, 0 1px 3px rgb(0 30 70 / 6%));
+      box-sizing: border-box;
+      color: var(--cmco-ink, #0b0f18);
+      font: inherit;
+      height: 4.2rem;
+      outline: none;
+      padding: 0 1.4rem 0 4rem;
+      width: 100%;
+    }
+
+    .compass-count {
+      color: var(--cmco-slate-light, #8ba3b8);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .compass-count b {
+      color: var(--cmco-blue, #00529b);
+    }
+
+    .compass-layout {
+      align-items: start;
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: 26rem minmax(0, 1fr);
+    }
+
+    .compass-filter-rail,
+    .compass-table-panel {
+      background: var(--cmco-white, #fff);
+      border: 1px solid var(--cmco-line, #dde6f0);
+      border-radius: 0.8rem;
+      box-shadow: var(--cmco-shadow-md, 0 8px 28px -6px rgb(0 50 130 / 13%));
+    }
+
+    .compass-filter-rail {
+      display: grid;
+      gap: 1.8rem;
+      padding: 1.8rem;
+      position: sticky;
+      top: calc(var(--nav-height, 6.4rem) + 1.6rem);
+    }
+
+    .compass-filter-head {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .compass-filter-head h2,
+    .compass-table-head h2 {
+      color: var(--cmco-blue-ink, #001a36);
+      font-family: var(--cmco-font-display, "Bricolage Grotesque", sans-serif);
+      font-size: 1.8rem;
+      letter-spacing: 0;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .compass-reset {
+      background: transparent;
+      border: 0;
+      color: var(--cmco-blue, #00529b);
+      cursor: pointer;
+      font: 600 1.2rem/1 var(--cmco-font-body, inter, system-ui, sans-serif);
+      padding: 0;
+    }
+
+    .compass-filter-group {
+      border-top: 1px solid var(--cmco-line, #dde6f0);
+      padding-top: 1.4rem;
+    }
+
+    .compass-filter-group h3 {
+      color: var(--cmco-slate-light, #8ba3b8);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      margin: 0 0 1rem;
+      text-transform: uppercase;
+    }
+
+    .compass-filter-list {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .compass-filter-option {
+      align-items: center;
+      color: var(--cmco-slate, #3d5166);
+      display: flex;
+      font-size: 1.3rem;
+      gap: 0.8rem;
+      justify-content: space-between;
+    }
+
+    .compass-filter-option span:first-child {
+      align-items: center;
+      display: inline-flex;
+      gap: 0.8rem;
+      min-width: 0;
+    }
+
+    .compass-filter-option input {
+      accent-color: var(--cmco-blue, #00529b);
+      height: 1.4rem;
+      width: 1.4rem;
+    }
+
+    .compass-filter-option em {
+      color: var(--cmco-slate-light, #8ba3b8);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1rem;
+      font-style: normal;
+    }
+
+    .compass-table-panel {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .compass-table-head {
+      align-items: center;
+      border-bottom: 1px solid var(--cmco-line, #dde6f0);
+      display: flex;
+      gap: 1.6rem;
+      justify-content: space-between;
+      padding: 1.8rem 2rem;
+    }
+
+    .compass-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      justify-content: flex-end;
+    }
+
+    .compass-chip {
+      background: var(--cmco-blue-soft, #ebf3fc);
+      border: 1px solid var(--cmco-blue-line, #c4d7ee);
+      border-radius: 999px;
+      color: var(--cmco-blue-dark, #003e78);
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1;
+      padding: 0.7rem 1rem;
+      white-space: nowrap;
+    }
+
+    .compass-table-scroll {
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .compass-table {
+      border-collapse: collapse;
+      min-width: 88rem;
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    .compass-table th,
+    .compass-table td {
+      border-bottom: 1px solid var(--cmco-line, #dde6f0);
+      padding: 1.4rem 1.6rem;
+      text-align: left;
+      vertical-align: middle;
+      overflow-wrap: break-word;
+    }
+
+    .compass-table th:nth-child(1) { width: 23%; }
+    .compass-table th:nth-child(2) { width: 11%; }
+    .compass-table th:nth-child(3) { width: 12%; }
+    .compass-table th:nth-child(4) { width: 12%; }
+    .compass-table th:nth-child(5) { width: 12%; }
+    .compass-table th:nth-child(6) { width: 12%; }
+    .compass-table th:nth-child(7) { width: 7%; }
+    .compass-table th:nth-child(8) { width: 11%; }
+
+    .compass-table th {
+      background: var(--cmco-blue-mist, #f2f7fd);
+      color: var(--cmco-slate-mid, #5c7189);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1rem;
+      letter-spacing: 0.14em;
+      line-height: 1.45;
+      position: sticky;
+      text-transform: uppercase;
+      top: 0;
+      z-index: 1;
+    }
+
+    .compass-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .compass-product {
+      display: grid;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+
+    .compass-product strong {
+      color: var(--cmco-blue-ink, #001a36);
+      font-family: var(--cmco-font-display, "Bricolage Grotesque", sans-serif);
+      font-size: 1.6rem;
+      letter-spacing: 0;
+      line-height: 1.2;
+    }
+
+    .compass-product span,
+    .compass-muted {
+      color: var(--cmco-slate-mid, #5c7189);
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .compass-sku {
+      color: var(--cmco-blue-dark, #003e78);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      overflow-wrap: anywhere;
+    }
+
+    .compass-family {
+      color: var(--cmco-slate, #3d5166);
+      font-weight: 600;
+    }
+
+    .compass-rating {
+      color: var(--cmco-blue-ink, #001a36);
+      font-weight: 700;
+    }
+
+    .compass-status,
+    .compass-availability {
+      align-items: center;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 1.15rem;
+      font-weight: 700;
+      gap: 0.6rem;
+      line-height: 1;
+      padding: 0.7rem 1rem;
+      white-space: nowrap;
+    }
+
+    .compass-status::before,
+    .compass-availability::before {
+      border-radius: 50%;
+      content: "";
+      height: 0.7rem;
+      width: 0.7rem;
+    }
+
+    .compass-status.configured {
+      background: var(--color-positive-200, #eff5ef);
+      color: var(--color-positive-800, #53824c);
+    }
+
+    .compass-status.configured::before {
+      background: var(--color-positive-500, #7fb078);
+    }
+
+    .compass-status.review {
+      background: var(--color-warning-200, #fdf3e9);
+      color: var(--color-warning-800, #cc7a2e);
+    }
+
+    .compass-status.review::before {
+      background: var(--color-warning-500, #e79f5c);
+    }
+
+    .compass-status.quote {
+      background: var(--color-informational-200, #eeeffb);
+      color: var(--color-informational-800, #5d6dd6);
+    }
+
+    .compass-status.quote::before {
+      background: var(--color-informational-500, #6978d9);
+    }
+
+    .compass-status.draft {
+      background: var(--color-neutral-200, #f5f5f5);
+      color: var(--color-neutral-800, #3d3d3d);
+    }
+
+    .compass-status.draft::before {
+      background: var(--color-neutral-600, #8f8f8f);
+    }
+
+    .compass-availability {
+      background: var(--cmco-blue-soft, #ebf3fc);
+      color: var(--cmco-blue-dark, #003e78);
+    }
+
+    .compass-availability::before {
+      background: var(--cmco-blue-bright, #0066bd);
+    }
+
+    .compass-price {
+      color: var(--cmco-blue-ink, #001a36);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .compass-actions {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      white-space: nowrap;
+    }
+
+    .compass-action {
+      border: 1px solid var(--cmco-blue-line, #c4d7ee);
+      border-radius: 0.7rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 700;
+      height: 3.4rem;
+      padding: 0 1.2rem;
+    }
+
+    .compass-action.primary {
+      background: var(--cmco-orange, #f08a1c);
+      border-color: var(--cmco-orange, #f08a1c);
+      color: #fff;
+    }
+
+    .compass-action.secondary {
+      background: var(--cmco-white, #fff);
+      color: var(--cmco-blue, #00529b);
+    }
+
+    @media (max-width: 980px) {
+      .compass-hero,
+      .compass-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .compass-summary {
+        min-width: 0;
+      }
+
+      .compass-filter-rail {
+        position: static;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .compass-page {
+        padding: 2.4rem 1.6rem 4rem;
+      }
+
+      .compass-toolbar,
+      .compass-table-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .compass-search {
+        flex: 0 1 auto;
+        max-width: none;
+      }
+
+      .compass-count,
+      .compass-chip-row {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body class="compass-demo">
+  <header></header>
+  <main>
+    <div class="compass-page">
+      <p class="compass-breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <span>Compass</span>
+      </p>
+
+      <section class="compass-hero" aria-labelledby="compass-title">
+        <div>
+          <p class="compass-eyebrow">Configuration workspace</p>
+          <h1 id="compass-title" class="compass-title">Compass</h1>
+          <p class="compass-intro">
+            A dummy product configuration view for browsing CMCO families, checking draft
+            configuration status, and preparing visual quote-ready assemblies.
+          </p>
+        </div>
+        <aside class="compass-summary" aria-label="Compass summary">
+          <strong>42</strong>
+          <span>Dummy products visible</span>
+        </aside>
+      </section>
+
+      <section class="compass-toolbar" aria-label="Compass search and result count">
+        <label class="compass-search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <span class="sr-only">Search configured products</span>
+          <input type="search" placeholder="Search product, SKU, family, or application" value="">
+        </label>
+        <p class="compass-count"><b>12</b> featured rows shown from dummy catalog</p>
+      </section>
+
+      <section class="compass-layout" aria-label="Compass product filters and table">
+        <aside class="compass-filter-rail" aria-label="Compass filters">
+          <div class="compass-filter-head">
+            <h2>Filters</h2>
+            <button class="compass-reset" type="button">Reset</button>
+          </div>
+
+          <div class="compass-filter-group">
+            <h3>Product family</h3>
+            <div class="compass-filter-list">
+              <label class="compass-filter-option"><span><input type="checkbox" checked> Hoists</span><em>14</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" checked> Rigging attachments</span><em>8</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Utility products</span><em>7</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Legacy literature</span><em>5</em></label>
+            </div>
+          </div>
+
+          <div class="compass-filter-group">
+            <h3>Brand</h3>
+            <div class="compass-filter-list">
+              <label class="compass-filter-option"><span><input type="checkbox" checked> CM</span><em>11</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Coffing</span><em>6</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Yale</span><em>9</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Budgit</span><em>4</em></label>
+            </div>
+          </div>
+
+          <div class="compass-filter-group">
+            <h3>Availability</h3>
+            <div class="compass-filter-list">
+              <label class="compass-filter-option"><span><input type="checkbox" checked> In stock</span><em>18</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Build to order</span><em>12</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Quote required</span><em>9</em></label>
+            </div>
+          </div>
+
+          <div class="compass-filter-group">
+            <h3>Application</h3>
+            <div class="compass-filter-list">
+              <label class="compass-filter-option"><span><input type="checkbox"> Manufacturing</span><em>16</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Utilities</span><em>6</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox"> Forestry</span><em>5</em></label>
+            </div>
+          </div>
+        </aside>
+
+        <section class="compass-table-panel" aria-labelledby="compass-products-title">
+          <div class="compass-table-head">
+            <div>
+              <p class="compass-section-label">Configuration table</p>
+              <h2 id="compass-products-title">Product assemblies</h2>
+            </div>
+            <div class="compass-chip-row" aria-label="Selected filters">
+              <span class="compass-chip">CM</span>
+              <span class="compass-chip">Hoists</span>
+              <span class="compass-chip">In stock</span>
+            </div>
+          </div>
+
+          <div class="compass-table-scroll">
+            <table class="compass-table">
+              <thead>
+                <tr>
+                  <th scope="col">Product</th>
+                  <th scope="col">SKU</th>
+                  <th scope="col">Family</th>
+                  <th scope="col">Capacity / Rating</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Availability</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="compass-product"><strong>Lodestar VS Electric Chain Hoist</strong><span>Variable speed package with trolley and pendant controls.</span></span></td>
+                  <td><span class="compass-sku">CM-LVS-2T-20</span></td>
+                  <td><span class="compass-family">Power Hoists</span></td>
+                  <td><span class="compass-rating">2 ton / 20 ft</span></td>
+                  <td><span class="compass-status configured">Configured</span></td>
+                  <td><span class="compass-availability">In stock</span></td>
+                  <td><span class="compass-price">$8,420</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>CM Hurricane 360 Hand Chain Hoist</strong><span>Low headroom manual lift for maintenance cells.</span></span></td>
+                  <td><span class="compass-sku">CM-H360-1T-15</span></td>
+                  <td><span class="compass-family">Hand Chain Hoists</span></td>
+                  <td><span class="compass-rating">1 ton / 15 ft</span></td>
+                  <td><span class="compass-status quote">Quote Ready</span></td>
+                  <td><span class="compass-availability">In stock</span></td>
+                  <td><span class="compass-price">$1,180</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>Coffing JLC Electric Chain Hoist</strong><span>Compact workstation hoist with adjustable upper limit.</span></span></td>
+                  <td><span class="compass-sku">COF-JLC-500-10</span></td>
+                  <td><span class="compass-family">Power Hoists</span></td>
+                  <td><span class="compass-rating">500 lb / 10 ft</span></td>
+                  <td><span class="compass-status review">Needs Review</span></td>
+                  <td><span class="compass-availability">Build to order</span></td>
+                  <td><span class="compass-price">$2,940</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>Yale Cable King Puller Kit</strong><span>Utility puller bundle with hooks, case, and spare pins.</span></span></td>
+                  <td><span class="compass-sku">YA-CK-3T-KIT</span></td>
+                  <td><span class="compass-family">Utility</span></td>
+                  <td><span class="compass-rating">3 ton rating</span></td>
+                  <td><span class="compass-status draft">Draft</span></td>
+                  <td><span class="compass-availability">Quote required</span></td>
+                  <td><span class="compass-price">TBD</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>CM Bandit Ratchet Lever Hoist</strong><span>Portable rigging assembly for field service teams.</span></span></td>
+                  <td><span class="compass-sku">CM-BAN-1500-10</span></td>
+                  <td><span class="compass-family">Lever Hoists</span></td>
+                  <td><span class="compass-rating">1.5 ton / 10 ft</span></td>
+                  <td><span class="compass-status configured">Configured</span></td>
+                  <td><span class="compass-availability">In stock</span></td>
+                  <td><span class="compass-price">$760</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>Rigging Attachment Starter Set</strong><span>Shackles, hooks, and beam clamp starter collection.</span></span></td>
+                  <td><span class="compass-sku">CM-RIG-ATT-12</span></td>
+                  <td><span class="compass-family">Rigging Attachments</span></td>
+                  <td><span class="compass-rating">1 to 5 ton range</span></td>
+                  <td><span class="compass-status quote">Quote Ready</span></td>
+                  <td><span class="compass-availability">In stock</span></td>
+                  <td><span class="compass-price">$1,325</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>Forestry Choker Chain Assembly</strong><span>Heavy-duty drag and lift chain visual bundle.</span></span></td>
+                  <td><span class="compass-sku">CM-FOR-CHK-78</span></td>
+                  <td><span class="compass-family">Forestry</span></td>
+                  <td><span class="compass-rating">7/8 in chain</span></td>
+                  <td><span class="compass-status review">Needs Review</span></td>
+                  <td><span class="compass-availability">Build to order</span></td>
+                  <td><span class="compass-price">$540</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+                <tr>
+                  <td><span class="compass-product"><strong>Legacy Product Literature Pack</strong><span>Archived manuals, diagrams, and replacement part PDFs.</span></span></td>
+                  <td><span class="compass-sku">CM-LIT-LEGACY</span></td>
+                  <td><span class="compass-family">Legacy Products</span></td>
+                  <td><span class="compass-rating">Digital package</span></td>
+                  <td><span class="compass-status draft">Draft</span></td>
+                  <td><span class="compass-availability">Available</span></td>
+                  <td><span class="compass-price">Free</span></td>
+                  <td><span class="compass-actions"><button class="compass-action secondary" type="button">View</button><button class="compass-action primary" type="button">Quote</button></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+  <footer></footer>
+</body>
+
+</html>
