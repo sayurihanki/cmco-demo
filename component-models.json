@@ -3103,6 +3103,36 @@
         "label": "SVG Label",
         "value": "Technical view",
         "description": "Optional label for the technical SVG media selector."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "config-table-enabled",
+        "label": "Config Table Enabled",
+        "value": "false",
+        "options": [
+          {
+            "name": "False",
+            "value": "false"
+          },
+          {
+            "name": "True",
+            "value": "true"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "config-table-family",
+        "label": "Config Table Family",
+        "value": "cm-anchor-shackles",
+        "options": [
+          {
+            "name": "CM Anchor Shackles",
+            "value": "cm-anchor-shackles"
+          }
+        ]
       }
     ]
   },

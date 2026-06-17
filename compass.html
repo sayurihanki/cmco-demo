@@ -11,7 +11,7 @@
   <title>Compass Product Configuration</title>
   <meta
     name="description"
-    content="Static Compass demo showing a dummy product configuration table for Columbus McKinnon."
+    content="Compass product configuration table for Columbus McKinnon."
   />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -268,6 +268,13 @@
       padding: 0;
     }
 
+    .compass-reset:hover,
+    .compass-reset:focus-visible {
+      color: var(--cmco-orange, #f08a1c);
+      outline: none;
+      text-decoration: underline;
+    }
+
     .compass-filter-group {
       border-top: 1px solid var(--cmco-line, #dde6f0);
       padding-top: 1.4rem;
@@ -342,11 +349,61 @@
       border: 1px solid var(--cmco-blue-line, #c4d7ee);
       border-radius: 999px;
       color: var(--cmco-blue-dark, #003e78);
+      cursor: pointer;
       font-size: 1.2rem;
       font-weight: 600;
       line-height: 1;
       padding: 0.7rem 1rem;
       white-space: nowrap;
+    }
+
+    .compass-chip:hover,
+    .compass-chip:focus-visible {
+      background: var(--cmco-blue, #00529b);
+      border-color: var(--cmco-blue, #00529b);
+      color: #fff;
+      outline: none;
+    }
+
+    .compass-chip[hidden] {
+      display: none;
+    }
+
+    .compass-detail {
+      background: var(--cmco-blue-mist, #f2f7fd);
+      border-bottom: 1px solid var(--cmco-line, #dde6f0);
+      display: grid;
+      gap: 1rem;
+      padding: 1.6rem 2rem;
+    }
+
+    .compass-detail[hidden] {
+      display: none;
+    }
+
+    .compass-detail h3,
+    .compass-detail p {
+      margin: 0;
+    }
+
+    .compass-detail h3 {
+      color: var(--cmco-blue-ink, #001a36);
+      font-family: var(--cmco-font-display, "Bricolage Grotesque", sans-serif);
+      font-size: 1.8rem;
+      letter-spacing: 0;
+      line-height: 1.2;
+    }
+
+    .compass-detail p {
+      color: var(--cmco-slate, #3d5166);
+      font-size: 1.3rem;
+      line-height: 1.5;
+    }
+
+    .compass-detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
     }
 
     .compass-table-scroll {
@@ -524,6 +581,12 @@
       padding: 0 1.2rem;
     }
 
+    .compass-action:hover,
+    .compass-action:focus-visible {
+      box-shadow: 0 0 0 3px rgb(0 82 155 / 18%);
+      outline: none;
+    }
+
     .compass-action.primary {
       background: var(--cmco-orange, #f08a1c);
       border-color: var(--cmco-orange, #f08a1c);
@@ -533,6 +596,14 @@
     .compass-action.secondary {
       background: var(--cmco-white, #fff);
       color: var(--cmco-blue, #00529b);
+    }
+
+    .compass-empty {
+      color: var(--cmco-slate-mid, #5c7189);
+      font-size: 1.4rem;
+      line-height: 1.5;
+      padding: 2rem;
+      text-align: center;
     }
 
     @media (max-width: 980px) {
@@ -589,13 +660,13 @@
           <p class="compass-eyebrow">Configuration workspace</p>
           <h1 id="compass-title" class="compass-title">Compass</h1>
           <p class="compass-intro">
-            A dummy product configuration view for browsing CMCO families, checking draft
+            Product configuration view for browsing CMCO families, checking draft
             configuration status, and preparing visual quote-ready assemblies.
           </p>
         </div>
         <aside class="compass-summary" aria-label="Compass summary">
-          <strong>42</strong>
-          <span>Dummy products visible</span>
+          <strong>8</strong>
+          <span>Products visible</span>
         </aside>
       </section>
 
@@ -606,9 +677,9 @@
             <path d="m20 20-3.5-3.5"></path>
           </svg>
           <span class="sr-only">Search configured products</span>
-          <input type="search" placeholder="Search product, SKU, family, or application" value="">
+          <input id="compass-search-input" type="search" placeholder="Search product, SKU, family, or application" value="">
         </label>
-        <p class="compass-count"><b>12</b> featured rows shown from dummy catalog</p>
+        <p class="compass-count" aria-live="polite"><b>8</b> products shown</p>
       </section>
 
       <section class="compass-layout" aria-label="Compass product filters and table">
@@ -621,38 +692,38 @@
           <div class="compass-filter-group">
             <h3>Product family</h3>
             <div class="compass-filter-list">
-              <label class="compass-filter-option"><span><input type="checkbox" checked> Hoists</span><em>14</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox" checked> Rigging attachments</span><em>8</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Utility products</span><em>7</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Legacy literature</span><em>5</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" checked data-filter-group="family" value="Hoists"> Hoists</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" checked data-filter-group="family" value="Rigging attachments"> Rigging attachments</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="family" value="Utility products"> Utility products</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="family" value="Legacy literature"> Legacy literature</span><em>0</em></label>
             </div>
           </div>
 
           <div class="compass-filter-group">
             <h3>Brand</h3>
             <div class="compass-filter-list">
-              <label class="compass-filter-option"><span><input type="checkbox" checked> CM</span><em>11</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Coffing</span><em>6</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Yale</span><em>9</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Budgit</span><em>4</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" checked data-filter-group="brand" value="CM"> CM</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="brand" value="Coffing"> Coffing</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="brand" value="Yale"> Yale</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="brand" value="Budgit"> Budgit</span><em>0</em></label>
             </div>
           </div>
 
           <div class="compass-filter-group">
             <h3>Availability</h3>
             <div class="compass-filter-list">
-              <label class="compass-filter-option"><span><input type="checkbox" checked> In stock</span><em>18</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Build to order</span><em>12</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Quote required</span><em>9</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" checked data-filter-group="availability" value="In stock"> In stock</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="availability" value="Build to order"> Build to order</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="availability" value="Quote required"> Quote required</span><em>0</em></label>
             </div>
           </div>
 
           <div class="compass-filter-group">
             <h3>Application</h3>
             <div class="compass-filter-list">
-              <label class="compass-filter-option"><span><input type="checkbox"> Manufacturing</span><em>16</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Utilities</span><em>6</em></label>
-              <label class="compass-filter-option"><span><input type="checkbox"> Forestry</span><em>5</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="application" value="Manufacturing"> Manufacturing</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="application" value="Utilities"> Utilities</span><em>0</em></label>
+              <label class="compass-filter-option"><span><input type="checkbox" data-filter-group="application" value="Forestry"> Forestry</span><em>0</em></label>
             </div>
           </div>
         </aside>
@@ -664,11 +735,11 @@
               <h2 id="compass-products-title">Product assemblies</h2>
             </div>
             <div class="compass-chip-row" aria-label="Selected filters">
-              <span class="compass-chip">CM</span>
-              <span class="compass-chip">Hoists</span>
-              <span class="compass-chip">In stock</span>
+              <button class="compass-chip" type="button" hidden>All products</button>
             </div>
           </div>
+
+          <div class="compass-detail" hidden aria-live="polite"></div>
 
           <div class="compass-table-scroll">
             <table class="compass-table">
@@ -772,6 +843,260 @@
       </section>
     </div>
   </main>
+  <script nonce="aem">
+    (() => {
+      const productMeta = {
+        'CM-LVS-2T-20': {
+          family: ['Hoists'],
+          brand: ['CM'],
+          application: ['Manufacturing'],
+          detail: 'Recommended for variable-speed production lifting with pendant controls and trolley travel.',
+        },
+        'CM-H360-1T-15': {
+          family: ['Hoists'],
+          brand: ['CM'],
+          application: ['Manufacturing', 'Utilities'],
+          detail: 'Best fit for maintenance cells where low headroom and 360-degree hand-chain access matter.',
+        },
+        'COF-JLC-500-10': {
+          family: ['Hoists'],
+          brand: ['Coffing'],
+          application: ['Manufacturing'],
+          detail: 'Compact electric hoist assembly for workstation lifting and repeat light-duty cycles.',
+        },
+        'YA-CK-3T-KIT': {
+          family: ['Utility products'],
+          brand: ['Yale'],
+          application: ['Utilities'],
+          detail: 'Utility puller bundle staged for field crews that need hooks, spare pins, and a carry case.',
+        },
+        'CM-BAN-1500-10': {
+          family: ['Hoists'],
+          brand: ['CM'],
+          application: ['Manufacturing', 'Utilities'],
+          detail: 'Portable lever hoist package for field service, rigging, and repair crews.',
+        },
+        'CM-RIG-ATT-12': {
+          family: ['Rigging attachments'],
+          brand: ['CM'],
+          application: ['Manufacturing'],
+          detail: 'Starter collection of shackles, hooks, and beam clamp accessories for common rigging setups.',
+        },
+        'CM-FOR-CHK-78': {
+          family: ['Rigging attachments'],
+          brand: ['CM'],
+          application: ['Forestry'],
+          detail: 'Heavy-duty chain assembly configured for forestry dragging, bundling, and lift support.',
+        },
+        'CM-LIT-LEGACY': {
+          family: ['Legacy literature'],
+          brand: ['CM'],
+          application: ['Manufacturing', 'Utilities'],
+          detail: 'Digital manuals and diagrams for archived equipment support and replacement-part lookup.',
+        },
+      };
+
+      const page = document.querySelector('.compass-page');
+      const table = page?.querySelector('.compass-table');
+      const rows = Array.from(table?.querySelectorAll('tbody tr') || []);
+      const searchInput = page?.querySelector('#compass-search-input');
+      const checkboxes = Array.from(page?.querySelectorAll('.compass-filter-option input[type="checkbox"]') || []);
+      const resetButton = page?.querySelector('.compass-reset');
+      const countLabel = page?.querySelector('.compass-count');
+      const summaryNumber = page?.querySelector('.compass-summary strong');
+      const chipRow = page?.querySelector('.compass-chip-row');
+      const detailPanel = page?.querySelector('.compass-detail');
+
+      if (!page || !table || !searchInput || !countLabel || !summaryNumber || !chipRow || !detailPanel) {
+        return;
+      }
+
+      const normalize = (value) => value.trim().toLowerCase();
+      const getCellText = (row, index) => row.cells[index]?.textContent.trim() || '';
+      const getProductName = (row) => row.querySelector('.compass-product strong')?.textContent.trim() || '';
+      const getProductDescription = (row) => row.querySelector('.compass-product span')?.textContent.trim() || '';
+      const getSku = (row) => row.querySelector('.compass-sku')?.textContent.trim() || '';
+      const getActiveFilters = () => checkboxes.reduce((filters, checkbox) => {
+        if (checkbox.checked) {
+          const group = checkbox.dataset.filterGroup;
+          filters[group] = filters[group] || [];
+          filters[group].push(checkbox.value);
+        }
+        return filters;
+      }, {});
+
+      const rowData = rows.map((row) => {
+        const sku = getSku(row);
+        const meta = productMeta[sku] || {};
+        const availability = getCellText(row, 5);
+        const record = {
+          row,
+          sku,
+          name: getProductName(row),
+          description: getProductDescription(row),
+          familyLabel: getCellText(row, 2),
+          rating: getCellText(row, 3),
+          status: getCellText(row, 4),
+          availability,
+          price: getCellText(row, 6),
+          filters: {
+            family: meta.family || [],
+            brand: meta.brand || [],
+            availability: availability === 'Available' ? ['Quote required'] : [availability],
+            application: meta.application || [],
+          },
+          detail: meta.detail || getProductDescription(row),
+        };
+
+        row.dataset.searchText = normalize([
+          record.name,
+          record.description,
+          record.sku,
+          record.familyLabel,
+          record.rating,
+          record.status,
+          record.availability,
+          record.price,
+          Object.values(record.filters).flat().join(' '),
+        ].join(' '));
+
+        row.querySelectorAll('.compass-action').forEach((button) => {
+          button.dataset.sku = sku;
+          button.setAttribute('aria-label', `${button.textContent.trim()} ${record.name}`);
+        });
+
+        return record;
+      });
+
+      const emptyRow = document.createElement('tr');
+      emptyRow.hidden = true;
+      emptyRow.innerHTML = '<td colspan="8"><div class="compass-empty">No product assemblies match the current search and filters.</div></td>';
+      table.tBodies[0].append(emptyRow);
+
+      const matchesFilters = (record, filters) => Object.entries(filters).every(([group, selected]) => {
+        const values = record.filters[group] || [];
+        return selected.length === 0 || selected.some((value) => values.includes(value));
+      });
+
+      const updateFilterCounts = () => {
+        checkboxes.forEach((checkbox) => {
+          const count = rowData.filter((record) => (record.filters[checkbox.dataset.filterGroup] || []).includes(checkbox.value)).length;
+          const countNode = checkbox.closest('.compass-filter-option')?.querySelector('em');
+          if (countNode) countNode.textContent = count;
+        });
+      };
+
+      const renderChips = (filters) => {
+        chipRow.replaceChildren();
+        const selected = Object.entries(filters).flatMap(([group, values]) => values.map((value) => ({ group, value })));
+
+        if (selected.length === 0) {
+          const chip = document.createElement('button');
+          chip.className = 'compass-chip';
+          chip.type = 'button';
+          chip.textContent = 'All products';
+          chip.disabled = true;
+          chipRow.append(chip);
+          return;
+        }
+
+        selected.forEach(({ group, value }) => {
+          const chip = document.createElement('button');
+          chip.className = 'compass-chip';
+          chip.type = 'button';
+          chip.textContent = `${value} x`;
+          chip.setAttribute('aria-label', `Remove ${value} filter`);
+          chip.addEventListener('click', () => {
+            const checkbox = checkboxes.find((item) => item.dataset.filterGroup === group && item.value === value);
+            if (checkbox) {
+              checkbox.checked = false;
+              applyFilters();
+            }
+          });
+          chipRow.append(chip);
+        });
+      };
+
+      const setDetail = (record, mode) => {
+        detailPanel.hidden = false;
+        detailPanel.innerHTML = `
+          <h3>${mode === 'quote' ? 'Quote prepared for' : 'Viewing'} ${record.name}</h3>
+          <p><strong>${record.sku}</strong> - ${record.familyLabel} - ${record.rating} - ${record.availability} - ${record.price}</p>
+          <p>${mode === 'quote' ? 'This assembly has been marked for quote follow-up.' : record.detail}</p>
+          <div class="compass-detail-actions">
+            <button class="compass-action secondary" type="button" data-detail-action="clear">Close</button>
+            <button class="compass-action primary" type="button" data-detail-action="quote" data-sku="${record.sku}">Prepare quote</button>
+          </div>
+        `;
+        detailPanel.querySelector('[data-detail-action="clear"]')?.addEventListener('click', () => {
+          detailPanel.hidden = true;
+          detailPanel.replaceChildren();
+        });
+        detailPanel.querySelector('[data-detail-action="quote"]')?.addEventListener('click', () => markQuoted(record));
+      };
+
+      const markQuoted = (record) => {
+        const status = record.row.querySelector('.compass-status');
+        const quoteButton = record.row.querySelector('.compass-action.primary');
+        if (status) {
+          status.className = 'compass-status quote';
+          status.textContent = 'Quote Ready';
+        }
+        if (quoteButton) {
+          quoteButton.textContent = 'Quoted';
+          quoteButton.setAttribute('aria-label', `Quote prepared for ${record.name}`);
+        }
+        record.status = 'Quote Ready';
+        setDetail(record, 'quote');
+      };
+
+      function applyFilters() {
+        const query = normalize(searchInput.value);
+        const filters = getActiveFilters();
+        let visibleCount = 0;
+
+        rowData.forEach((record) => {
+          const matchesSearch = !query || record.row.dataset.searchText.includes(query);
+          const isVisible = matchesSearch && matchesFilters(record, filters);
+          record.row.hidden = !isVisible;
+          if (isVisible) visibleCount += 1;
+        });
+
+        emptyRow.hidden = visibleCount !== 0;
+        countLabel.innerHTML = `<b>${visibleCount}</b> ${visibleCount === 1 ? 'product' : 'products'} shown`;
+        summaryNumber.textContent = visibleCount;
+        renderChips(filters);
+      }
+
+      searchInput.addEventListener('input', applyFilters);
+      checkboxes.forEach((checkbox) => checkbox.addEventListener('change', applyFilters));
+      resetButton?.addEventListener('click', () => {
+        searchInput.value = '';
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+        detailPanel.hidden = true;
+        detailPanel.replaceChildren();
+        applyFilters();
+        searchInput.focus();
+      });
+
+      page.addEventListener('click', (event) => {
+        const button = event.target.closest('.compass-action');
+        if (!button || !button.dataset.sku) return;
+        const record = rowData.find((item) => item.sku === button.dataset.sku);
+        if (!record) return;
+        if (button.classList.contains('primary')) {
+          markQuoted(record);
+        } else {
+          setDetail(record, 'view');
+        }
+      });
+
+      updateFilterCounts();
+      applyFilters();
+    })();
+  </script>
   <footer></footer>
 </body>
 

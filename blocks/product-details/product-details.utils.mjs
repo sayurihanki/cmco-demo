@@ -4,6 +4,7 @@ export const PRODUCT_DETAILS_PRESENTATIONS = Object.freeze({
 });
 
 export const PRODUCT_DETAILS_DEFAULT_SVG_LABEL = 'Technical view';
+export const PRODUCT_DETAILS_DEFAULT_CONFIG_TABLE_FAMILY = 'cm-anchor-shackles';
 
 export function normalizeProductDetailsPresentation(value = '') {
   const normalized = String(value || '').trim().toLowerCase();
@@ -39,10 +40,20 @@ export function normalizeProductDetailsSvgLabel(value = '') {
   return String(value || '').trim() || PRODUCT_DETAILS_DEFAULT_SVG_LABEL;
 }
 
+export function normalizeProductDetailsBooleanFlag(value = '') {
+  return String(value || '').trim().toLowerCase() === 'true';
+}
+
+export function normalizeProductDetailsConfigTableFamily(value = '') {
+  return String(value || '').trim().toLowerCase() || PRODUCT_DETAILS_DEFAULT_CONFIG_TABLE_FAMILY;
+}
+
 export function normalizeProductDetailsConfig(config = {}) {
   return {
     presentation: normalizeProductDetailsPresentation(config.presentation),
     svgUrl: normalizeProductDetailsSvgUrl(config['svg-url']),
     svgLabel: normalizeProductDetailsSvgLabel(config['svg-label']),
+    configTableEnabled: normalizeProductDetailsBooleanFlag(config['config-table-enabled']),
+    configTableFamily: normalizeProductDetailsConfigTableFamily(config['config-table-family']),
   };
 }

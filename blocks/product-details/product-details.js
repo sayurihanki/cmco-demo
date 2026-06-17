@@ -5,6 +5,7 @@ import { h } from '@dropins/tools/preact.js';
 import { events } from '@dropins/tools/event-bus.js';
 import { tryRenderAemAssetsImage } from '@dropins/tools/lib/aem/assets.js';
 import * as pdpApi from '@dropins/storefront-pdp/api.js';
+import * as cartApi from '@dropins/storefront-cart/api.js';
 import { render as pdpRendered } from '@dropins/storefront-pdp/render.js';
 import { render as wishlistRender } from '@dropins/storefront-wishlist/render.js';
 import { render as quickOrderProvider } from '@dropins/storefront-quick-order/render.js';
@@ -50,6 +51,13 @@ import {
   shouldActivateConfigurator,
   shouldActivateImmersivePresentation,
 } from './product-details.utils.mjs';
+import { getProductDetailsConfigTableData } from './product-details.config-table-data.mjs';
+import {
+  PRODUCT_DETAILS_CONFIG_TABLE_PAGE_SIZE,
+  applyProductDetailsConfigTableState,
+  getProductDetailsConfigTableFilterOptions,
+  normalizeProductDetailsConfigTableQuantity,
+} from './product-details.config-table-utils.mjs';
 /* eslint-enable import/extensions */
 
 /**
@@ -245,10 +253,395 @@ function hasRenderedContent(element) {
 const PDP_SECTION_IDS = Object.freeze({
   OVERVIEW: 'pdp-overview',
   PURCHASE: 'pdp-purchase-controls',
+  CONFIG_TABLE: 'pdp-config-table',
   FEATURES: 'pdp-features',
   SPECIFICATIONS: 'pdp-specifications',
   RELATED: 'pdp-related',
 });
+
+const CONFIG_TABLE_COLUMNS = Object.freeze([
+  { key: 'id', label: 'Long Item #', sortable: true },
+  { key: 'desc', label: 'Description', sortable: true },
+  {
+    key: 'wll', label: 'WLL (lbs)', sortable: true, align: 'right',
+  },
+  { key: 'size', label: 'Size (in)', sortable: true },
+  { key: 'pin', label: 'Pin Type', sortable: true },
+  { key: 'finish', label: 'Finish', sortable: true },
+  { key: 'qty', label: 'Qty. in Stock', align: 'right' },
+  { key: 'lt', label: 'Lead Time', align: 'center' },
+  {
+    key: 'price', label: 'List Price', sortable: true, align: 'right',
+  },
+  { key: 'actions', label: 'Actions', align: 'right' },
+]);
+
+function createElement(tag, className = '', attrs = {}) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+
+  Object.entries(attrs).forEach(([name, value]) => {
+    if (value === undefined || value === null || value === '') return;
+    element.setAttribute(name, value);
+  });
+
+  return element;
+}
+
+function formatConfigTableMoney(amount, currency = 'USD') {
+  return new Intl.NumberFormat(document.documentElement.lang || 'en-US', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+function formatConfigTableNumber(value) {
+  return new Intl.NumberFormat(document.documentElement.lang || 'en-US').format(value);
+}
+
+function getConfigTableFinishModifier(finish = '') {
+  const normalized = finish.toLowerCase();
+
+  if (normalized.includes('galvanized')) return 'galvanized';
+  if (normalized.includes('orange')) return 'orange';
+  return 'self';
+}
+
+function getConfigTableLeadTimeModifier(days = 0) {
+  if (days <= 5) return 'fast';
+  if (days <= 14) return 'mid';
+  return 'slow';
+}
+
+function getConfigTableStockModifier(quantity) {
+  if (!quantity) return 'none';
+  if (quantity < 10) return 'low';
+  return 'in';
+}
+
+function appendConfigTableCell(rowElement, content, { align = '', className = '' } = {}) {
+  const cell = document.createElement('td');
+  if (align) cell.classList.add(`product-details__config-table-cell--${align}`);
+  if (className) cell.classList.add(className);
+
+  if (content instanceof Node) {
+    cell.append(content);
+  } else {
+    cell.textContent = content;
+  }
+
+  rowElement.append(cell);
+  return cell;
+}
+
+function createConfigTableSelect(label, values, formatValue, onChange) {
+  const field = createElement('label', 'product-details__config-table-field');
+  const labelText = createElement('span', 'product-details__config-table-field-label');
+  labelText.textContent = label;
+
+  const select = createElement('select', 'product-details__config-table-select');
+  select.append(new Option('All', ''));
+  values.forEach((value) => {
+    select.append(new Option(formatValue(value), String(value)));
+  });
+
+  select.addEventListener('change', () => onChange(select.value));
+  field.append(labelText, select);
+
+  return field;
+}
+
+function createConfigTableStatus() {
+  const status = createElement('div', 'product-details__config-table-status', {
+    role: 'status',
+    'aria-live': 'polite',
+    hidden: true,
+  });
+
+  let timeoutId = null;
+
+  return {
+    element: status,
+    show(message, type = 'success') {
+      clearTimeout(timeoutId);
+      status.textContent = message;
+      status.hidden = false;
+      status.dataset.status = type;
+
+      timeoutId = window.setTimeout(() => {
+        status.hidden = true;
+      }, 4200);
+    },
+  };
+}
+
+function createConfigTableSortButton(column, state, onSort) {
+  const button = createElement('button', 'product-details__config-table-sort');
+  button.type = 'button';
+  button.textContent = column.label;
+  button.dataset.sortKey = column.key;
+  button.addEventListener('click', () => {
+    onSort({
+      key: column.key,
+      direction: state.sort.key === column.key && state.sort.direction === 'asc'
+        ? 'desc'
+        : 'asc',
+    });
+  });
+
+  return button;
+}
+
+function syncConfigTableSortHeaders(table, state) {
+  table.querySelectorAll('.product-details__config-table-sort').forEach((button) => {
+    const isActive = button.dataset.sortKey === state.sort.key;
+    button.dataset.direction = isActive ? state.sort.direction : '';
+    button.setAttribute('aria-sort', isActive ? state.sort.direction : 'none');
+  });
+}
+
+function renderProductDetailsConfigTable(container, tableData) {
+  if (!container || !tableData?.rows?.length) return;
+
+  const { rows } = tableData;
+  const filterOptions = getProductDetailsConfigTableFilterOptions(rows);
+  const status = createConfigTableStatus();
+  const state = {
+    filters: {},
+    page: 1,
+    pageSize: PRODUCT_DETAILS_CONFIG_TABLE_PAGE_SIZE,
+    quantities: {},
+    selectedId: '',
+    sort: { key: '', direction: 'asc' },
+  };
+
+  const intro = createElement('div', 'product-details__config-table-intro');
+  const copy = createElement('div', 'product-details__config-table-copy');
+  const eyebrow = createElement('p', 'product-details__section-kicker');
+  eyebrow.textContent = tableData.eyebrow || 'Config table';
+  const title = createElement('h2', 'product-details__section-heading');
+  title.textContent = tableData.title || 'Configuration table';
+  const description = createElement('p', 'product-details__config-table-description');
+  description.textContent = tableData.description || '';
+  copy.append(eyebrow, title, description);
+
+  const count = createElement('div', 'product-details__config-table-count');
+  intro.append(copy, count);
+
+  const controls = createElement('div', 'product-details__config-table-controls');
+  const searchField = createElement('label', 'product-details__config-table-search');
+  const searchLabel = createElement('span', 'product-details__config-table-field-label');
+  searchLabel.textContent = 'Search';
+  const searchInput = createElement('input', 'product-details__config-table-input', {
+    type: 'search',
+    placeholder: 'Search item or description',
+  });
+  searchInput.addEventListener('input', () => {
+    state.filters.query = searchInput.value;
+    state.page = 1;
+    render();
+  });
+  searchField.append(searchLabel, searchInput);
+
+  controls.append(
+    searchField,
+    createConfigTableSelect('Description', filterOptions.desc, String, (value) => {
+      state.filters.desc = value;
+      state.page = 1;
+      render();
+    }),
+    createConfigTableSelect('WLL', filterOptions.wll, formatConfigTableNumber, (value) => {
+      state.filters.wll = value;
+      state.page = 1;
+      render();
+    }),
+    createConfigTableSelect('Size', filterOptions.size, String, (value) => {
+      state.filters.size = value;
+      state.page = 1;
+      render();
+    }),
+    createConfigTableSelect('Pin Type', filterOptions.pin, String, (value) => {
+      state.filters.pin = value;
+      state.page = 1;
+      render();
+    }),
+    createConfigTableSelect('Finish', filterOptions.finish, String, (value) => {
+      state.filters.finish = value;
+      state.page = 1;
+      render();
+    }),
+  );
+
+  const tableShell = createElement('div', 'product-details__config-table-card');
+  const tableWrap = createElement('div', 'product-details__config-table-wrap');
+  const table = createElement('table', 'product-details__config-table-table');
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+  const tbody = document.createElement('tbody');
+  const pagination = createElement('div', 'product-details__config-table-pagination');
+
+  CONFIG_TABLE_COLUMNS.forEach((column) => {
+    const header = document.createElement('th');
+    header.scope = 'col';
+    if (column.align) header.classList.add(`product-details__config-table-cell--${column.align}`);
+
+    if (column.sortable) {
+      header.append(createConfigTableSortButton(column, state, (nextSort) => {
+        state.sort = nextSort;
+        state.page = 1;
+        render();
+      }));
+    } else {
+      header.textContent = column.label;
+    }
+
+    headerRow.append(header);
+  });
+
+  thead.append(headerRow);
+  table.append(thead, tbody);
+  tableWrap.append(table);
+  tableShell.append(tableWrap, pagination);
+  container.replaceChildren(intro, status.element, controls, tableShell);
+
+  function renderPagination(tableState) {
+    pagination.replaceChildren();
+
+    if (tableState.totalItems === 0) {
+      pagination.hidden = true;
+      return;
+    }
+
+    pagination.hidden = false;
+
+    const pageInfo = createElement('span', 'product-details__config-table-page-info');
+    pageInfo.textContent = `Showing ${tableState.startIndex}-${tableState.endIndex} of ${tableState.totalItems}`;
+
+    const controlsWrapper = createElement('div', 'product-details__config-table-page-controls');
+    [
+      ['First', 1, tableState.currentPage === 1],
+      ['Previous', tableState.currentPage - 1, tableState.currentPage === 1],
+      ['Next', tableState.currentPage + 1, tableState.currentPage === tableState.totalPages],
+      ['Last', tableState.totalPages, tableState.currentPage === tableState.totalPages],
+    ].forEach(([label, page, disabled]) => {
+      const button = createElement('button', 'product-details__config-table-page-button');
+      button.type = 'button';
+      button.textContent = label;
+      button.disabled = disabled;
+      button.addEventListener('click', () => {
+        state.page = page;
+        render();
+      });
+      controlsWrapper.append(button);
+    });
+
+    pagination.append(pageInfo, controlsWrapper);
+  }
+
+  function renderRows(tableState) {
+    tbody.replaceChildren();
+
+    if (tableState.rows.length === 0) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = CONFIG_TABLE_COLUMNS.length;
+      cell.className = 'product-details__config-table-empty';
+      cell.textContent = 'No items match the current filters.';
+      row.append(cell);
+      tbody.append(row);
+      return;
+    }
+
+    tableState.rows.forEach((row) => {
+      const tr = document.createElement('tr');
+      tr.classList.toggle('is-selected', state.selectedId === row.id);
+      tr.addEventListener('click', () => {
+        state.selectedId = state.selectedId === row.id ? '' : row.id;
+        render();
+      });
+
+      const item = createElement('span', 'product-details__config-table-item');
+      item.textContent = row.id;
+      appendConfigTableCell(tr, item);
+      appendConfigTableCell(tr, row.desc);
+      appendConfigTableCell(tr, `${formatConfigTableNumber(row.wll)} lbs`, { align: 'right' });
+      appendConfigTableCell(tr, `${row.size}"`);
+      appendConfigTableCell(tr, row.pin);
+
+      const finish = createElement(
+        'span',
+        `product-details__config-table-badge product-details__config-table-badge--${getConfigTableFinishModifier(row.finish)}`,
+      );
+      finish.textContent = row.finish === 'Orange Powder Coated' ? 'Orange P.C.' : row.finish;
+      appendConfigTableCell(tr, finish);
+
+      const stock = createElement(
+        'span',
+        `product-details__config-table-stock product-details__config-table-stock--${getConfigTableStockModifier(row.qty)}`,
+      );
+      stock.textContent = row.qty ? String(row.qty) : '-';
+      appendConfigTableCell(tr, stock, { align: 'right' });
+
+      const leadTime = createElement(
+        'span',
+        `product-details__config-table-lead product-details__config-table-lead--${getConfigTableLeadTimeModifier(row.lt)}`,
+      );
+      leadTime.textContent = `${row.lt}d`;
+      appendConfigTableCell(tr, leadTime, { align: 'center' });
+
+      appendConfigTableCell(tr, formatConfigTableMoney(row.price), { align: 'right' });
+
+      const actions = createElement('div', 'product-details__config-table-actions');
+      const quantity = createElement('input', 'product-details__config-table-quantity', {
+        type: 'number',
+        min: '1',
+        value: String(state.quantities[row.id] || 1),
+        'aria-label': `Quantity for ${row.id}`,
+      });
+      quantity.addEventListener('click', (event) => event.stopPropagation());
+      quantity.addEventListener('change', () => {
+        state.quantities[row.id] = normalizeProductDetailsConfigTableQuantity(quantity.value);
+        quantity.value = String(state.quantities[row.id]);
+      });
+
+      const add = createElement('button', 'product-details__config-table-add');
+      add.type = 'button';
+      add.textContent = 'Add';
+      add.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        add.disabled = true;
+        add.textContent = 'Adding';
+
+        try {
+          const selectedQuantity = normalizeProductDetailsConfigTableQuantity(quantity.value);
+          state.quantities[row.id] = selectedQuantity;
+          await cartApi.addProductsToCart([{ sku: row.id, quantity: selectedQuantity }]);
+          status.show(`${row.id} added to cart.`);
+        } catch (error) {
+          status.show(error?.message || `Unable to add ${row.id}.`, 'error');
+        } finally {
+          add.disabled = false;
+          add.textContent = 'Add';
+        }
+      });
+
+      actions.append(quantity, add);
+      appendConfigTableCell(tr, actions, { align: 'right' });
+      tbody.append(tr);
+    });
+  }
+
+  function render() {
+    const tableState = applyProductDetailsConfigTableState(rows, state);
+    count.textContent = `${formatConfigTableNumber(tableState.totalItems)} item${tableState.totalItems === 1 ? '' : 's'}`;
+    syncConfigTableSortHeaders(table, state);
+    renderRows(tableState);
+    renderPagination(tableState);
+  }
+
+  render();
+}
 
 function normalizeText(value = '') {
   return String(value || '').replace(/\s+/g, ' ').trim();
@@ -582,10 +975,12 @@ export default async function decorate(block) {
     </div>
     <nav class="product-details__tabs" aria-label="Product detail sections">
       <a class="product-details__tab-link is-active" href="#${PDP_SECTION_IDS.OVERVIEW}" data-target="${PDP_SECTION_IDS.OVERVIEW}" aria-current="true">Overview</a>
+      ${config.configTableEnabled ? `<a class="product-details__tab-link" href="#${PDP_SECTION_IDS.CONFIG_TABLE}" data-target="${PDP_SECTION_IDS.CONFIG_TABLE}" aria-current="false">Config table</a>` : ''}
       <a class="product-details__tab-link" href="#${PDP_SECTION_IDS.FEATURES}" data-target="${PDP_SECTION_IDS.FEATURES}" aria-current="false">Features</a>
       <a class="product-details__tab-link" href="#${PDP_SECTION_IDS.SPECIFICATIONS}" data-target="${PDP_SECTION_IDS.SPECIFICATIONS}" aria-current="false">Specifications</a>
       <a class="product-details__tab-link" href="#${PDP_SECTION_IDS.RELATED}" data-target="${PDP_SECTION_IDS.RELATED}" aria-current="false">Related</a>
     </nav>
+    ${config.configTableEnabled ? `<section class="product-details__config-table" id="${PDP_SECTION_IDS.CONFIG_TABLE}"></section>` : ''}
     <section class="product-details__feature-section" id="${PDP_SECTION_IDS.FEATURES}">
       <div class="product-details__section-intro">
         <p class="product-details__section-kicker">Product features</p>
@@ -633,6 +1028,7 @@ export default async function decorate(block) {
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
   const $gridOrderingContainer = fragment.querySelector('.product-details__grid-ordering');
+  const $configTable = fragment.querySelector('.product-details__config-table');
   const $featureSection = fragment.querySelector('.product-details__feature-section');
   const $featureGrid = fragment.querySelector('.product-details__feature-pillars');
   const $specificationsSection = fragment.querySelector('.product-details__specifications-section');
@@ -657,8 +1053,16 @@ export default async function decorate(block) {
     'product-details--presentation-auto-immersive',
     config.presentation === PRODUCT_DETAILS_PRESENTATIONS.AUTO_IMMERSIVE,
   );
+  block.classList.toggle('product-details--config-table-enabled', config.configTableEnabled);
   block.dataset.presentation = config.presentation;
   block.dataset.mediaView = 'photos';
+
+  if (config.configTableEnabled) {
+    renderProductDetailsConfigTable(
+      $configTable,
+      getProductDetailsConfigTableData(config.configTableFamily),
+    );
+  }
 
   const mediaState = {
     currentView: 'photos',

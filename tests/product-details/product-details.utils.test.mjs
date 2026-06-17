@@ -6,6 +6,7 @@ import {
   PRODUCT_DETAILS_DEFAULT_SVG_LABEL,
   PRODUCT_DETAILS_PRESENTATIONS,
   normalizeProductDetailsConfig,
+  normalizeProductDetailsConfigTableFamily,
   normalizeProductDetailsPresentation,
   normalizeProductDetailsSvgLabel,
   normalizeProductDetailsSvgUrl,
@@ -78,6 +79,28 @@ test('normalizeProductDetailsConfig returns normalized presentation and SVG meta
       presentation: PRODUCT_DETAILS_PRESENTATIONS.AUTO_IMMERSIVE,
       svgUrl: '/media/rack.svg',
       svgLabel: 'Rack section',
+      configTableEnabled: false,
+      configTableFamily: 'cm-anchor-shackles',
     },
   );
+});
+
+test('normalizeProductDetailsConfig returns config table settings', () => {
+  assert.deepEqual(
+    normalizeProductDetailsConfig({
+      'config-table-enabled': 'TRUE',
+      'config-table-family': ' cm-anchor-shackles ',
+    }),
+    {
+      presentation: PRODUCT_DETAILS_PRESENTATIONS.DEFAULT,
+      svgUrl: '',
+      svgLabel: 'Technical view',
+      configTableEnabled: true,
+      configTableFamily: 'cm-anchor-shackles',
+    },
+  );
+});
+
+test('normalizeProductDetailsConfigTableFamily falls back to anchor shackles', () => {
+  assert.equal(normalizeProductDetailsConfigTableFamily('  '), 'cm-anchor-shackles');
 });
