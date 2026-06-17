@@ -191,6 +191,117 @@ const CMCO_FEAT_PANEL_HTML = `
   </div>
 </div>`;
 
+const SITE_SWITCHER_ENVIRONMENTS = [
+  {
+    id: 'cmco-demo',
+    label: 'Columbus McKinnon',
+    host: 'main--cmco-demo--sayurihanki.aem.live',
+  },
+  {
+    id: 'jenhankib2bbodea',
+    label: 'B2B Bodea',
+    host: 'main--jenhankib2bbodea--sayurihanki.aem.live',
+  },
+  {
+    id: 'jenhankib2bapple',
+    label: 'B2B Apple',
+    host: 'main--jenhankib2bapple--sayurihanki.aem.live',
+  },
+];
+
+function getCurrentSiteEnvironment() {
+  const { hostname } = window.location;
+  return SITE_SWITCHER_ENVIRONMENTS.find(({ id, host }) => (
+    hostname === host || hostname.includes(`--${id}--`)
+  )) || SITE_SWITCHER_ENVIRONMENTS[0];
+}
+
+function buildSiteUrl(host) {
+  const url = new URL(`https://${host}`);
+  url.pathname = window.location.pathname;
+  url.search = window.location.search;
+  url.hash = window.location.hash;
+  return url.href;
+}
+
+function renderSiteSwitcher(navBrand) {
+  const currentEnvironment = getCurrentSiteEnvironment();
+  const switcher = document.createElement('div');
+  const buttonId = 'site-switcher-button';
+  const menuId = 'site-switcher-menu';
+
+  switcher.className = 'site-switcher';
+  switcher.innerHTML = `<button
+      type="button"
+      id="${buttonId}"
+      class="site-switcher-button"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-controls="${menuId}"
+    >
+      <span class="site-switcher-current">${currentEnvironment.label}</span>
+      <span class="site-switcher-caret" aria-hidden="true"></span>
+    </button>
+    <div id="${menuId}" class="site-switcher-menu" role="menu" aria-labelledby="${buttonId}"></div>`;
+
+  const button = switcher.querySelector('.site-switcher-button');
+  const menu = switcher.querySelector('.site-switcher-menu');
+
+  SITE_SWITCHER_ENVIRONMENTS.forEach((environment) => {
+    const option = document.createElement('a');
+    const isCurrent = environment.id === currentEnvironment.id;
+
+    option.className = 'site-switcher-option';
+    option.href = buildSiteUrl(environment.host);
+    option.role = 'menuitem';
+    option.textContent = environment.label;
+
+    if (isCurrent) {
+      option.classList.add('site-switcher-option--current');
+      option.setAttribute('aria-current', 'page');
+      option.addEventListener('click', (event) => {
+        event.preventDefault();
+        closeSiteSwitcher();
+      });
+    }
+
+    menu.append(option);
+  });
+
+  function closeSiteSwitcher() {
+    switcher.classList.remove('site-switcher--open');
+    button.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleSiteSwitcher(forceOpen) {
+    const open = forceOpen ?? !switcher.classList.contains('site-switcher--open');
+    switcher.classList.toggle('site-switcher--open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  button.addEventListener('click', (event) => {
+    event.stopPropagation();
+    toggleSiteSwitcher();
+  });
+
+  switcher.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
+
+  window.addEventListener('keydown', (event) => {
+    if (event.code === 'Escape' && switcher.classList.contains('site-switcher--open')) {
+      closeSiteSwitcher();
+      button.focus();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!switcher.contains(event.target)) closeSiteSwitcher();
+  });
+
+  navBrand.append(switcher);
+}
+
 /**
  * Sets up the submenu for a nav section.
  * Mobile: back header + title + plain ul.
@@ -332,6 +443,7 @@ export default async function decorate(block) {
       <span class="cmco-logo-tagline">Intelligent Motion</span>
     </div>`;
   }
+  renderSiteSwitcher(navBrand);
 
   // Shared timer — cancelled on mouseenter, fires close on mouseout
   let closeMenuTimer;

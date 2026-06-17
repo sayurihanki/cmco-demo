@@ -42,7 +42,7 @@
   transition: color 0.2s;
 }
 
-.cmco-topbar a:hover {
+.cmco-topbar :where(a:hover) {
   color: #fff;
 }
 
@@ -63,7 +63,7 @@
   border-radius: 50%;
   background: #4ae47a;
   flex-shrink: 0;
-  animation: cmcoTickerPulse 2s ease-in-out infinite;
+  animation: cmco-ticker-pulse 2s ease-in-out infinite;
 }
 
 /* ── CMCO Logo mark ─────────────────────────────────────────────────── */
@@ -85,7 +85,7 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(120deg, transparent 35%, rgb(255 255 255 / 18%) 50%, transparent 65%);
-  animation: cmcoLogoShimmer 5s ease-in-out 1.5s infinite;
+  animation: cmco-logo-shimmer 5s ease-in-out 1.5s infinite;
   pointer-events: none;
 }
 
@@ -394,11 +394,15 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 
 /* brand */
 header nav .nav-brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   min-width: 128px;
+  position: relative;
 }
 
-header nav .nav-brand a {
-  grid-area: brand;
+header nav .nav-brand .default-content-wrapper :where(a) {
   flex-basis: 128px;
   font: var(--type-headline-1-font);
   letter-spacing: var(--type-headline-1-letter-spacing);
@@ -415,6 +419,110 @@ li.nav-drop img {
 header nav .nav-brand img {
   width: 128px;
   height: auto;
+}
+
+header nav .site-switcher {
+  position: relative;
+  z-index: 110;
+}
+
+header nav .site-switcher-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #1d3329;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 12px;
+  min-height: 42px;
+  max-width: min(46vw, 260px);
+  padding: 6px 10px;
+}
+
+header nav .site-switcher-button:hover,
+header nav .site-switcher-button:focus-visible {
+  color: #146b42;
+}
+
+header nav .site-switcher-button:focus-visible {
+  outline: 2px solid #2ba66b;
+  outline-offset: 4px;
+}
+
+header nav .site-switcher-current {
+  display: block;
+  font: var(--type-headline-1-font);
+  letter-spacing: var(--type-headline-1-letter-spacing);
+  font-weight: 700;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+header nav .site-switcher-caret {
+  border-color: currentcolor;
+  border-style: solid;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  flex: 0 0 auto;
+  height: 9px;
+  margin-block-start: -4px;
+  transform: rotate(45deg);
+  transition: transform 0.18s ease;
+  width: 9px;
+}
+
+header nav .site-switcher--open .site-switcher-caret {
+  margin-block-start: 4px;
+  transform: rotate(225deg);
+}
+
+header nav .site-switcher-menu {
+  background: #fbfaf7;
+  border: 1px solid rgb(22 66 42 / 20%);
+  border-radius: 20px;
+  box-shadow: 0 18px 42px -24px rgb(0 0 0 / 55%), 0 8px 22px -14px rgb(7 49 30 / 38%);
+  display: none;
+  left: 50%;
+  min-width: 260px;
+  padding: 14px 10px;
+  position: absolute;
+  top: calc(100% + 8px);
+  transform: translateX(-50%);
+}
+
+header nav .site-switcher--open .site-switcher-menu {
+  display: grid;
+  gap: 6px;
+}
+
+header nav .site-switcher-option {
+  border-radius: 999px;
+  color: #25a563;
+  display: block;
+  font: var(--type-headline-1-font);
+  letter-spacing: var(--type-headline-1-letter-spacing);
+  line-height: 1;
+  padding: 16px 24px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+header nav .site-switcher-option:hover,
+header nav .site-switcher-option:focus-visible {
+  background: rgb(255 255 255 / 78%);
+  color: #176f45;
+}
+
+header nav .site-switcher-option:focus-visible {
+  outline: 2px solid #2ba66b;
+  outline-offset: 2px;
+}
+
+header nav .site-switcher-option--current {
+  background: #fff;
+  color: #1f7f4e;
 }
 
 /* sections */
@@ -473,7 +581,6 @@ header nav .nav-sections ul>li:empty {
     z-index: 50;
     background: rgb(255 255 255 / 88%);
     backdrop-filter: saturate(200%) blur(22px);
-    backdrop-filter: saturate(200%) blur(22px);
     border-bottom: 1px solid rgb(196 215 238 / 55%);
     transition: box-shadow 0.3s;
   }
@@ -502,7 +609,7 @@ header nav .nav-sections ul>li:empty {
     flex-shrink: 0;
   }
 
-  header nav .nav-brand a {
+  header nav .nav-brand .default-content-wrapper :where(a) {
     display: flex;
     align-items: center;
     gap: 13px;
@@ -510,7 +617,7 @@ header nav .nav-sections ul>li:empty {
     font-size: 0;
   }
 
-  header nav .nav-brand a:hover {
+  header nav .nav-brand .default-content-wrapper :where(a:hover) {
     text-decoration: none;
   }
 
@@ -610,10 +717,6 @@ header nav .nav-sections ul>li:empty {
     flex-shrink: 0;
     height: 10px;
     width: 10px;
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3.5l3 3 3-3'/%3E%3C/svg%3E");
-    mask-position: center;
-    mask-repeat: no-repeat;
-    mask-size: contain;
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3.5l3 3 3-3'/%3E%3C/svg%3E");
     mask-position: center;
     mask-repeat: no-repeat;
@@ -817,7 +920,7 @@ header nav .nav-sections ul>li:empty {
 
   /* Staggered row reveal */
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] .cmco-cat-row {
-    animation: cmcoNavItemIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: cmco-nav-item-in 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] .cmco-cat-row:nth-child(1) { animation-delay: 20ms; }
@@ -1298,7 +1401,7 @@ header .nav-search-input .search_autocomplete .popover-container {
 }
 
 /* ── CMCO nav keyframes ─────────────────────────────────────────────── */
-@keyframes cmcoNavItemIn {
+@keyframes cmco-nav-item-in {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -1310,13 +1413,31 @@ header .nav-search-input .search_autocomplete .popover-container {
   }
 }
 
-@keyframes cmcoTickerPulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; transform: scale(1.3); }
+@keyframes cmco-ticker-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
 }
 
-@keyframes cmcoLogoShimmer {
-  0% { transform: translateX(-100%); opacity: 0; }
-  40% { opacity: 1; }
-  55%, 100% { transform: translateX(120%); opacity: 0; }
+@keyframes cmco-logo-shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  55%,
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
 }

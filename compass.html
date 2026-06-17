@@ -406,6 +406,242 @@
       gap: 0.8rem;
     }
 
+    .compass-config-table {
+      background: var(--cmco-white, #fff);
+      border-bottom: 1px solid var(--cmco-line, #dde6f0);
+      display: grid;
+      gap: 1.4rem;
+      padding: 1.6rem 2rem 2rem;
+    }
+
+    .compass-config-table[hidden] {
+      display: none;
+    }
+
+    .compass-config-head {
+      align-items: end;
+      display: flex;
+      gap: 1.6rem;
+      justify-content: space-between;
+    }
+
+    .compass-config-head h3,
+    .compass-config-head p {
+      margin: 0;
+    }
+
+    .compass-config-head h3 {
+      color: var(--cmco-blue-ink, #001a36);
+      font-family: var(--cmco-font-display, "Bricolage Grotesque", sans-serif);
+      font-size: 2.2rem;
+      letter-spacing: 0;
+      line-height: 1.1;
+    }
+
+    .compass-config-head p {
+      color: var(--cmco-slate, #3d5166);
+      font-size: 1.4rem;
+      line-height: 1.55;
+      margin-top: 0.6rem;
+      max-width: 72rem;
+    }
+
+    .compass-config-count {
+      background: var(--cmco-blue-mist, #f2f7fd);
+      border: 1px solid var(--cmco-blue-line, #c4d7ee);
+      border-radius: 999px;
+      color: var(--cmco-blue, #00529b);
+      flex: none;
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.8rem 1.2rem;
+      text-transform: uppercase;
+    }
+
+    .compass-config-controls {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    }
+
+    .compass-config-field {
+      display: grid;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .compass-config-field.search {
+      grid-column: span 2;
+    }
+
+    .compass-config-field span {
+      color: var(--cmco-slate-mid, #5c7189);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .compass-config-input,
+    .compass-config-select,
+    .compass-config-qty {
+      background: var(--cmco-white, #fff);
+      border: 1px solid var(--cmco-line, #dde6f0);
+      border-radius: 0.7rem;
+      color: var(--cmco-ink, #0b0f18);
+      font: inherit;
+      min-height: 3.6rem;
+      min-width: 0;
+      padding: 0.7rem 0.9rem;
+      width: 100%;
+    }
+
+    .compass-config-scroll {
+      overflow-x: auto;
+    }
+
+    .compass-config-grid {
+      border-collapse: collapse;
+      min-width: 98rem;
+      width: 100%;
+    }
+
+    .compass-config-grid th,
+    .compass-config-grid td {
+      border-bottom: 1px solid var(--cmco-line, #dde6f0);
+      padding: 1rem 1.1rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .compass-config-grid th {
+      background: var(--cmco-blue-ink, #001a36);
+      color: rgb(196 215 238 / 86%);
+      font-family: var(--cmco-font-mono, "JetBrains Mono", monospace);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .compass-config-grid tbody tr {
+      cursor: pointer;
+    }
+
+    .compass-config-grid tbody tr:hover,
+    .compass-config-grid tbody tr.selected {
+      background: var(--cmco-blue-mist, #f2f7fd);
+    }
+
+    .compass-config-sort {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      font: inherit;
+      letter-spacing: inherit;
+      padding: 0;
+      text-transform: inherit;
+    }
+
+    .compass-config-sort[data-direction="asc"]::after {
+      color: var(--cmco-orange, #f08a1c);
+      content: " ↑";
+    }
+
+    .compass-config-sort[data-direction="desc"]::after {
+      color: var(--cmco-orange, #f08a1c);
+      content: " ↓";
+    }
+
+    .compass-config-right {
+      text-align: right;
+    }
+
+    .compass-config-center {
+      text-align: center;
+    }
+
+    .compass-config-item {
+      color: var(--cmco-blue, #00529b);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .compass-config-badge,
+    .compass-config-stock,
+    .compass-config-lead {
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 1.1rem;
+      font-weight: 800;
+      justify-content: center;
+      line-height: 1;
+      min-width: 2.6rem;
+      padding: 0.55rem 0.8rem;
+    }
+
+    .compass-config-badge.galvanized {
+      background: #eef3f8;
+      color: #468;
+    }
+
+    .compass-config-badge.orange,
+    .compass-config-stock.low,
+    .compass-config-lead.mid {
+      background: var(--cmco-orange-soft, #fff3e0);
+      color: var(--cmco-orange, #f08a1c);
+    }
+
+    .compass-config-badge.self {
+      background: var(--cmco-blue-mist, #f2f7fd);
+      color: var(--cmco-slate, #3d5166);
+    }
+
+    .compass-config-stock.in,
+    .compass-config-lead.fast {
+      background: #ebfbf3;
+      color: #0f7a58;
+    }
+
+    .compass-config-stock.none,
+    .compass-config-lead.slow {
+      background: #f6f8fb;
+      color: var(--cmco-slate-light, #8ba3b8);
+    }
+
+    .compass-config-actions {
+      align-items: center;
+      display: inline-grid;
+      gap: 0.8rem;
+      grid-template-columns: 6rem auto;
+    }
+
+    .compass-config-qty {
+      min-height: 3.2rem;
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    .compass-config-add {
+      background: var(--cmco-orange, #f08a1c);
+      border: 0;
+      border-radius: 0.7rem;
+      color: var(--cmco-white, #fff);
+      cursor: pointer;
+      font-weight: 800;
+      min-height: 3.2rem;
+      padding: 0.7rem 1.1rem;
+    }
+
+    .compass-config-message {
+      color: var(--cmco-blue, #00529b);
+      font-weight: 700;
+      min-height: 1.8rem;
+    }
+
     .compass-table-scroll {
       overflow-x: auto;
       width: 100%;
@@ -740,6 +976,24 @@
           </div>
 
           <div class="compass-detail" hidden aria-live="polite"></div>
+          <section class="compass-config-table" hidden aria-labelledby="compass-config-title">
+            <div class="compass-config-head">
+              <div>
+                <p class="compass-section-label">Configuration table</p>
+                <h3 id="compass-config-title">CM Anchor Shackles</h3>
+                <p>Select shackle variants by working load limit, size, pin type, finish, stock, and lead time.</p>
+              </div>
+              <span class="compass-config-count">0 items</span>
+            </div>
+            <div class="compass-config-message" aria-live="polite"></div>
+            <div class="compass-config-controls" aria-label="CM Anchor Shackles filters"></div>
+            <div class="compass-config-scroll">
+              <table class="compass-config-grid">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
 
           <div class="compass-table-scroll">
             <table class="compass-table">
@@ -896,6 +1150,46 @@
         },
       };
 
+      const anchorShackleRows = [
+        { id: 'M345G', desc: 'Super Strong Anchor Shackle', wll: 1000, size: '3/16', pin: 'Round Pin', finish: 'Galvanized', qty: null, lt: 11, price: 14.34 },
+        { id: 'M346', desc: 'Super Strong Anchor Shackle', wll: 1500, size: '1/4', pin: 'Round Pin', finish: 'Self Colored', qty: null, lt: 11, price: 14.02 },
+        { id: 'M346G', desc: 'Super Strong Anchor Shackle', wll: 1500, size: '1/4', pin: 'Round Pin', finish: 'Galvanized', qty: 14, lt: 3, price: 13.54 },
+        { id: 'M346P', desc: 'Super Strong Anchor Shackle', wll: 1500, size: '1/4', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: null, lt: 11, price: 13.21 },
+        { id: 'M347', desc: 'Super Strong Anchor Shackle', wll: 2000, size: '5/16', pin: 'Round Pin', finish: 'Self Colored', qty: null, lt: 41, price: 21.55 },
+        { id: 'M347G', desc: 'Super Strong Anchor Shackle', wll: 2000, size: '5/16', pin: 'Round Pin', finish: 'Galvanized', qty: null, lt: 11, price: 19.38 },
+        { id: 'M347P', desc: 'Super Strong Anchor Shackle', wll: 2000, size: '5/16', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: 142, lt: 3, price: 18.87 },
+        { id: 'M348G', desc: 'Super Strong Anchor Shackle', wll: 3000, size: '3/8', pin: 'Round Pin', finish: 'Galvanized', qty: 7, lt: 3, price: 17.22 },
+        { id: 'M348P', desc: 'Super Strong Anchor Shackle', wll: 3000, size: '3/8', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: 193, lt: 3, price: 19.94 },
+        { id: 'M349', desc: 'Super Strong Anchor Shackle', wll: 4000, size: '7/16', pin: 'Round Pin', finish: 'Self Colored', qty: null, lt: 56, price: 17.39 },
+        { id: 'M349G', desc: 'Super Strong Anchor Shackle', wll: 4000, size: '7/16', pin: 'Round Pin', finish: 'Galvanized', qty: 19, lt: 3, price: 19.03 },
+        { id: 'M349P', desc: 'Super Strong Anchor Shackle', wll: 4000, size: '7/16', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: 92, lt: 3, price: 19.31 },
+        { id: 'M350', desc: 'Super Strong Anchor Shackle', wll: 6000, size: '1/2', pin: 'Round Pin', finish: 'Self Colored', qty: null, lt: 11, price: 20.93 },
+        { id: 'M350G', desc: 'Super Strong Anchor Shackle', wll: 6000, size: '1/2', pin: 'Round Pin', finish: 'Galvanized', qty: 44, lt: 3, price: 22.41 },
+        { id: 'M350P', desc: 'Super Strong Anchor Shackle', wll: 6000, size: '1/2', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: null, lt: 11, price: 21.88 },
+        { id: 'M322', desc: 'Super Strong Anchor Shackle', wll: 8500, size: '5/8', pin: 'Round Pin', finish: 'Self Colored', qty: 8, lt: 3, price: 28.14 },
+        { id: 'M322G', desc: 'Super Strong Anchor Shackle', wll: 8500, size: '5/8', pin: 'Round Pin', finish: 'Galvanized', qty: null, lt: 11, price: 30.62 },
+        { id: 'M322P', desc: 'Super Strong Anchor Shackle', wll: 8500, size: '5/8', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: 67, lt: 3, price: 31.14 },
+        { id: 'M323', desc: 'Super Strong Anchor Shackle', wll: 9500, size: '3/4', pin: 'Round Pin', finish: 'Self Colored', qty: null, lt: 11, price: 38.21 },
+        { id: 'M323G', desc: 'Super Strong Anchor Shackle', wll: 9500, size: '3/4', pin: 'Round Pin', finish: 'Galvanized', qty: 22, lt: 3, price: 41.58 },
+        { id: 'M323P', desc: 'Super Strong Anchor Shackle', wll: 9500, size: '3/4', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: null, lt: 11, price: 42.14 },
+        { id: 'M324', desc: 'Super Strong Anchor Shackle', wll: 13500, size: '7/8', pin: 'Round Pin', finish: 'Self Colored', qty: null, lt: 11, price: 52.87 },
+        { id: 'M324G', desc: 'Super Strong Anchor Shackle', wll: 13500, size: '7/8', pin: 'Round Pin', finish: 'Galvanized', qty: 5, lt: 3, price: 57.44 },
+        { id: 'M324P', desc: 'Super Strong Anchor Shackle', wll: 13500, size: '7/8', pin: 'Round Pin', finish: 'Orange Powder Coated', qty: 31, lt: 3, price: 59.12 },
+      ];
+
+      const configColumns = [
+        ['id', 'Long Item #'],
+        ['desc', 'Description'],
+        ['wll', 'WLL (lbs)', 'right'],
+        ['size', 'Size (in)'],
+        ['pin', 'Pin Type'],
+        ['finish', 'Finish'],
+        ['qty', 'Qty. in Stock', 'right', false],
+        ['lt', 'Lead Time', 'center', false],
+        ['price', 'List Price', 'right'],
+        ['actions', 'Actions', 'right', false],
+      ];
+
       const page = document.querySelector('.compass-page');
       const table = page?.querySelector('.compass-table');
       const rows = Array.from(table?.querySelectorAll('tbody tr') || []);
@@ -906,8 +1200,13 @@
       const summaryNumber = page?.querySelector('.compass-summary strong');
       const chipRow = page?.querySelector('.compass-chip-row');
       const detailPanel = page?.querySelector('.compass-detail');
+      const configTablePanel = page?.querySelector('.compass-config-table');
+      const configControls = page?.querySelector('.compass-config-controls');
+      const configTable = page?.querySelector('.compass-config-grid');
+      const configCount = page?.querySelector('.compass-config-count');
+      const configMessage = page?.querySelector('.compass-config-message');
 
-      if (!page || !table || !searchInput || !countLabel || !summaryNumber || !chipRow || !detailPanel) {
+      if (!page || !table || !searchInput || !countLabel || !summaryNumber || !chipRow || !detailPanel || !configTablePanel || !configControls || !configTable || !configCount || !configMessage) {
         return;
       }
 
@@ -1017,8 +1316,190 @@
         });
       };
 
+      const money = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      const number = (value) => new Intl.NumberFormat('en-US').format(value);
+      const unique = (key) => [...new Set(anchorShackleRows.map((row) => row[key]))]
+        .filter((value) => value !== null && value !== undefined)
+        .sort((a, b) => (typeof a === 'number' ? a - b : String(a).localeCompare(String(b))));
+
+      const configState = {
+        filters: {},
+        selectedId: '',
+        sortKey: '',
+        sortDirection: 'asc',
+      };
+
+      const getFinishClass = (finish) => {
+        if (finish === 'Galvanized') return 'galvanized';
+        if (finish === 'Orange Powder Coated') return 'orange';
+        return 'self';
+      };
+
+      const getStockClass = (qty) => {
+        if (!qty) return 'none';
+        return qty < 10 ? 'low' : 'in';
+      };
+
+      const getLeadClass = (days) => {
+        if (days <= 5) return 'fast';
+        if (days <= 14) return 'mid';
+        return 'slow';
+      };
+
+      const renderConfigControls = () => {
+        const makeSelect = (key, label, formatter = String) => {
+          const field = document.createElement('label');
+          field.className = 'compass-config-field';
+          field.innerHTML = `<span>${label}</span>`;
+          const select = document.createElement('select');
+          select.className = 'compass-config-select';
+          select.innerHTML = '<option value="">All</option>';
+          unique(key).forEach((value) => {
+            const option = document.createElement('option');
+            option.value = String(value);
+            option.textContent = formatter(value);
+            select.append(option);
+          });
+          select.addEventListener('change', () => {
+            configState.filters[key] = select.value;
+            renderConfigTable();
+          });
+          field.append(select);
+          return field;
+        };
+
+        const search = document.createElement('label');
+        search.className = 'compass-config-field search';
+        search.innerHTML = '<span>Search</span><input class="compass-config-input" type="search" placeholder="Search item or description">';
+        search.querySelector('input').addEventListener('input', (event) => {
+          configState.filters.query = event.target.value;
+          renderConfigTable();
+        });
+
+        configControls.replaceChildren(
+          search,
+          makeSelect('desc', 'Description'),
+          makeSelect('wll', 'WLL', number),
+          makeSelect('size', 'Size'),
+          makeSelect('pin', 'Pin Type'),
+          makeSelect('finish', 'Finish'),
+        );
+      };
+
+      const getFilteredConfigRows = () => {
+        const query = normalize(configState.filters.query || '');
+        return anchorShackleRows.filter((row) => {
+          if (query && !normalize(`${row.id} ${row.desc}`).includes(query)) return false;
+          if (configState.filters.desc && row.desc !== configState.filters.desc) return false;
+          if (configState.filters.wll && String(row.wll) !== configState.filters.wll) return false;
+          if (configState.filters.size && row.size !== configState.filters.size) return false;
+          if (configState.filters.pin && row.pin !== configState.filters.pin) return false;
+          if (configState.filters.finish && row.finish !== configState.filters.finish) return false;
+          return true;
+        });
+      };
+
+      const getSortedConfigRows = () => {
+        const rowsToSort = getFilteredConfigRows();
+        const { sortKey, sortDirection } = configState;
+        if (!sortKey) return rowsToSort;
+        const direction = sortDirection === 'desc' ? -1 : 1;
+        return [...rowsToSort].sort((a, b) => {
+          const av = a[sortKey];
+          const bv = b[sortKey];
+          if (typeof av === 'number') return (av - bv) * direction;
+          return String(av || '').localeCompare(String(bv || '')) * direction;
+        });
+      };
+
+      const renderConfigHeader = () => {
+        const headerRow = document.createElement('tr');
+        configColumns.forEach(([key, label, align, sortable = true]) => {
+          const th = document.createElement('th');
+          if (align) th.className = `compass-config-${align}`;
+          if (sortable) {
+            const button = document.createElement('button');
+            button.className = 'compass-config-sort';
+            button.type = 'button';
+            button.textContent = label;
+            button.dataset.direction = configState.sortKey === key ? configState.sortDirection : '';
+            button.addEventListener('click', () => {
+              configState.sortDirection = configState.sortKey === key && configState.sortDirection === 'asc' ? 'desc' : 'asc';
+              configState.sortKey = key;
+              renderConfigTable();
+            });
+            th.append(button);
+          } else {
+            th.textContent = label;
+          }
+          headerRow.append(th);
+        });
+        configTable.tHead.replaceChildren(headerRow);
+      };
+
+      const renderConfigTable = () => {
+        const rowsToRender = getSortedConfigRows();
+        configCount.textContent = `${rowsToRender.length} item${rowsToRender.length === 1 ? '' : 's'}`;
+        configMessage.textContent = '';
+        renderConfigHeader();
+
+        if (rowsToRender.length === 0) {
+          const empty = document.createElement('tr');
+          empty.innerHTML = '<td colspan="10"><div class="compass-empty">No shackle variants match the current filters.</div></td>';
+          configTable.tBodies[0].replaceChildren(empty);
+          return;
+        }
+
+        configTable.tBodies[0].replaceChildren(...rowsToRender.map((row) => {
+          const tr = document.createElement('tr');
+          tr.className = configState.selectedId === row.id ? 'selected' : '';
+          tr.addEventListener('click', () => {
+            configState.selectedId = configState.selectedId === row.id ? '' : row.id;
+            renderConfigTable();
+          });
+          const finishLabel = row.finish === 'Orange Powder Coated' ? 'Orange P.C.' : row.finish;
+          tr.innerHTML = `
+            <td><span class="compass-config-item">${row.id}</span></td>
+            <td>${row.desc}</td>
+            <td class="compass-config-right">${number(row.wll)} lbs</td>
+            <td>${row.size}"</td>
+            <td>${row.pin}</td>
+            <td><span class="compass-config-badge ${getFinishClass(row.finish)}">${finishLabel}</span></td>
+            <td class="compass-config-right"><span class="compass-config-stock ${getStockClass(row.qty)}">${row.qty || '-'}</span></td>
+            <td class="compass-config-center"><span class="compass-config-lead ${getLeadClass(row.lt)}">${row.lt}d</span></td>
+            <td class="compass-config-right">${money(row.price)}</td>
+            <td class="compass-config-right"><span class="compass-config-actions"><input class="compass-config-qty" type="number" min="1" value="1" aria-label="Quantity for ${row.id}"><button class="compass-config-add" type="button">Add</button></span></td>
+          `;
+          tr.querySelector('.compass-config-qty').addEventListener('click', (event) => event.stopPropagation());
+          tr.querySelector('.compass-config-add').addEventListener('click', (event) => {
+            event.stopPropagation();
+            const qty = Math.max(1, Math.floor(Number(tr.querySelector('.compass-config-qty').value) || 1));
+            tr.querySelector('.compass-config-qty').value = qty;
+            configMessage.textContent = `${row.id} quantity ${qty} added to the active quote.`;
+          });
+          return tr;
+        }));
+      };
+
+      const showConfigTable = () => {
+        configTablePanel.hidden = false;
+        renderConfigControls();
+        renderConfigTable();
+        configTablePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      const hideConfigTable = () => {
+        configTablePanel.hidden = true;
+        configMessage.textContent = '';
+      };
+
       const setDetail = (record, mode) => {
         detailPanel.hidden = false;
+        if (record.sku === 'CM-RIG-ATT-12' && mode !== 'quote') {
+          showConfigTable();
+        } else {
+          hideConfigTable();
+        }
         detailPanel.innerHTML = `
           <h3>${mode === 'quote' ? 'Quote prepared for' : 'Viewing'} ${record.name}</h3>
           <p><strong>${record.sku}</strong> - ${record.familyLabel} - ${record.rating} - ${record.availability} - ${record.price}</p>
@@ -1077,6 +1558,7 @@
         });
         detailPanel.hidden = true;
         detailPanel.replaceChildren();
+        hideConfigTable();
         applyFilters();
         searchInput.focus();
       });
