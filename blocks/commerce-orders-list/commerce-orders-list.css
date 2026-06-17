@@ -1,1 +1,56 @@
-/* stylelint-disable no-empty-source */
+body.my-account .commerce-orders-list-wrapper {
+    width: 100%;
+}
+
+body.my-account .commerce-orders-list .account-orders-list-header {
+    margin-bottom: var(--spacing-small);
+}
+
+body.my-account .commerce-orders-list .account-empty-list,
+body.my-account .commerce-orders-list .account-orders-list-card,
+body.my-account .commerce-orders-list .account-orders-list-action--minifiedView {
+    border: 1px solid var(--glass-border-subtle);
+    border-radius: calc(var(--shape-border-radius-2) + 2px);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur-xs) var(--glass-saturate);
+    box-shadow: 0 6px 18px rgb(0 40 100 / 7%);
+    overflow: hidden;
+}
+
+body.my-account .commerce-orders-list .account-empty-list {
+    margin-bottom: var(--spacing-small);
+}
+
+body.my-account .commerce-orders-list .account-empty-list .dropin-card,
+body.my-account .commerce-orders-list .account-orders-list-card .dropin-card {
+    border: 0;
+    background: transparent;
+}
+
+body.my-account .commerce-orders-list .account-orders-list-action--minifiedView .dropin-card__content {
+    min-height: 88px;
+    padding: var(--spacing-small) var(--spacing-medium);
+}
+
+body.my-account .commerce-orders-list .account-empty-list.account-empty-list--minified .dropin-card__content {
+    min-height: 88px;
+    padding: var(--spacing-small) var(--spacing-medium);
+}
+
+body.my-account .commerce-orders-list .account-orders-list-action--minifiedView {
+    transition:
+        box-shadow var(--transition-fast) var(--ease-out),
+        transform var(--transition-fast) var(--ease-out);
+}
+
+body.my-account .commerce-orders-list .account-orders-list-action--minifiedView:hover,
+body.my-account .commerce-orders-list .account-orders-list-action--minifiedView:focus-visible {
+    box-shadow: 0 10px 22px rgb(0 40 100 / 11%);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+body.my-account .commerce-orders-list .account-orders-list-action__card-wrapper svg,
+body.my-account .commerce-orders-list .account-orders-list-action svg {
+    color: var(--cmco-blue-ink);
+}

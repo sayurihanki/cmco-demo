@@ -1,1 +1,38 @@
-/* stylelint-disable no-empty-source */
+body.my-account .commerce-customer-information-wrapper {
+    width: 100%;
+}
+
+body.my-account .commerce-customer-information .customer-information__title {
+    margin-bottom: var(--spacing-small);
+}
+
+body.my-account .commerce-customer-information .account-customer-information-card {
+    border: 1px solid var(--glass-border-subtle);
+    border-radius: calc(var(--shape-border-radius-2) + 2px);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur-xs) var(--glass-saturate);
+    box-shadow: 0 6px 18px rgb(0 40 100 / 7%);
+    overflow: hidden;
+}
+
+body.my-account .commerce-customer-information .account-customer-information-card .dropin-card__content {
+    padding: var(--spacing-medium);
+}
+
+body.my-account .commerce-customer-information .account-customer-information-card__wrapper {
+    gap: var(--spacing-small);
+}
+
+body.my-account .commerce-customer-information .account-customer-information-card__actions {
+    color: var(--cmco-blue-ink);
+}
+
+body.my-account .commerce-customer-information .account-customer-information-card__actions button {
+    color: var(--cmco-blue-ink);
+    font: var(--type-button-2-font);
+}
+
+body.my-account .commerce-customer-information .account-customer-information-card__actions button:hover,
+body.my-account .commerce-customer-information .account-customer-information-card__actions button:focus-visible {
+    color: var(--main-color-accent);
+}

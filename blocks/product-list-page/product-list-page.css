@@ -43,10 +43,6 @@
 
 .block.product-list-page .search__layout {
   align-items: start;
-}
-
-/* Span the legacy wrapper grid so the nested layout doesn't collapse into the sidebar track. */
-.block.product-list-page .search__layout {
   grid-column: 1 / -1;
   width: 100%;
   min-width: 0;

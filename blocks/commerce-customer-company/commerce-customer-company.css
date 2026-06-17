@@ -1,1 +1,20 @@
-/* stylelint-disable no-empty-source */
+body.my-account .commerce-customer-company-wrapper {
+    width: 100%;
+}
+
+body.my-account .commerce-customer-company .customer-company-info-card {
+    border: 1px solid rgb(0 82 155 / 18%);
+    border-radius: calc(var(--shape-border-radius-2) + 2px);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur-xs) var(--glass-saturate);
+    box-shadow: 0 6px 18px rgb(0 40 100 / 7%);
+    overflow: hidden;
+}
+
+body.my-account .commerce-customer-company .customer-company-info-card .dropin-card__content {
+    padding: var(--spacing-medium);
+}
+
+body.my-account .commerce-customer-company .customer-company-info-card__content p {
+    color: var(--cmco-blue-ink);
+}

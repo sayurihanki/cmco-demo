@@ -162,6 +162,31 @@
   --cmco-font-display: "Bricolage Grotesque", sans-serif;
   --cmco-font-body: inter, system-ui, sans-serif;
   --cmco-font-mono: "JetBrains Mono", monospace;
+
+  /* Shared commerce surface tokens, mapped to CMCO brand colors */
+  --main-color-accent: var(--cmco-blue);
+  --accent-1: var(--main-color-accent);
+  --accent-2: var(--cmco-blue-dark);
+  --accent-3: var(--cmco-orange);
+  --accent-glow: 0 102 189;
+  --accent-deep-glow: 0 82 155;
+  --accent-dark-glow: 0 40 79;
+  --secondary-glow: 240 138 28;
+  --shadow-glass: 0 12px 34px rgb(0 40 100 / 11%);
+  --shadow-glass-hover: 0 16px 42px rgb(0 40 100 / 16%);
+  --shadow-focus: 0 0 0 3px var(--color-neutral-50), 0 0 0 5px rgb(var(--accent-glow) / 42%);
+  --glass-bg: rgb(255 255 255 / 62%);
+  --glass-bg-hover: rgb(255 255 255 / 82%);
+  --glass-bg-strong: rgb(255 255 255 / 92%);
+  --glass-border: rgb(255 255 255 / 78%);
+  --glass-border-subtle: rgb(var(--accent-dark-glow) / 12%);
+  --glass-blur: blur(24px);
+  --glass-blur-sm: blur(12px);
+  --glass-blur-xs: blur(8px);
+  --glass-saturate: saturate(150%);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.2s;
+  --transition-medium: 0.4s;
 }
 
 /* fallback font */
@@ -189,6 +214,13 @@ body {
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 100%;
   -webkit-font-smoothing: antialiased;
+}
+
+body.my-account {
+  background:
+    radial-gradient(circle at 12% 8%, rgb(235 243 252 / 90%), transparent 34rem),
+    radial-gradient(circle at 86% 14%, rgb(255 243 224 / 72%), transparent 28rem),
+    linear-gradient(180deg, var(--cmco-white) 0%, var(--cmco-paper) 100%);
 }
 
 body:not(.appear) {

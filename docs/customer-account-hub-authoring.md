@@ -1,4 +1,4 @@
-# Customer Account Hub Authoring Runbook
+# Customer Account Dashboard Authoring Runbook
 
 ## Scope
 
@@ -6,30 +6,51 @@ This runbook defines the required DA composition for `/customer/account` and the
 
 ## `/customer/account` Composition
 
-Use a `body.columns` layout with this exact right-column order:
-
-1. `commerce-account-header`
-2. `commerce-account-hub`
-3. `commerce-orders-list` with `minified-view=true`
-4. `commerce-addresses` with `minified-view=true`
-
-Use this exact left-column block:
-
-1. `commerce-account-nav`
-
-Recommended `commerce-account-hub` config row values:
+Use page metadata:
 
 | key | value |
 | --- | --- |
-| `title` | `My account` |
-| `rows-limit` | `3` |
-| `show-orders` | `true` |
-| `show-addresses` | `true` |
-| `show-module-cards` | `false` |
-| `guest-cta-label` | `Sign in` |
-| `guest-cta-href` | `/customer/login` |
+| `Title` | `My Account` |
+| `Template` | `My Account, Columns` |
+| `Robots` | `noindex, nofollow` |
 
-Enable `show-module-cards=true` only when you want the deferred Tier 3 module summary calls.
+`Template=My Account, Columns` is required because it adds `body.my-account.columns`. The `columns` class activates the two-column layout, and `my-account` scopes the CMCO account-dashboard card styling.
+
+Use a two-column layout:
+
+Left column:
+
+| key | value |
+| --- | --- |
+| `Column Width` | `30%` |
+| `Gap` | `Small` |
+
+Left-column block:
+
+1. `/customer/nav` fragment
+
+Right column:
+
+| key | value |
+| --- | --- |
+| `Column Width` | `70%` |
+| `Gap` | `Big` |
+
+Right-column block order:
+
+1. `commerce-account-header`
+   - `Title` = `My account`
+2. `commerce-orders-list`
+   - `Minified view` = `true`
+3. `commerce-addresses`
+   - `Minified view` = `true`
+4. `commerce-customer-information`
+5. `commerce-customer-company`
+6. Optional purchase-order approval summary block if available in the content environment
+7. `commerce-returns-list`
+   - `Minified view` = `true`
+
+Do not add the legacy visible `commerce-account-hub` card or the literal `Hub config` / `Orders config` headings when matching the CMCO B2B account-page screenshots.
 
 ## Canonical `commerce-account-nav` Rows
 
@@ -49,6 +70,8 @@ Author nav as table rows using columns: `label`, `icon`, `permission`.
 | `Company Credit` / `View company credit history` | `credit-card` | `Magento_CompanyCredit::view` |
 | `Quotes` / `Manage negotiable quotes` | `quote` | `Magento_NegotiableQuote::all,Magento_NegotiableQuote::view_quotes` |
 | `Quote Templates` / `Manage negotiable quote templates` | `copy` | `Magento_NegotiableQuoteTemplate::all,Magento_NegotiableQuoteTemplate::view_template` |
+| `Purchase Orders` / `Manage purchase orders` | `purchase` | `Magento_PurchaseOrder::view_purchase_orders` |
+| `Approval Rules` / `Manage approval rules` | `check-with-circle` | `Magento_PurchaseOrderRule::view_approval_rules` |
 
 ## Permission Parsing Contract
 
@@ -78,6 +101,8 @@ Do not change these route contracts:
 - `/customer/negotiable-quote`
 - `/customer/negotiable-quote-template`
 - `/customer/requisition-lists`
+- `/customer/purchase-orders`
+- `/customer/approval-rules`
 
 Each module route should keep the page composition pattern:
 
@@ -87,5 +112,6 @@ Each module route should keep the page composition pattern:
 
 ## DA Execution Notes
 
-If mounted DA content access is available at delivery time, apply the composition updates directly in DA.  
-If mounted access is not available, use this runbook as the handoff artifact for content authors.
+The local repository does not currently include a tracked `/customer/account` source document. Apply the composition and metadata above in DA/AEM content before publishing.
+
+If the DA environment does not provide a `commerce-approval-rules` dashboard block, omit that optional empty dashboard block from `/customer/account`; the dedicated approval-rules page should use the existing `commerce-b2b-po-approval-rules-list` implementation.

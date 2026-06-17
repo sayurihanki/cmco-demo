@@ -1,1 +1,50 @@
-/* stylelint-disable no-empty-source */
+body.my-account .commerce-addresses-wrapper {
+    width: 100%;
+}
+
+body.my-account .commerce-addresses .account-addresses-header {
+    margin-bottom: var(--spacing-small);
+}
+
+body.my-account .commerce-addresses .account-address-card,
+body.my-account .commerce-addresses .account-actions-address {
+    border: 1px solid var(--glass-border-subtle);
+    border-radius: calc(var(--shape-border-radius-2) + 2px);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur-xs) var(--glass-saturate);
+    box-shadow: 0 6px 18px rgb(0 40 100 / 7%);
+}
+
+body.my-account .commerce-addresses .account-address-card {
+    margin-bottom: var(--spacing-small);
+    min-height: 220px;
+}
+
+body.my-account .commerce-addresses .account-address-card .dropin-card__content {
+    padding: var(--spacing-medium);
+}
+
+body.my-account .commerce-addresses .account-actions-address {
+    min-height: 88px;
+    transition:
+        box-shadow var(--transition-fast) var(--ease-out),
+        transform var(--transition-fast) var(--ease-out);
+}
+
+body.my-account .commerce-addresses .account-actions-address:hover,
+body.my-account .commerce-addresses .account-actions-address:focus-visible {
+    box-shadow: 0 10px 22px rgb(0 40 100 / 11%);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+body.my-account .commerce-addresses .account-actions-address svg {
+    color: var(--cmco-blue-ink);
+}
+
+body.my-account .commerce-addresses .account-address-card__labels .dropin-tag,
+body.my-account .commerce-addresses .account-address-card__labels span {
+    border-color: rgb(0 82 155 / 18%);
+    background: rgb(0 82 155 / 12%);
+    color: var(--cmco-blue-ink);
+}
