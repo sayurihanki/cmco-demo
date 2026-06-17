@@ -430,7 +430,7 @@ header nav .site-switcher-button {
   align-items: center;
   background: transparent;
   border: 0;
-  color: #1d3329;
+  color: var(--cmco-blue-ink, #001a36);
   cursor: pointer;
   display: inline-flex;
   gap: 12px;
@@ -441,11 +441,11 @@ header nav .site-switcher-button {
 
 header nav .site-switcher-button:hover,
 header nav .site-switcher-button:focus-visible {
-  color: #146b42;
+  color: var(--cmco-blue, #00529b);
 }
 
 header nav .site-switcher-button:focus-visible {
-  outline: 2px solid #2ba66b;
+  outline: 2px solid var(--cmco-orange, #f08a1c);
   outline-offset: 4px;
 }
 
@@ -479,10 +479,10 @@ header nav .site-switcher--open .site-switcher-caret {
 }
 
 header nav .site-switcher-menu {
-  background: #fbfaf7;
-  border: 1px solid rgb(22 66 42 / 20%);
+  background: var(--background-color, #fff);
+  border: 1px solid var(--cmco-blue-line, #c4d7ee);
   border-radius: 20px;
-  box-shadow: 0 18px 42px -24px rgb(0 0 0 / 55%), 0 8px 22px -14px rgb(7 49 30 / 38%);
+  box-shadow: 0 18px 42px -24px rgb(0 40 100 / 55%), 0 8px 22px -14px rgb(0 82 155 / 32%);
   display: none;
   left: 50%;
   min-width: 260px;
@@ -499,7 +499,7 @@ header nav .site-switcher--open .site-switcher-menu {
 
 header nav .site-switcher-option {
   border-radius: 999px;
-  color: #25a563;
+  color: var(--cmco-blue, #00529b);
   display: block;
   font: var(--type-headline-1-font);
   letter-spacing: var(--type-headline-1-letter-spacing);
@@ -511,18 +511,18 @@ header nav .site-switcher-option {
 
 header nav .site-switcher-option:hover,
 header nav .site-switcher-option:focus-visible {
-  background: rgb(255 255 255 / 78%);
-  color: #176f45;
+  background: var(--cmco-blue-mist, #f2f7fd);
+  color: var(--cmco-blue-dark, #003e78);
 }
 
 header nav .site-switcher-option:focus-visible {
-  outline: 2px solid #2ba66b;
+  outline: 2px solid var(--cmco-orange, #f08a1c);
   outline-offset: 2px;
 }
 
 header nav .site-switcher-option--current {
-  background: #fff;
-  color: #1f7f4e;
+  background: var(--cmco-blue-mist, #f2f7fd);
+  color: var(--cmco-blue-ink, #001a36);
 }
 
 /* sections */
