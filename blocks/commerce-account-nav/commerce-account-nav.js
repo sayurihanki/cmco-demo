@@ -28,15 +28,22 @@ function evaluatePermissions(permissions, keys) {
   const safePermissions = permissions && typeof permissions === 'object' ? permissions : {};
   const normalizedKeys = keys.length > 0 ? keys : ['all'];
   const hasPermissionPayload = Object.keys(safePermissions).length > 0;
+  const isAllItem = normalizedKeys.includes('all');
+  const hasGrantedPermission = normalizedKeys.some((key) => safePermissions[key] === true);
+  const disabledPermissionCount = normalizedKeys
+    .filter((key) => safePermissions[key] === false)
+    .length;
 
-  const isExplicitlyDisabled = normalizedKeys.some((key) => safePermissions[key] === false);
+  const isExplicitlyDisabled = isAllItem
+    ? safePermissions.all === false
+    : !hasGrantedPermission && disabledPermissionCount === normalizedKeys.length;
 
   const isGranted = !hasPermissionPayload
-    || normalizedKeys.includes('all')
+    || isAllItem
     || safePermissions.admin
     || safePermissions.all
-    || normalizedKeys.some((key) => safePermissions[key] === true)
-    || normalizedKeys.every((key) => safePermissions[key] !== false);
+    || hasGrantedPermission
+    || disabledPermissionCount < normalizedKeys.length;
 
   return { isGranted: Boolean(isGranted), isExplicitlyDisabled };
 }
@@ -121,6 +128,7 @@ export default async function decorate(block) {
       const $icon = template.querySelector('.commerce-account-nav__item__icon');
       const $title = template.querySelector('.commerce-account-nav__item__title');
       const $description = template.querySelector('.commerce-account-nav__item__description');
+      $icon.hidden = true;
 
       /** Content */
       const $content = $item.querySelector(`:scope > div:nth-child(${rows.label})`)?.children;
@@ -128,8 +136,9 @@ export default async function decorate(block) {
       const $descriptionContent = $content?.[1];
 
       /** Link */
-      const link = $titleContent?.querySelector('a')?.href || '#';
-      const isActive = getPathname(link) === window.location.pathname;
+      const authoredLink = $titleContent?.querySelector('a')?.href;
+      const link = authoredLink || '#';
+      const isActive = Boolean(authoredLink) && getPathname(link) === window.location.pathname;
       $link.classList.toggle('commerce-account-nav__item--active', isActive);
       $link.href = link;
 
@@ -140,6 +149,7 @@ export default async function decorate(block) {
         $link.classList.add('commerce-account-nav__item--has-icon');
         try {
           UI.render(Icon, { source: icon, size: 24 })($icon);
+          $icon.hidden = false;
         } catch {
           $link.classList.remove('commerce-account-nav__item--has-icon');
         }
