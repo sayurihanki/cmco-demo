@@ -439,14 +439,6 @@ body.my-account textarea {
   border-radius: var(--shape-border-radius-2);
 }
 
-body.my-account select:focus,
-body.my-account input:focus,
-body.my-account textarea:focus {
-  border-color: var(--main-color-accent);
-  box-shadow: 0 0 0 1px var(--main-color-accent);
-  outline: none;
-}
-
 /* links */
 a:not(.dropin-design a) {
   color: var(--color-brand-500);
@@ -559,6 +551,14 @@ button.button.secondary:focus-visible {
 
 main input:hover {
   border: var(--shape-border-width-1) solid var(--color-neutral-700);
+}
+
+body.my-account select:focus,
+body.my-account input:focus,
+body.my-account textarea:focus {
+  border-color: var(--main-color-accent);
+  box-shadow: 0 0 0 1px var(--main-color-accent);
+  outline: none;
 }
 
 main blockquote {
