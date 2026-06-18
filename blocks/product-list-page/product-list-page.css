@@ -410,7 +410,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 30rem;
+  height: 36rem;
   padding: 1rem;
   overflow: hidden;
   border-radius: var(--plp-card-radius) var(--plp-card-radius) 0 0;
@@ -439,7 +439,7 @@
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 26rem;
+  max-height: 32rem;
   object-fit: contain;
   transition: transform 0.35s ease;
 }

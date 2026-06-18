@@ -82,14 +82,18 @@
 
 .commerce-account-nav__item__title {
     color: var(--cmco-blue-ink);
-    font: var(--type-body-1-strong-font);
+    font-family: var(--cmco-font-body);
+    font-size: 1.5rem;
+    font-weight: 600;
     grid-area: title;
     line-height: 1.2;
 }
 
 .commerce-account-nav__item__description {
     color: var(--cmco-slate);
-    font: var(--type-body-2-default-font);
+    font-family: var(--cmco-font-body);
+    font-size: 1.3rem;
+    font-weight: 400;
     grid-area: description;
     line-height: 1.25;
     text-decoration: none;

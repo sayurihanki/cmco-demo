@@ -91,7 +91,9 @@
 /* Title */
 .commerce-account-sidebar .commerce-account-sidebar-item-title {
     color: var(--cmco-blue-ink);
-    font: var(--type-body-1-strong-font);
+    font-family: var(--cmco-font-body);
+    font-size: 1.5rem;
+    font-weight: 600;
     line-height: 1.2;
     margin: 0;
     border: none;
@@ -101,7 +103,9 @@
 /* Subtitle */
 .commerce-account-sidebar .commerce-account-sidebar-item-subtitle {
     color: var(--cmco-slate);
-    font: var(--type-body-2-default-font);
+    font-family: var(--cmco-font-body);
+    font-size: 1.3rem;
+    font-weight: 400;
     line-height: 1.25;
     margin: 0;
     text-decoration: none;

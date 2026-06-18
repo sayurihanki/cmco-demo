@@ -1,3 +1,16 @@
 body.columns main > .section > div.commerce-account-header-wrapper {
     margin-bottom: 0;
 }
+
+body.my-account .commerce-account-header h1,
+body.my-account .commerce-account-header .dropin-header h1 {
+    font-family: var(--cmco-font-display);
+    font-size: clamp(2.4rem, 3.2vw, 3.4rem);
+    font-variation-settings: "opsz" 48, "wght" 700;
+    color: var(--cmco-blue-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 var(--spacing-xsmall);
+    padding-bottom: var(--spacing-small);
+    border-bottom: 2px solid var(--cmco-blue-line);
+}

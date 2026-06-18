@@ -17,8 +17,12 @@
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-title {
-    font: var(--type-headline-2-strong-font);
-    letter-spacing: normal;
+    font-family: var(--cmco-font-display);
+    font-size: clamp(2rem, 2.8vw, 2.8rem);
+    font-variation-settings: "opsz" 40, "wght" 700;
+    letter-spacing: -0.02em;
+    color: var(--cmco-blue-ink);
+    line-height: 1.15;
     margin: 0;
 }
 
@@ -40,8 +44,10 @@
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-subtitle {
-    color: var(--color-neutral-700);
-    font: var(--type-body-2-default-font);
+    color: var(--cmco-slate);
+    font-family: var(--cmco-font-body);
+    font-size: 1.4rem;
+    font-weight: 400;
     margin: 0;
 }
 
@@ -62,15 +68,21 @@
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-metric-label {
-    color: var(--color-neutral-600);
-    font: var(--type-details-caption-2-font);
+    color: var(--cmco-slate-mid);
+    font-family: var(--cmco-font-body);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     margin: 0;
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-metric-value {
-    color: var(--color-neutral-900);
-    font: var(--type-headline-2-strong-font);
-    letter-spacing: normal;
+    color: var(--cmco-blue-ink);
+    font-family: var(--cmco-font-display);
+    font-size: 2.2rem;
+    font-variation-settings: "opsz" 32, "wght" 700;
+    letter-spacing: -0.02em;
     margin: 0;
 }
 
@@ -104,13 +116,17 @@
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-action-title {
-    color: var(--color-neutral-900);
-    font: var(--type-body-2-strong-font);
+    color: var(--cmco-blue-ink);
+    font-family: var(--cmco-font-body);
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-action-description {
-    color: var(--color-neutral-700);
-    font: var(--type-details-caption-2-font);
+    color: var(--cmco-slate);
+    font-family: var(--cmco-font-body);
+    font-size: 1.2rem;
+    font-weight: 400;
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-modules {
@@ -119,7 +135,11 @@
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-modules-title {
-    font: var(--type-body-1-strong-font);
+    font-family: var(--cmco-font-display);
+    font-size: 1.8rem;
+    font-variation-settings: "opsz" 24, "wght" 600;
+    color: var(--cmco-blue-ink);
+    letter-spacing: -0.01em;
     margin: 0;
 }
 
@@ -152,18 +172,24 @@
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-module-title {
-    color: var(--color-neutral-900);
-    font: var(--type-body-2-strong-font);
+    color: var(--cmco-blue-ink);
+    font-family: var(--cmco-font-body);
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-module-description {
-    color: var(--color-neutral-700);
-    font: var(--type-details-caption-2-font);
+    color: var(--cmco-slate);
+    font-family: var(--cmco-font-body);
+    font-size: 1.2rem;
+    font-weight: 400;
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-module-value {
     color: var(--main-color-accent);
-    font: var(--type-body-2-emphasized-font);
+    font-family: var(--cmco-font-display);
+    font-size: 1.4rem;
+    font-variation-settings: "opsz" 20, "wght" 600;
 }
 
 .commerce-account-hub-wrapper .commerce-account-hub-cta {

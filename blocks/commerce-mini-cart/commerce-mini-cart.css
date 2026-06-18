@@ -29,13 +29,13 @@
 /* ── Header ──────────────────────────────────────────────────────────── */
 
 .cart-cart-summary-list__heading {
-    padding: 18px 22px 14px;
+    padding: 20px 22px 16px;
     display: flex;
     align-items: center;
     gap: 10px;
     position: relative;
     overflow: hidden;
-    border-bottom: none;
+    border-bottom: 1px solid var(--cmco-line, #dde6f0);
 }
 
 /* Blueprint grid background */
@@ -285,10 +285,22 @@
     height: 14px !important;
 }
 
+/* ── Collapse empty slots (kill the dead-space gap) ─────────────────── */
+
+.cart-mini-cart__productListFooter,
+.cart-mini-cart__preCheckoutSection {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
 /* ── Footer ──────────────────────────────────────────────────────────── */
 
 .cart-mini-cart__footer {
     background: var(--cmco-white, #fff) !important;
+    border-top: 1px solid var(--cmco-line, #dde6f0) !important;
 }
 
 /* Subtotal row */

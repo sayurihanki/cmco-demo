@@ -48,3 +48,26 @@ body.my-account .commerce-addresses .account-address-card__labels span {
     background: rgb(0 82 155 / 12%);
     color: var(--cmco-blue-ink);
 }
+
+body.my-account .commerce-addresses .account-addresses-header h2,
+body.my-account .commerce-addresses .account-addresses-header h3 {
+    font-family: var(--cmco-font-display);
+    font-variation-settings: "opsz" 32, "wght" 700;
+    color: var(--cmco-blue-ink);
+    letter-spacing: -0.02em;
+}
+
+body.my-account .commerce-addresses .dropin-card__content p {
+    font-family: var(--cmco-font-body);
+    color: var(--cmco-slate);
+}
+
+body.my-account .commerce-addresses .dropin-card__content a {
+    font-family: var(--cmco-font-body);
+    font-weight: 600;
+    color: var(--main-color-accent);
+}
+
+body.my-account .commerce-addresses .dropin-card__content a:hover {
+    color: var(--cmco-blue-bright);
+}

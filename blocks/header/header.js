@@ -729,6 +729,9 @@ export default async function decorate(block) {
           },
         })(searchForm);
       });
+    } else {
+      searchResult.classList.remove('is-open');
+      searchResult.setAttribute('aria-hidden', 'true');
     }
 
     togglePanel(searchPanel, state);
