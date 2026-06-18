@@ -59,6 +59,10 @@ import {
   getProductDetailsConfigTableFilterOptions,
   normalizeProductDetailsConfigTableQuantity,
 } from './product-details.config-table-utils.mjs';
+import {
+  addConfigTableRowToCart,
+  loadConfigTableCommerceContext,
+} from './product-details.config-table-commerce.mjs';
 /* eslint-enable import/extensions */
 
 /**
@@ -411,16 +415,6 @@ function getFallbackVariantOptionUID(row = {}) {
     || '';
 }
 
-function buildMissingFallbackOptionUIDError(row = {}) {
-  const optionSku = row?.id ? ` "${row.id}"` : '';
-
-  return new Error(
-    `The selected shackle option${optionSku} is visible, but Adobe Commerce did not expose its custom-option UID. `
-    + 'Customizable-option SKUs are not standalone product SKUs. Configure commerce-core-endpoint so the PDP can load '
-    + 'the option UIDs, or add optionValueUid values to the CM Anchor Shackles fallback data before add to cart.',
-  );
-}
-
 function getFallbackVariantRows(product = {}, config = {}) {
   const hasCommerceOptions = Array.isArray(product?.options) && product.options.length > 0;
   const hasInputOptions = Array.isArray(product?.inputOptions) && product.inputOptions.length > 0;
@@ -519,10 +513,14 @@ function syncConfigTableSortHeaders(table, state) {
   });
 }
 
-function renderProductDetailsConfigTable(container, tableData) {
+function renderProductDetailsConfigTable(container, tableData, parentSku = '') {
   if (!container || !tableData?.rows?.length) return;
 
   const { rows } = tableData;
+  const normalizedParentSku = String(parentSku || '').trim();
+  const commerceContextPromise = normalizedParentSku
+    ? loadConfigTableCommerceContext(normalizedParentSku)
+    : Promise.resolve(null);
   const filterOptions = getProductDetailsConfigTableFilterOptions(rows);
   const status = createConfigTableStatus();
   const state = {
@@ -734,7 +732,14 @@ function renderProductDetailsConfigTable(container, tableData) {
         try {
           const selectedQuantity = normalizeProductDetailsConfigTableQuantity(quantity.value);
           state.quantities[row.id] = selectedQuantity;
-          await cartApi.addProductsToCart([{ sku: row.id, quantity: selectedQuantity }]);
+
+          const commerceContext = await commerceContextPromise;
+          if (commerceContext) {
+            await addConfigTableRowToCart(commerceContext, row, selectedQuantity);
+          } else {
+            await cartApi.addProductsToCart([{ sku: row.id, quantity: selectedQuantity }]);
+          }
+
           status.show(`${row.id} added to cart.`);
         } catch (error) {
           status.show(error?.message || `Unable to add ${row.id}.`, 'error');
@@ -1186,6 +1191,7 @@ export default async function decorate(block) {
     renderProductDetailsConfigTable(
       $configTable,
       getProductDetailsConfigTableData(config.configTableFamily),
+      product?.sku,
     );
   }
 
@@ -1672,16 +1678,23 @@ export default async function decorate(block) {
             }
 
             const selectedOptionUID = getFallbackVariantOptionUID(selectedRow);
-            if (!selectedOptionUID) {
-              throw buildMissingFallbackOptionUIDError(selectedRow);
+            const cartItem = {
+              sku: product.sku,
+              quantity: values.quantity || 1,
+            };
+
+            if (selectedOptionUID) {
+              cartItem.optionsUIDs = [selectedOptionUID];
+            } else {
+              console.warn(
+                'product-details: Adobe Commerce did not expose a custom-option UID for the selected shackle option. '
+                + `Adding parent SKU "${product.sku}" without selected_options.`,
+                selectedRow,
+              );
             }
 
             const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
-            await addProductsToCart([{
-              sku: product.sku,
-              quantity: values.quantity || 1,
-              optionsUIDs: [selectedOptionUID],
-            }]);
+            await addProductsToCart([cartItem]);
             return;
           }
 
