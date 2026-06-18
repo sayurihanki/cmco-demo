@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 import { addProductsToCart } from '@dropins/storefront-cart/api.js';
 import {
   fetchGraphQl,

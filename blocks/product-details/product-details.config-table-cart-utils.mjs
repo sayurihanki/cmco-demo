@@ -100,7 +100,7 @@ export function buildConfigTableCartItem(context, row, quantity = 1) {
   }
 
   return {
-    sku: row.id,
+    sku: context.parentSku,
     quantity: qty,
   };
 }
@@ -129,5 +129,5 @@ export function canBuildConfigTableCartItem(context, row) {
     return true;
   }
 
-  return context.optionMap.has(rowKey);
+  return context.optionMap.has(rowKey) || Boolean(context.parentSku);
 }

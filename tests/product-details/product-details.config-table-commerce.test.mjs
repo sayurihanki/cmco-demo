@@ -1,9 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+/* eslint-disable import/extensions */
 import {
   buildConfigTableCartItem,
   canBuildConfigTableCartItem,
 } from '../../blocks/product-details/product-details.config-table-cart-utils.mjs';
+/* eslint-enable import/extensions */
 
 test('buildConfigTableCartItem uses variant selections when available', () => {
   const context = {
@@ -41,13 +43,17 @@ test('buildConfigTableCartItem uses core option uid mapping when variants are un
   });
 });
 
-test('canBuildConfigTableCartItem requires a resolvable option mapping', () => {
+test('buildConfigTableCartItem falls back to the parent SKU when option UIDs are unavailable', () => {
   const context = {
     parentSku: 'CM Anchor Shackles',
     variantMap: new Map(),
     optionMap: new Map(),
   };
 
-  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G' }), false);
+  assert.deepEqual(buildConfigTableCartItem(context, { id: 'M345G' }, 3), {
+    sku: 'CM Anchor Shackles',
+    quantity: 3,
+  });
+  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G' }), true);
   assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G', optionValueUid: 'uid-345g' }), true);
 });
