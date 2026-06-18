@@ -377,6 +377,102 @@ function createConfigTableStatus() {
   };
 }
 
+function formatVariantOptionLabel(row) {
+  const sizeLabel = row?.size ? `${row.size}"` : row?.id || 'Variant';
+  const finishLabel = row?.finish || '';
+
+  return finishLabel ? `${sizeLabel} - ${finishLabel}` : sizeLabel;
+}
+
+function buildVariantOptionSummary(row) {
+  if (!row) {
+    return '';
+  }
+
+  const parts = [
+    row.id ? `SKU ${row.id}` : '',
+    row.wll ? `${formatConfigTableNumber(row.wll)} lbs WLL` : '',
+    row.pin || '',
+    row.finish || '',
+    Number.isFinite(row.price) ? formatConfigTableMoney(row.price) : '',
+  ].filter(Boolean);
+
+  return parts.join(' • ');
+}
+
+function getFallbackVariantRows(product = {}, config = {}) {
+  const hasCommerceOptions = Array.isArray(product?.options) && product.options.length > 0;
+  const hasInputOptions = Array.isArray(product?.inputOptions) && product.inputOptions.length > 0;
+
+  if (hasCommerceOptions || hasInputOptions) {
+    return [];
+  }
+
+  const tableData = getProductDetailsConfigTableData(config.configTableFamily);
+  return Array.isArray(tableData?.rows) ? tableData.rows : [];
+}
+
+function renderFallbackVariantSelector(container, rows = [], onChange = () => {}) {
+  if (!container) {
+    return { hasOptions: false, getSelectedRow: () => null };
+  }
+
+  container.replaceChildren();
+
+  if (!Array.isArray(rows) || rows.length === 0) {
+    container.hidden = true;
+    return { hasOptions: false, getSelectedRow: () => null };
+  }
+
+  container.hidden = false;
+
+  const wrapper = createElement('div', 'product-details__fallback-options');
+  const label = createElement('label', 'product-details__fallback-options-label', {
+    for: 'product-details-fallback-variant',
+  });
+  label.textContent = rows[0]?.desc || 'Variant';
+
+  const select = createElement('select', 'product-details__fallback-options-select', {
+    id: 'product-details-fallback-variant',
+  });
+  select.append(new Option('Select an option', ''));
+
+  rows.forEach((row) => {
+    select.append(new Option(formatVariantOptionLabel(row), row.id));
+  });
+
+  const helper = createElement('p', 'product-details__fallback-options-helper');
+  helper.textContent = 'Choose the shackle variant to add the matching SKU.';
+
+  const summary = createElement('p', 'product-details__fallback-options-summary');
+  summary.hidden = true;
+
+  const state = {
+    selectedId: '',
+  };
+
+  const sync = () => {
+    const selectedRow = rows.find((row) => row.id === state.selectedId) || null;
+    const summaryText = buildVariantOptionSummary(selectedRow);
+    summary.textContent = summaryText;
+    summary.hidden = !summaryText;
+    onChange(selectedRow);
+  };
+
+  select.addEventListener('change', () => {
+    state.selectedId = select.value;
+    sync();
+  });
+
+  wrapper.append(label, select, helper, summary);
+  container.append(wrapper);
+
+  return {
+    hasOptions: true,
+    getSelectedRow: () => rows.find((row) => row.id === state.selectedId) || null,
+  };
+}
+
 function createConfigTableSortButton(column, state, onSort) {
   const button = createElement('button', 'product-details__config-table-sort');
   button.type = 'button';
@@ -967,6 +1063,7 @@ export default async function decorate(block) {
             <div class="product-details__configuration">
               <div class="product-details__options"></div>
               <div class="product-details__input-options"></div>
+              <div class="product-details__fallback-options-shell" hidden></div>
               <div class="product-details__quantity"></div>
               <div class="product-details__buttons">
                 <div class="product-details__buttons__add-to-cart"></div>
@@ -1026,6 +1123,7 @@ export default async function decorate(block) {
   const $miniSpecs = fragment.querySelector('.product-details__mini-specs');
   const $options = fragment.querySelector('.product-details__options');
   const $inputOptions = fragment.querySelector('.product-details__input-options');
+  const $fallbackOptions = fragment.querySelector('.product-details__fallback-options-shell');
   const $quantity = fragment.querySelector('.product-details__quantity');
   const $giftCardOptions = fragment.querySelector('.product-details__gift-card-options');
   const $addToCart = fragment.querySelector('.product-details__buttons__add-to-cart');
