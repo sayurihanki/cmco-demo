@@ -153,6 +153,13 @@ function isConfigTableRowMapped(context, row) {
 }
 
 function getConfigTableMappingMessage(context, mappedCount) {
+  if (context?.parentSkuFallbackAllowed) {
+    return {
+      status: 'success',
+      text: `${mappedCount} shackle variants are ready for cart through the ${context.parentSku} Commerce SKU.`,
+    };
+  }
+
   if (mappedCount > 0) {
     return {
       status: 'success',
@@ -322,7 +329,6 @@ function initCompassPage(page) {
       });
 
       const addButton = tr.querySelector('.compass-config-add');
-      addButton.disabled = Boolean(activeCommerceContext && !isMapped);
       addButton.addEventListener('click', async (event) => {
         event.stopPropagation();
         addButton.disabled = true;
