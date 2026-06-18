@@ -41,7 +41,7 @@ export function renderAuthDropdown(navTools) {
       <div id="auth-dropin-container"></div>
       <ul class="authenticated-user-menu">
          <li><a href="${rootLink('/customer/account')}">My Account</a></li>
-          <li><button>Logout</button></li>
+          <li><button class="logoutButton">Logout</button></li>
       </ul>
     </div>
  </div>`);
@@ -64,11 +64,12 @@ export function renderAuthDropdown(navTools) {
     const show = state ?? !authDropDownPanel.classList.contains('nav-tools-panel--show');
 
     authDropDownPanel.classList.toggle('nav-tools-panel--show', show);
+    loginButton.setAttribute('aria-expanded', show ? 'true' : 'false');
     authDropDownPanel.setAttribute('role', 'dialog');
-    authDropDownPanel.setAttribute('aria-hidden', 'false');
+    authDropDownPanel.setAttribute('aria-hidden', show ? 'false' : 'true');
     authDropDownPanel.setAttribute('aria-labelledby', 'modal-title');
     authDropDownPanel.setAttribute('aria-describedby', 'modal-description');
-    authDropDownPanel.focus();
+    if (show) authDropDownPanel.focus();
   }
 
   loginButton.addEventListener('click', () => toggleDropDownAuthMenu());
@@ -97,10 +98,12 @@ export function renderAuthDropdown(navTools) {
     const getUserNameCookie = getCookie('auth_dropin_firstname');
 
     if (isAuthenticated || getUserTokenCookie) {
+      authDropDownPanel.classList.add('nav-auth-menu-panel--authenticated');
       authDropDownMenuList.style.display = 'block';
       authDropinContainer.style.display = 'none';
       loginButton.textContent = `Hi, ${getUserNameCookie}`;
     } else {
+      authDropDownPanel.classList.remove('nav-auth-menu-panel--authenticated');
       authDropDownMenuList.style.display = 'none';
       authDropinContainer.style.display = 'block';
       loginButton.innerHTML = `
