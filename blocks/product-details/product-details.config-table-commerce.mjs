@@ -68,22 +68,11 @@ export async function loadConfigTableCommerceContext(parentSku) {
     ...indexOptionValueUids(product),
     ...indexCoreOptionValueUids(coreResult?.product),
   ]);
-  const parentSkuFallbackAllowed = Boolean(
-    product?.sku
-    && product?.addToCartAllowed !== false
-    && variantMap.size === 0
-    && optionMap.size === 0
-    && (product?.__typename === 'SimpleProductView' || !product?.__typename)
-    && (!Array.isArray(product?.options) || product.options.length === 0)
-    && (!Array.isArray(product?.inputOptions) || product.inputOptions.length === 0),
-  );
-
   return {
     parentSku: normalizedSku,
     product,
     variantMap,
     optionMap,
-    parentSkuFallbackAllowed,
     coreError: coreResult?.error || null,
     coreStatus: coreResult?.status || '',
     coreMessage: coreResult?.message || '',

@@ -401,6 +401,12 @@ body.page-product-details main .section {
   font-weight: 700;
 }
 
+.product-details__fallback-options-summary[data-status="warning"] {
+  border-color: rgb(240 138 28 / 38%);
+  background: rgb(255 248 238 / 86%);
+  color: #7a3e00;
+}
+
 .product-details__input-options .pdp-input-options {
   display: grid;
   gap: 1.4rem;

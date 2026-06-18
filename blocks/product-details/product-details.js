@@ -282,6 +282,10 @@ const CONFIG_TABLE_COLUMNS = Object.freeze([
   { key: 'actions', label: 'Actions', align: 'right' },
 ]);
 
+const PRODUCT_CONFIG_TABLE_FALLBACKS = Object.freeze({
+  'cm anchor shackles': 'cm-anchor-shackles',
+});
+
 function createElement(tag, className = '', attrs = {}) {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -405,23 +409,55 @@ function getConfigTableRowKey(row = {}) {
   return String(row?.id || '').trim().toLowerCase();
 }
 
-function getBuyBoxConfigTableRows(tableData, commerceContext) {
-  if (!tableData?.rows?.length || !commerceContext) {
+function getProductConfigTableFallbackFamily(product = {}) {
+  const keys = [
+    product?.sku,
+    product?.name,
+  ]
+    .map((value) => String(value || '').trim().toLowerCase())
+    .filter(Boolean);
+
+  return keys.map((key) => PRODUCT_CONFIG_TABLE_FALLBACKS[key]).find(Boolean) || '';
+}
+
+function getBuyBoxConfigTableData(product = {}, config = {}) {
+  if (getOptionGroupCount(product) > 0) {
+    return null;
+  }
+
+  if (config.configTableEnabled) {
+    return getProductDetailsConfigTableData(config.configTableFamily);
+  }
+
+  const fallbackFamily = getProductConfigTableFallbackFamily(product);
+  return fallbackFamily ? getProductDetailsConfigTableData(fallbackFamily) : null;
+}
+
+function getConfigTableRowOptionsUIDs(commerceContext, row = {}) {
+  if (!commerceContext) {
     return [];
   }
 
-  return tableData.rows
-    .filter((row) => canBuildConfigTableCartItem(commerceContext, row))
-    .map((row) => {
-      const key = getConfigTableRowKey(row);
-      const variantPayload = commerceContext.variantMap.get(key);
-      const optionUID = commerceContext.optionMap.get(key);
+  const key = getConfigTableRowKey(row);
+  const variantPayload = commerceContext.variantMap.get(key);
+  const optionUID = commerceContext.optionMap.get(key);
 
-      return {
-        ...row,
-        optionsUIDs: variantPayload?.optionsUIDs || (optionUID ? [optionUID] : []),
-      };
-    });
+  return variantPayload?.optionsUIDs || (optionUID ? [optionUID] : []);
+}
+
+function hasBackendMappedConfigTableRow(row = {}) {
+  return Array.isArray(row?.optionsUIDs) && row.optionsUIDs.length > 0;
+}
+
+function getBuyBoxConfigTableRows(tableData, commerceContext) {
+  if (!tableData?.rows?.length) {
+    return [];
+  }
+
+  return tableData.rows.map((row) => ({
+    ...row,
+    optionsUIDs: getConfigTableRowOptionsUIDs(commerceContext, row),
+  }));
 }
 
 function createFallbackOptionSelect({
@@ -450,7 +486,15 @@ function createFallbackOptionSelect({
   return field;
 }
 
-function renderFallbackVariantSelector(container, rows = [], onChange = () => {}) {
+function renderFallbackVariantSelector(
+  container,
+  rows = [],
+  {
+    onChange = () => {},
+    isRowCartReady = () => true,
+    unavailableMessage = '',
+  } = {},
+) {
   if (!container) {
     return { hasOptions: false, getSelectedRow: () => null };
   }
@@ -467,6 +511,13 @@ function renderFallbackVariantSelector(container, rows = [], onChange = () => {}
   const wrapper = createElement('div', 'product-details__fallback-options');
   const title = createElement('p', 'product-details__fallback-options-label');
   title.textContent = 'Customizable shackle options';
+
+  const helper = createElement('p', 'product-details__fallback-options-helper');
+  const hasMappedRows = rows.some(isRowCartReady);
+  helper.textContent = hasMappedRows
+    ? 'Select all attributes to choose a shackle option.'
+    : unavailableMessage;
+  helper.hidden = !helper.textContent;
 
   const summary = createElement('p', 'product-details__fallback-options-summary');
   summary.hidden = true;
@@ -516,13 +567,23 @@ function renderFallbackVariantSelector(container, rows = [], onChange = () => {}
       ))) || null
       : null;
     const summaryText = buildVariantOptionSummary(selectedRow);
-    summary.textContent = summaryText;
-    summary.hidden = !summaryText;
+    const selectedRowUnavailable = selectedRow && !isRowCartReady(selectedRow);
+    const selectedMessage = selectedRowUnavailable && unavailableMessage
+      ? `${summaryText} ${unavailableMessage}`
+      : summaryText;
+
+    summary.textContent = selectedMessage;
+    if (selectedRowUnavailable) {
+      summary.dataset.status = 'warning';
+    } else {
+      delete summary.dataset.status;
+    }
+    summary.hidden = !selectedMessage;
     onChange(selectedRow);
   };
 
   const renderControls = () => {
-    wrapper.replaceChildren(title);
+    wrapper.replaceChildren(title, helper);
 
     const controls = createElement('div', 'product-details__fallback-options-controls');
     keys.forEach((key) => {
@@ -829,6 +890,7 @@ async function renderProductDetailsConfigTable(
       add.textContent = 'Add';
       if (!canBuildConfigTableCartItem(commerceContext, row)) {
         add.title = 'This option still needs Commerce mapping before it can be added to cart.';
+        add.disabled = true;
       }
       add.addEventListener('click', async (event) => {
         event.stopPropagation();
@@ -1299,7 +1361,11 @@ export default async function decorate(block) {
   const configTableData = config.configTableEnabled
     ? getProductDetailsConfigTableData(config.configTableFamily)
     : null;
-  const configTableCommerceContextPromise = config.configTableEnabled && product?.sku
+  const buyBoxConfigTableData = getBuyBoxConfigTableData(product, config);
+  const shouldLoadConfigTableCommerce = Boolean(
+    (configTableData || buyBoxConfigTableData) && product?.sku,
+  );
+  const configTableCommerceContextPromise = shouldLoadConfigTableCommerce
     ? loadConfigTableCommerceContext(product.sku).catch((error) => {
       console.warn('product-details: unable to load backend options for shackle configuration.', error);
       return null;
@@ -1460,9 +1526,12 @@ export default async function decorate(block) {
 
   const configTableCommerceContext = await configTableCommerceContextPromise;
   const fallbackVariantRows = getBuyBoxConfigTableRows(
-    configTableData,
+    buyBoxConfigTableData,
     configTableCommerceContext,
   );
+  const fallbackOptionsUnavailableMessage = fallbackVariantRows.length > 0
+    ? 'Commerce option mapping is not available yet, so this choice cannot be added to cart.'
+    : '';
 
   const syncDerivedContent = (nextProduct = product) => {
     const productTitle = getProductTitle(nextProduct, $header);
@@ -1765,22 +1834,33 @@ export default async function decorate(block) {
   const fallbackSelector = renderFallbackVariantSelector(
     $fallbackOptions,
     fallbackVariantRows,
-    (selectedRow) => {
-      fallbackSelectedRow = selectedRow;
+    {
+      isRowCartReady: hasBackendMappedConfigTableRow,
+      unavailableMessage: fallbackOptionsUnavailableMessage,
+      onChange: (selectedRow) => {
+        const selectedRowCartReady = hasBackendMappedConfigTableRow(selectedRow);
 
-      if (addToCart && fallbackVariantRows.length > 0) {
-        addToCart.setProps((prev) => ({
-          ...prev,
-          disabled: !fallbackSelectedRow,
-        }));
-      }
+        fallbackSelectedRow = selectedRow;
+
+        if (addToCart && fallbackVariantRows.length > 0) {
+          addToCart.setProps((prev) => ({
+            ...prev,
+            disabled: !fallbackSelectedRow || !selectedRowCartReady,
+          }));
+        }
+      },
     },
+  );
+
+  const isFallbackAddToCartDisabled = () => (
+    fallbackSelector.hasOptions
+    && (!fallbackSelectedRow || !hasBackendMappedConfigTableRow(fallbackSelectedRow))
   );
 
   addToCart = await UI.render(Button, {
     children: labels.Global?.AddProductToCart,
     icon: h(Icon, { source: 'Cart' }),
-    disabled: disableBaseAddToCart || fallbackSelector.hasOptions,
+    disabled: disableBaseAddToCart || isFallbackAddToCartDisabled(),
     onClick: async () => {
       const buttonActionText = isUpdateMode
         ? labels.Global?.UpdatingInCart
@@ -1800,6 +1880,10 @@ export default async function decorate(block) {
             const selectedRow = fallbackSelectedRow || fallbackSelector.getSelectedRow();
             if (!selectedRow?.id) {
               throw new Error('Please select a shackle option before adding to cart.');
+            }
+
+            if (!hasBackendMappedConfigTableRow(selectedRow)) {
+              throw new Error(fallbackOptionsUnavailableMessage);
             }
 
             if (!configTableCommerceContext) {
@@ -1853,7 +1937,7 @@ export default async function decorate(block) {
         updateAddToCartButtonText(addToCart, isUpdateMode, labels);
         addToCart.setProps((prev) => ({
           ...prev,
-          disabled: disableBaseAddToCart || (fallbackSelector.hasOptions && !fallbackSelectedRow),
+          disabled: disableBaseAddToCart || isFallbackAddToCartDisabled(),
         }));
       }
     },
@@ -1864,7 +1948,7 @@ export default async function decorate(block) {
       ...prev,
       disabled: disableBaseAddToCart
         || !valid
-        || (fallbackSelector.hasOptions && !fallbackSelectedRow),
+        || isFallbackAddToCartDisabled(),
     }));
   }, { eager: true });
 

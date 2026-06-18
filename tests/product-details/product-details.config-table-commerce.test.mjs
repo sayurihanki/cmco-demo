@@ -59,23 +59,6 @@ test('buildConfigTableCartItem rejects rows without backend option UIDs', () => 
   assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G', optionValueUid: 'uid-345g' }), false);
 });
 
-test('buildConfigTableCartItem can fall back to the parent simple product SKU', () => {
-  const context = {
-    parentSku: 'CM Anchor Shackles',
-    variantMap: new Map(),
-    optionMap: new Map(),
-    parentSkuFallbackAllowed: true,
-  };
-
-  const item = buildConfigTableCartItem(context, { id: 'M345G' }, 4);
-
-  assert.deepEqual(item, {
-    sku: 'CM Anchor Shackles',
-    quantity: 4,
-  });
-  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G' }), true);
-});
-
 test('CM Anchor Shackles table data keeps all visible variants independent of commerce mapping', () => {
   const tableData = getProductDetailsConfigTableData('cm-anchor-shackles');
   const context = {
@@ -84,12 +67,11 @@ test('CM Anchor Shackles table data keeps all visible variants independent of co
     optionMap: new Map(),
     coreStatus: 'unsupported-endpoint',
     coreMessage: 'Commerce option UIDs are not available.',
-    parentSkuFallbackAllowed: true,
   };
 
   assert.equal(tableData.rows.length, 24);
   assert.equal(
     tableData.rows.filter((row) => canBuildConfigTableCartItem(context, row)).length,
-    24,
+    0,
   );
 });
