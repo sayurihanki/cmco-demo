@@ -5,7 +5,6 @@ import { h } from '@dropins/tools/preact.js';
 import { events } from '@dropins/tools/event-bus.js';
 import { tryRenderAemAssetsImage } from '@dropins/tools/lib/aem/assets.js';
 import * as pdpApi from '@dropins/storefront-pdp/api.js';
-import * as cartApi from '@dropins/storefront-cart/api.js';
 import { render as pdpRendered } from '@dropins/storefront-pdp/render.js';
 import { render as wishlistRender } from '@dropins/storefront-wishlist/render.js';
 import { render as quickOrderProvider } from '@dropins/storefront-quick-order/render.js';
@@ -61,6 +60,7 @@ import {
 } from './product-details.config-table-utils.mjs';
 import {
   addConfigTableRowToCart,
+  canBuildConfigTableCartItem,
   loadConfigTableCommerceContext,
 } from './product-details.config-table-commerce.mjs';
 /* eslint-enable import/extensions */
@@ -415,18 +415,6 @@ function getFallbackVariantOptionUID(row = {}) {
     || '';
 }
 
-function getFallbackVariantRows(product = {}, config = {}) {
-  const hasCommerceOptions = Array.isArray(product?.options) && product.options.length > 0;
-  const hasInputOptions = Array.isArray(product?.inputOptions) && product.inputOptions.length > 0;
-
-  if (hasCommerceOptions || hasInputOptions) {
-    return [];
-  }
-
-  const tableData = getProductDetailsConfigTableData(config.configTableFamily);
-  return Array.isArray(tableData?.rows) ? tableData.rows : [];
-}
-
 function renderFallbackVariantSelector(container, rows = [], onChange = () => {}) {
   if (!container) {
     return { hasOptions: false, getSelectedRow: () => null };
@@ -513,14 +501,35 @@ function syncConfigTableSortHeaders(table, state) {
   });
 }
 
-function renderProductDetailsConfigTable(container, tableData, parentSku = '') {
+async function renderProductDetailsConfigTable(container, tableData, parentSku = '') {
   if (!container || !tableData?.rows?.length) return;
 
-  const { rows } = tableData;
+  container.hidden = true;
+
   const normalizedParentSku = String(parentSku || '').trim();
-  const commerceContextPromise = normalizedParentSku
-    ? loadConfigTableCommerceContext(normalizedParentSku)
-    : Promise.resolve(null);
+  if (!normalizedParentSku) return;
+
+  let commerceContext = null;
+  try {
+    commerceContext = await loadConfigTableCommerceContext(normalizedParentSku);
+  } catch (error) {
+    console.warn('product-details: unable to load backend options for config table.', error);
+    return;
+  }
+
+  const rows = tableData.rows.filter((row) => (
+    canBuildConfigTableCartItem(commerceContext, row)
+  ));
+
+  if (rows.length === 0) {
+    console.warn(
+      `product-details: no backend-backed configuration rows are available for "${normalizedParentSku}".`,
+    );
+    return;
+  }
+
+  container.hidden = false;
+
   const filterOptions = getProductDetailsConfigTableFilterOptions(rows);
   const status = createConfigTableStatus();
   const state = {
@@ -733,12 +742,7 @@ function renderProductDetailsConfigTable(container, tableData, parentSku = '') {
           const selectedQuantity = normalizeProductDetailsConfigTableQuantity(quantity.value);
           state.quantities[row.id] = selectedQuantity;
 
-          const commerceContext = await commerceContextPromise;
-          if (commerceContext) {
-            await addConfigTableRowToCart(commerceContext, row, selectedQuantity);
-          } else {
-            await cartApi.addProductsToCart([{ sku: row.id, quantity: selectedQuantity }]);
-          }
+          await addConfigTableRowToCart(commerceContext, row, selectedQuantity);
 
           status.show(`${row.id} added to cart.`);
         } catch (error) {
@@ -793,6 +797,10 @@ function getOptionGroupCount(product) {
   const inputOptionCount = Array.isArray(product?.inputOptions) ? product.inputOptions.length : 0;
 
   return selectableOptionCount + inputOptionCount;
+}
+
+function shouldDisableBaseAddToCart(product = {}, config = {}) {
+  return Boolean(config.configTableEnabled) && getOptionGroupCount(product) === 0;
 }
 
 function splitSentences(value = '') {
@@ -1338,7 +1346,7 @@ export default async function decorate(block) {
     renderMediaSelectors();
   };
 
-  const fallbackVariantRows = getFallbackVariantRows(product, config);
+  const fallbackVariantRows = [];
 
   const syncDerivedContent = (nextProduct = product) => {
     const productTitle = getProductTitle(nextProduct, $header);
@@ -1635,6 +1643,7 @@ export default async function decorate(block) {
   hideRedundantShortDescription($header, $shortDescription);
   hideRedundantHeaderSku($header);
 
+  const disableBaseAddToCart = shouldDisableBaseAddToCart(product, config);
   let addToCart = null;
   let fallbackSelectedRow = null;
   const fallbackSelector = renderFallbackVariantSelector(
@@ -1655,7 +1664,7 @@ export default async function decorate(block) {
   addToCart = await UI.render(Button, {
     children: labels.Global?.AddProductToCart,
     icon: h(Icon, { source: 'Cart' }),
-    disabled: fallbackSelector.hasOptions,
+    disabled: disableBaseAddToCart || fallbackSelector.hasOptions,
     onClick: async () => {
       const buttonActionText = isUpdateMode
         ? labels.Global?.UpdatingInCart
@@ -1678,23 +1687,16 @@ export default async function decorate(block) {
             }
 
             const selectedOptionUID = getFallbackVariantOptionUID(selectedRow);
-            const cartItem = {
-              sku: product.sku,
-              quantity: values.quantity || 1,
-            };
-
-            if (selectedOptionUID) {
-              cartItem.optionsUIDs = [selectedOptionUID];
-            } else {
-              console.warn(
-                'product-details: Adobe Commerce did not expose a custom-option UID for the selected shackle option. '
-                + `Adding parent SKU "${product.sku}" without selected_options.`,
-                selectedRow,
-              );
+            if (!selectedOptionUID) {
+              throw new Error('The selected shackle option is not available from the backend for this product.');
             }
 
             const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
-            await addProductsToCart([cartItem]);
+            await addProductsToCart([{
+              sku: product.sku,
+              quantity: values.quantity || 1,
+              optionsUIDs: [selectedOptionUID],
+            }]);
             return;
           }
 
@@ -1734,7 +1736,7 @@ export default async function decorate(block) {
         updateAddToCartButtonText(addToCart, isUpdateMode, labels);
         addToCart.setProps((prev) => ({
           ...prev,
-          disabled: fallbackSelector.hasOptions && !fallbackSelectedRow,
+          disabled: disableBaseAddToCart || (fallbackSelector.hasOptions && !fallbackSelectedRow),
         }));
       }
     },
@@ -1743,7 +1745,9 @@ export default async function decorate(block) {
   events.on('pdp/valid', (valid) => {
     addToCart.setProps((prev) => ({
       ...prev,
-      disabled: !valid || (fallbackSelector.hasOptions && !fallbackSelectedRow),
+      disabled: disableBaseAddToCart
+        || !valid
+        || (fallbackSelector.hasOptions && !fallbackSelectedRow),
     }));
   }, { eager: true });
 

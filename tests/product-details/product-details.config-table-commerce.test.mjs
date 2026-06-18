@@ -43,17 +43,17 @@ test('buildConfigTableCartItem uses core option uid mapping when variants are un
   });
 });
 
-test('buildConfigTableCartItem falls back to the parent SKU when option UIDs are unavailable', () => {
+test('buildConfigTableCartItem rejects rows without backend option UIDs', () => {
   const context = {
     parentSku: 'CM Anchor Shackles',
     variantMap: new Map(),
     optionMap: new Map(),
   };
 
-  assert.deepEqual(buildConfigTableCartItem(context, { id: 'M345G' }, 3), {
-    sku: 'CM Anchor Shackles',
-    quantity: 3,
-  });
-  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G' }), true);
-  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G', optionValueUid: 'uid-345g' }), true);
+  assert.throws(
+    () => buildConfigTableCartItem(context, { id: 'M345G' }, 3),
+    /did not expose its option UID/,
+  );
+  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G' }), false);
+  assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G', optionValueUid: 'uid-345g' }), false);
 });

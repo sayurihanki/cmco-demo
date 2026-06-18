@@ -2,15 +2,6 @@ function normalizeSku(value = '') {
   return String(value || '').trim().toLowerCase();
 }
 
-function getRowOptionUid(row = {}) {
-  return row.optionUID
-    || row.optionUid
-    || row.optionValueUID
-    || row.optionValueUid
-    || row.uid
-    || '';
-}
-
 export function indexOptionValueUids(product = {}) {
   const map = new Map();
 
@@ -81,15 +72,6 @@ export function buildConfigTableCartItem(context, row, quantity = 1) {
     };
   }
 
-  const explicitUid = getRowOptionUid(row);
-  if (explicitUid) {
-    return {
-      sku: context.parentSku,
-      optionsUIDs: [explicitUid],
-      quantity: qty,
-    };
-  }
-
   const optionUid = context.optionMap.get(rowKey);
   if (optionUid) {
     return {
@@ -99,10 +81,7 @@ export function buildConfigTableCartItem(context, row, quantity = 1) {
     };
   }
 
-  return {
-    sku: context.parentSku,
-    quantity: qty,
-  };
+  throw buildMissingConfigTableOptionError(row, context);
 }
 
 export function buildMissingConfigTableOptionError(row = {}, context = {}) {
@@ -110,8 +89,7 @@ export function buildMissingConfigTableOptionError(row = {}, context = {}) {
 
   return new Error(
     `The selected shackle option${optionSku} is visible, but Adobe Commerce did not expose its option UID. `
-    + `Configure commerce-core-endpoint for "${context.parentSku}" or add optionValueUid values to the `
-    + 'configuration table data before add to cart.',
+    + `Configure commerce-core-endpoint for "${context.parentSku}" so the PDP can load backend-backed options.`,
   );
 }
 
@@ -125,9 +103,5 @@ export function canBuildConfigTableCartItem(context, row) {
     return true;
   }
 
-  if (getRowOptionUid(row)) {
-    return true;
-  }
-
-  return context.optionMap.has(rowKey) || Boolean(context.parentSku);
+  return context.optionMap.has(rowKey);
 }
