@@ -205,15 +205,10 @@ export default async function decorate(block) {
     element.innerHTML = '';
 
     // Get the element's dataset
-    const { dataset: { cartId, canRequestQuote, cartSubtotal } } = element;
+    const { dataset: { cartId, cartSubtotal } } = element;
 
     // Convert the minimum total for quote request to a number or return 0 if it's not a number
     const minimumTotalNumberForQuoteRequest = parseInt(minimumTotalForQuoteRequest, 10) || 0;
-
-    if (!canRequestQuote) {
-      element.setAttribute('hidden', '');
-      return;
-    }
 
     element.removeAttribute('hidden');
 
@@ -256,9 +251,20 @@ export default async function decorate(block) {
 
   // Request Quote Button container
   const requestQuoteContainer = document.createElement('div');
+  requestQuoteContainer.classList.add('cart__request-quote');
   requestQuoteContainer.setAttribute('data-cart-id', _cart?.id);
   requestQuoteContainer.setAttribute('hidden', '');
   renderRequestQuoteButton(requestQuoteContainer);
+
+  const renderRequestQuoteLineItem = () => h('div', {
+    className: 'cart-order-summary__entry cart-order-summary__request-quote',
+    ref: (element) => {
+      if (!element) return;
+      if (requestQuoteContainer.parentElement !== element) {
+        element.appendChild(requestQuoteContainer);
+      }
+    },
+  });
 
   // Render Containers
   const createProductLink = (product) => getProductLink(product.url.urlKey, product.topLevelSku);
@@ -348,6 +354,14 @@ export default async function decorate(block) {
     provider.render(OrderSummary, {
       routeProduct: createProductLink,
       routeCheckout: checkoutURL ? () => rootLink(checkoutURL) : undefined,
+      updateLineItems: (lineItems) => [
+        ...lineItems,
+        {
+          key: 'requestQuoteContent',
+          sortOrder: 1210,
+          content: renderRequestQuoteLineItem(),
+        },
+      ],
       slots: {
         EstimateShipping: async (ctx) => {
           if (enableEstimateShipping === 'true') {
@@ -362,9 +376,6 @@ export default async function decorate(block) {
           provider.render(Coupons)(coupons);
 
           ctx.appendChild(coupons);
-
-          // Prepend request quote button
-          ctx.prependSibling(requestQuoteContainer);
         },
         GiftCards: (ctx) => {
           const giftCards = document.createElement('div');
@@ -414,16 +425,6 @@ export default async function decorate(block) {
   events.on('quote-management/initialized', (state) => {
     minimumTotalForQuoteRequest = state?.config?.quoteMinimumAmount || 0;
     minimumTotalForQuoteRequestMessage = state?.config?.quoteMinimumAmountMessage || '';
-    renderRequestQuoteButton(requestQuoteContainer);
-  }, { eager: true });
-
-  // Listen for quote management permissions event to show/hide request quote button
-  events.on('quote-management/permissions', (permissions) => {
-    if (permissions?.requestQuote) {
-      requestQuoteContainer.dataset.canRequestQuote = true;
-    } else {
-      requestQuoteContainer.removeAttribute('data-can-request-quote');
-    }
     renderRequestQuoteButton(requestQuoteContainer);
   }, { eager: true });
 

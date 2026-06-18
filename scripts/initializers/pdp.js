@@ -14,6 +14,9 @@ import {
   QUICK_ORDER_PATH,
 } from '../commerce.js';
 import { getMetadata } from '../aem.js';
+import { transformProductInputOptions } from '../components/pdp-input-options/pdp-input-options.js';
+import { fetchCoreCustomizableCommerceProduct } from '../../blocks/uniform-configurator/uniform-configurator.commerce-core.js';
+import { mergeCommerceContractProduct } from '../../blocks/uniform-configurator/uniform-configurator.commerce.js';
 
 export const IMAGES_SIZES = {
   width: 960,
@@ -111,7 +114,7 @@ await initializeDropin(async () => {
   const getProductData = async (skipTransform) => {
     const data = await fetchProductData(sku, { optionsUIDs, skipTransform })
       .then(preloadImageMiddleware);
-    return data;
+    return enrichProductInputOptions(data);
   };
 
   const [product, labels] = await Promise.all([
@@ -128,6 +131,9 @@ await initializeDropin(async () => {
   const models = {
     ProductDetails: {
       initialData: { ...product },
+      transformer: (rawProduct) => ({
+        inputOptions: transformProductInputOptions(rawProduct),
+      }),
     },
   };
 
@@ -141,6 +147,28 @@ await initializeDropin(async () => {
     persistURLParams: true,
   });
 })();
+
+async function enrichProductInputOptions(product) {
+  if (!product?.sku) {
+    return product;
+  }
+
+  const hasInputOptions = Array.isArray(product.inputOptions) && product.inputOptions.length > 0;
+  if (hasInputOptions) {
+    return product;
+  }
+
+  const coreProductResult = await fetchCoreCustomizableCommerceProduct(product.sku);
+  if (coreProductResult.product?.sku) {
+    return mergeCommerceContractProduct(product, coreProductResult.product);
+  }
+
+  if (coreProductResult.error) {
+    console.warn('Unable to load PDP customizable options:', coreProductResult.error);
+  }
+
+  return product;
+}
 
 async function preloadImageMiddleware(data) {
   const image = data?.images?.[0]?.url?.replace(/^https?:/, '');

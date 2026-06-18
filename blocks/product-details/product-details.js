@@ -44,6 +44,7 @@ import {
   initializeRequisitionListForProduct,
   createRequisitionListRenderer,
 } from './requisition-list.js';
+import { mountProductInputOptions } from '../../scripts/components/pdp-input-options/pdp-input-options.js';
 /* eslint-disable import/extensions */
 import {
   PRODUCT_DETAILS_PRESENTATIONS,
@@ -666,7 +667,10 @@ function getViewsLabel({ svgReady, svgLabel }) {
 }
 
 function getOptionGroupCount(product) {
-  return Array.isArray(product?.options) ? product.options.length : 0;
+  const selectableOptionCount = Array.isArray(product?.options) ? product.options.length : 0;
+  const inputOptionCount = Array.isArray(product?.inputOptions) ? product.inputOptions.length : 0;
+
+  return selectableOptionCount + inputOptionCount;
 }
 
 function splitSentences(value = '') {
@@ -962,6 +966,7 @@ export default async function decorate(block) {
             <div class="product-details__gift-card-options"></div>
             <div class="product-details__configuration">
               <div class="product-details__options"></div>
+              <div class="product-details__input-options"></div>
               <div class="product-details__quantity"></div>
               <div class="product-details__buttons">
                 <div class="product-details__buttons__add-to-cart"></div>
@@ -1020,6 +1025,7 @@ export default async function decorate(block) {
   const $shortDescription = fragment.querySelector('.product-details__short-description');
   const $miniSpecs = fragment.querySelector('.product-details__mini-specs');
   const $options = fragment.querySelector('.product-details__options');
+  const $inputOptions = fragment.querySelector('.product-details__input-options');
   const $quantity = fragment.querySelector('.product-details__quantity');
   const $giftCardOptions = fragment.querySelector('.product-details__gift-card-options');
   const $addToCart = fragment.querySelector('.product-details__buttons__add-to-cart');
@@ -1349,6 +1355,7 @@ export default async function decorate(block) {
         },
       },
     })($options),
+    mountProductInputOptions($inputOptions),
     pdpRendered.render(ProductQuantity, {})($quantity),
     pdpRendered.render(ProductGiftCardOptions, {})($giftCardOptions),
     pdpRendered.render(ProductDescription, {})($description),

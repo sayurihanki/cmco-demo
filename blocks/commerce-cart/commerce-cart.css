@@ -63,6 +63,10 @@
 }
 
 /* Request Quote */
+.cart-order-summary__request-quote {
+  grid-template-columns: 1fr;
+}
+
 .cart__request-quote-button {
   width: 100%;
 }
