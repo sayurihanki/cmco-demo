@@ -433,10 +433,10 @@ header nav .site-switcher-button {
   color: var(--cmco-blue-ink, #001a36);
   cursor: pointer;
   display: inline-flex;
-  gap: 12px;
-  min-height: 42px;
-  max-width: min(46vw, 260px);
-  padding: 6px 10px;
+  gap: 8px;
+  min-height: 36px;
+  max-width: min(42vw, 220px);
+  padding: 5px 8px;
 }
 
 header nav .site-switcher-button:hover,
@@ -451,10 +451,12 @@ header nav .site-switcher-button:focus-visible {
 
 header nav .site-switcher-current {
   display: block;
-  font: var(--type-headline-1-font);
-  letter-spacing: var(--type-headline-1-letter-spacing);
-  font-weight: 700;
-  line-height: 1;
+  font-family: var(--cmco-font-display, 'Bricolage Grotesque', sans-serif);
+  font-size: 18px;
+  font-weight: 650;
+  font-variation-settings: 'opsz' 18, 'wght' 650;
+  letter-spacing: 0;
+  line-height: 1.05;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -463,14 +465,14 @@ header nav .site-switcher-current {
 header nav .site-switcher-caret {
   border-color: currentcolor;
   border-style: solid;
-  border-width: 0 3px 3px 0;
+  border-width: 0 2px 2px 0;
   display: inline-block;
   flex: 0 0 auto;
-  height: 9px;
-  margin-block-start: -4px;
+  height: 8px;
+  margin-block-start: -3px;
   transform: rotate(45deg);
   transition: transform 0.18s ease;
-  width: 9px;
+  width: 8px;
 }
 
 header nav .site-switcher--open .site-switcher-caret {
@@ -481,12 +483,12 @@ header nav .site-switcher--open .site-switcher-caret {
 header nav .site-switcher-menu {
   background: var(--background-color, #fff);
   border: 1px solid var(--cmco-blue-line, #c4d7ee);
-  border-radius: 20px;
+  border-radius: 14px;
   box-shadow: 0 18px 42px -24px rgb(0 40 100 / 55%), 0 8px 22px -14px rgb(0 82 155 / 32%);
   display: none;
   left: 50%;
-  min-width: 260px;
-  padding: 14px 10px;
+  min-width: 230px;
+  padding: 10px 8px;
   position: absolute;
   top: calc(100% + 8px);
   transform: translateX(-50%);
@@ -498,13 +500,16 @@ header nav .site-switcher--open .site-switcher-menu {
 }
 
 header nav .site-switcher-option {
-  border-radius: 999px;
+  border-radius: 10px;
   color: var(--cmco-blue, #00529b);
   display: block;
-  font: var(--type-headline-1-font);
-  letter-spacing: var(--type-headline-1-letter-spacing);
-  line-height: 1;
-  padding: 16px 24px;
+  font-family: var(--cmco-font-display, 'Bricolage Grotesque', sans-serif);
+  font-size: 16px;
+  font-weight: 550;
+  font-variation-settings: 'opsz' 16, 'wght' 550;
+  letter-spacing: 0;
+  line-height: 1.15;
+  padding: 11px 16px;
   text-decoration: none;
   white-space: nowrap;
 }

@@ -390,14 +390,35 @@ function buildVariantOptionSummary(row) {
   }
 
   const parts = [
-    row.id ? `SKU ${row.id}` : '',
+    row.id ? `Option SKU ${row.id}` : '',
     row.wll ? `${formatConfigTableNumber(row.wll)} lbs WLL` : '',
     row.pin || '',
     row.finish || '',
     Number.isFinite(row.price) ? formatConfigTableMoney(row.price) : '',
   ].filter(Boolean);
 
-  return parts.join(' • ');
+  return parts.join(' / ');
+}
+
+function getFallbackVariantOptionUID(row = {}) {
+  return row.optionUID
+    || row.optionUid
+    || row.optionValueUID
+    || row.optionValueUid
+    || row.valueUID
+    || row.valueUid
+    || row.uid
+    || '';
+}
+
+function buildMissingFallbackOptionUIDError(row = {}) {
+  const optionSku = row?.id ? ` "${row.id}"` : '';
+
+  return new Error(
+    `The selected shackle option${optionSku} is visible, but Adobe Commerce did not expose its custom-option UID. `
+    + 'Customizable-option SKUs are not standalone product SKUs. Configure commerce-core-endpoint so the PDP can load '
+    + 'the option UIDs, or add optionValueUid values to the CM Anchor Shackles fallback data before add to cart.',
+  );
 }
 
 function getFallbackVariantRows(product = {}, config = {}) {
@@ -442,7 +463,7 @@ function renderFallbackVariantSelector(container, rows = [], onChange = () => {}
   });
 
   const helper = createElement('p', 'product-details__fallback-options-helper');
-  helper.textContent = 'Choose the shackle variant to add the matching SKU.';
+  helper.textContent = 'Choose the shackle option for this product.';
 
   const summary = createElement('p', 'product-details__fallback-options-summary');
   summary.hidden = true;
@@ -1311,6 +1332,8 @@ export default async function decorate(block) {
     renderMediaSelectors();
   };
 
+  const fallbackVariantRows = getFallbackVariantRows(product, config);
+
   const syncDerivedContent = (nextProduct = product) => {
     const productTitle = getProductTitle(nextProduct, $header);
     $breadcrumbsCurrent.textContent = productTitle;
@@ -1325,7 +1348,7 @@ export default async function decorate(block) {
       $stateBadges.append(createStateBadge(mediaState.svgLabel));
     }
 
-    const optionCount = getOptionGroupCount(nextProduct);
+    const optionCount = getOptionGroupCount(nextProduct) + (fallbackVariantRows.length > 0 ? 1 : 0);
     const viewsLabel = getViewsLabel(mediaState);
 
     $miniSpecs.replaceChildren(
@@ -1606,9 +1629,27 @@ export default async function decorate(block) {
   hideRedundantShortDescription($header, $shortDescription);
   hideRedundantHeaderSku($header);
 
-  const addToCart = await UI.render(Button, {
+  let addToCart = null;
+  let fallbackSelectedRow = null;
+  const fallbackSelector = renderFallbackVariantSelector(
+    $fallbackOptions,
+    fallbackVariantRows,
+    (selectedRow) => {
+      fallbackSelectedRow = selectedRow;
+
+      if (addToCart && fallbackVariantRows.length > 0) {
+        addToCart.setProps((prev) => ({
+          ...prev,
+          disabled: !fallbackSelectedRow,
+        }));
+      }
+    },
+  );
+
+  addToCart = await UI.render(Button, {
     children: labels.Global?.AddProductToCart,
     icon: h(Icon, { source: 'Cart' }),
+    disabled: fallbackSelector.hasOptions,
     onClick: async () => {
       const buttonActionText = isUpdateMode
         ? labels.Global?.UpdatingInCart
@@ -1624,6 +1665,26 @@ export default async function decorate(block) {
         const valid = pdpApi.isProductConfigurationValid();
 
         if (valid) {
+          if (fallbackSelector.hasOptions) {
+            const selectedRow = fallbackSelectedRow || fallbackSelector.getSelectedRow();
+            if (!selectedRow?.id) {
+              throw new Error('Please select a shackle option before adding to cart.');
+            }
+
+            const selectedOptionUID = getFallbackVariantOptionUID(selectedRow);
+            if (!selectedOptionUID) {
+              throw buildMissingFallbackOptionUIDError(selectedRow);
+            }
+
+            const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
+            await addProductsToCart([{
+              sku: product.sku,
+              quantity: values.quantity || 1,
+              optionsUIDs: [selectedOptionUID],
+            }]);
+            return;
+          }
+
           if (isUpdateMode) {
             const { updateProductsFromCart } = await import('@dropins/storefront-cart/api.js');
 
@@ -1660,7 +1721,7 @@ export default async function decorate(block) {
         updateAddToCartButtonText(addToCart, isUpdateMode, labels);
         addToCart.setProps((prev) => ({
           ...prev,
-          disabled: false,
+          disabled: fallbackSelector.hasOptions && !fallbackSelectedRow,
         }));
       }
     },
@@ -1669,7 +1730,7 @@ export default async function decorate(block) {
   events.on('pdp/valid', (valid) => {
     addToCart.setProps((prev) => ({
       ...prev,
-      disabled: !valid,
+      disabled: !valid || (fallbackSelector.hasOptions && !fallbackSelectedRow),
     }));
   }, { eager: true });
 
