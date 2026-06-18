@@ -223,114 +223,6 @@ body.my-account {
     linear-gradient(180deg, var(--cmco-white) 0%, var(--cmco-paper) 100%);
 }
 
-body.my-account main h1,
-body.my-account main h2,
-body.my-account main h3 {
-  font-family: var(--cmco-font-display);
-  color: var(--cmco-blue-ink);
-  letter-spacing: -0.02em;
-}
-
-body.my-account main h1 {
-  font-size: clamp(2.4rem, 3.2vw, 3.4rem);
-  font-variation-settings: "opsz" 48, "wght" 700;
-  line-height: 1.1;
-}
-
-body.my-account main h2 {
-  font-size: clamp(1.8rem, 2.4vw, 2.4rem);
-  font-variation-settings: "opsz" 36, "wght" 700;
-  line-height: 1.15;
-}
-
-body.my-account main h3 {
-  font-size: clamp(1.6rem, 2vw, 2rem);
-  font-variation-settings: "opsz" 28, "wght" 600;
-  line-height: 1.2;
-}
-
-body.my-account main {
-  font-family: var(--cmco-font-body);
-}
-
-body.my-account main p,
-body.my-account main span,
-body.my-account main a,
-body.my-account main label {
-  font-family: var(--cmco-font-body);
-}
-
-body.my-account .dropin-header-container__title {
-  font-family: var(--cmco-font-display);
-  color: var(--cmco-blue-ink);
-  font-variation-settings: "opsz" 36, "wght" 700;
-  letter-spacing: -0.02em;
-}
-
-body.my-account .dropin-card__content p {
-  font-family: var(--cmco-font-body);
-  color: var(--cmco-slate);
-}
-
-body.my-account .dropin-button--primary {
-  background: var(--main-color-accent);
-  border-color: var(--main-color-accent);
-  color: var(--cmco-white);
-  font-family: var(--cmco-font-body);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  border-radius: var(--shape-border-radius-3);
-}
-
-body.my-account .dropin-button--primary:hover,
-body.my-account .dropin-button--primary:focus-visible {
-  background: var(--cmco-blue-bright);
-  border-color: var(--cmco-blue-bright);
-}
-
-body.my-account .dropin-button--secondary {
-  font-family: var(--cmco-font-body);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--main-color-accent);
-  border-color: var(--main-color-accent);
-  border-radius: var(--shape-border-radius-3);
-}
-
-body.my-account .dropin-button--secondary:hover,
-body.my-account .dropin-button--secondary:focus-visible {
-  color: var(--cmco-blue-bright);
-  border-color: var(--cmco-blue-bright);
-}
-
-body.my-account .dropin-tag {
-  font-family: var(--cmco-font-body);
-  font-weight: 600;
-  border-color: rgb(0 82 155 / 18%);
-  background: rgb(0 82 155 / 12%);
-  color: var(--cmco-blue-ink);
-}
-
-body.my-account .dropin-text-swatch__label {
-  font-family: var(--cmco-font-body);
-  color: var(--cmco-slate);
-}
-
-body.my-account select,
-body.my-account input,
-body.my-account textarea {
-  font-family: var(--cmco-font-body);
-  border-radius: var(--shape-border-radius-2);
-}
-
-body.my-account select:focus,
-body.my-account input:focus,
-body.my-account textarea:focus {
-  border-color: var(--main-color-accent);
-  box-shadow: 0 0 0 1px var(--main-color-accent);
-  outline: none;
-}
-
 body:not(.appear) {
   display: none;
 }
@@ -447,6 +339,114 @@ button {
   font: inherit;
 }
 
+/* Account pages: CMCO typography and component overrides */
+body.my-account main {
+  font-family: var(--cmco-font-body);
+}
+
+body.my-account main h1,
+body.my-account main h2,
+body.my-account main h3 {
+  font-family: var(--cmco-font-display);
+  color: var(--cmco-blue-ink);
+  letter-spacing: -0.02em;
+}
+
+body.my-account main h1 {
+  font-size: clamp(2.4rem, 3.2vw, 3.4rem);
+  font-variation-settings: "opsz" 48, "wght" 700;
+  line-height: 1.1;
+}
+
+body.my-account main h2 {
+  font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+  font-variation-settings: "opsz" 36, "wght" 700;
+  line-height: 1.15;
+}
+
+body.my-account main h3 {
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  font-variation-settings: "opsz" 28, "wght" 600;
+  line-height: 1.2;
+}
+
+body.my-account main p,
+body.my-account main span,
+body.my-account main label {
+  font-family: var(--cmco-font-body);
+}
+
+body.my-account .dropin-header-container__title {
+  font-family: var(--cmco-font-display);
+  color: var(--cmco-blue-ink);
+  font-variation-settings: "opsz" 36, "wght" 700;
+  letter-spacing: -0.02em;
+}
+
+body.my-account .dropin-card__content p {
+  font-family: var(--cmco-font-body);
+  color: var(--cmco-slate);
+}
+
+body.my-account .dropin-button--primary {
+  background: var(--main-color-accent);
+  border-color: var(--main-color-accent);
+  color: var(--cmco-white);
+  font-family: var(--cmco-font-body);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--shape-border-radius-3);
+}
+
+body.my-account .dropin-button--primary:hover,
+body.my-account .dropin-button--primary:focus-visible {
+  background: var(--cmco-blue-bright);
+  border-color: var(--cmco-blue-bright);
+}
+
+body.my-account .dropin-button--secondary {
+  font-family: var(--cmco-font-body);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--main-color-accent);
+  border-color: var(--main-color-accent);
+  border-radius: var(--shape-border-radius-3);
+}
+
+body.my-account .dropin-button--secondary:hover,
+body.my-account .dropin-button--secondary:focus-visible {
+  color: var(--cmco-blue-bright);
+  border-color: var(--cmco-blue-bright);
+}
+
+body.my-account .dropin-tag {
+  font-family: var(--cmco-font-body);
+  font-weight: 600;
+  border-color: rgb(0 82 155 / 18%);
+  background: rgb(0 82 155 / 12%);
+  color: var(--cmco-blue-ink);
+}
+
+body.my-account .dropin-text-swatch__label {
+  font-family: var(--cmco-font-body);
+  color: var(--cmco-slate);
+}
+
+body.my-account select,
+body.my-account input,
+body.my-account textarea {
+  font-family: var(--cmco-font-body);
+  border-radius: var(--shape-border-radius-2);
+}
+
+body.my-account select:focus,
+body.my-account input:focus,
+body.my-account textarea:focus {
+  border-color: var(--main-color-accent);
+  box-shadow: 0 0 0 1px var(--main-color-accent);
+  outline: none;
+}
+
 /* links */
 a:not(.dropin-design a) {
   color: var(--color-brand-500);
@@ -454,6 +454,10 @@ a:not(.dropin-design a) {
   letter-spacing: var(--type-body-1-strong-letter-spacing);
   text-decoration: none;
   overflow-wrap: break-word;
+}
+
+body.my-account main a {
+  font-family: var(--cmco-font-body);
 }
 
 a:not(.dropin-design a):hover {

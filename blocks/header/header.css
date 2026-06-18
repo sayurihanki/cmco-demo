@@ -5,14 +5,14 @@
   --desktop-panel-min-height: 200px;
   --desktop-panel-max-height: 600px;
   --nav-interaction-speed: 0.22s;
-  --nav-live-search-accent-rgb: 46 190 122;
+  --nav-live-search-accent-rgb: 0 82 155;
   --nav-live-search-width: 680px;
   --nav-live-search-radius: 20px;
-  --nav-live-search-bg: linear-gradient(158deg, rgb(255 255 255 / 93%) 0%, rgb(242 247 243 / 88%) 100%);
-  --nav-live-search-border: rgb(232 250 242 / 72%);
+  --nav-live-search-bg: linear-gradient(158deg, rgb(255 255 255 / 96%) 0%, rgb(235 243 252 / 92%) 100%);
+  --nav-live-search-border: rgb(196 215 238 / 82%);
   --nav-live-search-shadow:
-    0 1px 0 rgb(255 255 255 / 50%) inset,
-    0 12px 28px rgb(14 20 16 / 14%);
+    0 1px 0 rgb(255 255 255 / 62%) inset,
+    0 18px 46px rgb(0 40 79 / 18%);
   --nav-live-search-highlight-bg: rgb(var(--nav-live-search-accent-rgb) / 5%);
   --nav-live-search-highlight-border: rgb(var(--nav-live-search-accent-rgb) / 12%);
 }
@@ -1065,8 +1065,8 @@ header .nav-search-panel #search-bar-form {
 
 header .nav-search-panel input {
   backdrop-filter: blur(10px) saturate(125%);
-  background: linear-gradient(150deg, rgb(255 255 255 / 90%) 0%, rgb(255 255 255 / 76%) 100%);
-  border: 1px solid rgb(228 231 237 / 92%);
+  background: linear-gradient(150deg, rgb(255 255 255 / 94%) 0%, rgb(242 247 253 / 84%) 100%);
+  border: 1px solid rgb(196 215 238 / 92%);
   border-radius: 14px;
   box-shadow: 0 1px 0 rgb(255 255 255 / 56%) inset;
   color: var(--color-neutral-900);
@@ -1110,7 +1110,7 @@ header .nav-search-panel .search-bar-result {
   overflow: hidden;
   pointer-events: none;
   position: relative;
-  scrollbar-color: rgb(148 163 184 / 56%) rgb(255 255 255 / 44%);
+  scrollbar-color: rgb(92 113 137 / 60%) rgb(235 243 252 / 70%);
   scrollbar-width: thin;
   transition:
     max-height 0.18s ease-out,
@@ -1133,12 +1133,12 @@ header .nav-search-panel .search-bar-result .product-discovery-product-list__gri
 
 /* Popover List */
 header .nav-search-panel .search-bar-result .dropin-product-item-card {
-  background: linear-gradient(150deg, rgb(255 255 255 / 94%) 0%, rgb(255 255 255 / 76%) 100%);
-  border: 1px solid rgb(255 255 255 / 72%);
+  background: linear-gradient(150deg, rgb(255 255 255 / 96%) 0%, rgb(242 247 253 / 82%) 100%);
+  border: 1px solid rgb(196 215 238 / 70%);
   border-radius: 14px;
   box-shadow:
     0 1px 0 rgb(255 255 255 / 52%) inset,
-    0 8px 16px rgb(15 23 42 / 8%);
+    0 8px 18px rgb(0 40 79 / 10%);
   display: grid;
   gap: var(--spacing-small);
   grid-template-columns: 64px 1fr;
@@ -1151,10 +1151,10 @@ header .nav-search-panel .search-bar-result .dropin-product-item-card {
 }
 
 header .nav-search-panel .search-bar-result .dropin-product-item-card:hover {
-  border-color: rgb(var(--nav-live-search-accent-rgb) / 16%);
+  border-color: rgb(var(--nav-live-search-accent-rgb) / 22%);
   box-shadow:
     0 1px 0 rgb(255 255 255 / 62%) inset,
-    0 10px 20px rgb(17 24 39 / 10%);
+    0 12px 24px rgb(0 40 79 / 13%);
 }
 
 header .nav-search-panel .search-bar-result .dropin-product-item-card picture,
@@ -1164,7 +1164,7 @@ header .nav-search-panel .search-bar-result .dropin-product-item-card img {
 }
 
 header .nav-search-panel .search-bar-result .dropin-product-item-card img {
-  box-shadow: 0 4px 10px rgb(15 23 42 / 10%);
+  box-shadow: 0 4px 10px rgb(0 40 79 / 12%);
 }
 
 header .nav-search-panel .search-bar-result .dropin-product-item-card a {
@@ -1179,7 +1179,7 @@ header .nav-search-panel .search-bar-result .dropin-product-item-card:hover a {
 
 /* Product Item Skeleton */
 header .nav-search-panel .search-bar-result .dropin-product-item-card__content .dropin-skeleton-row {
-  background: linear-gradient(90deg, rgb(255 255 255 / 86%) 0%, rgb(245 247 250 / 98%) 50%, rgb(255 255 255 / 86%) 100%);
+  background: linear-gradient(90deg, rgb(235 243 252 / 78%) 0%, rgb(255 255 255 / 96%) 50%, rgb(235 243 252 / 78%) 100%);
   border-radius: 999px;
   height: 1em;
 }
@@ -1192,12 +1192,12 @@ header .nav-search-panel .search-bar-result .product-discovery-product-list__foo
 header .search-view-all .dropin-button,
 header .nav-search-panel .search-bar-result .product-discovery-product-list__footer button {
   backdrop-filter: blur(8px) saturate(120%);
-  background: linear-gradient(148deg, rgb(255 255 255 / 94%) 0%, rgb(255 255 255 / 84%) 100%);
-  border: 1px solid rgb(73 80 90 / 58%);
+  background: linear-gradient(148deg, rgb(255 255 255 / 96%) 0%, rgb(235 243 252 / 88%) 100%);
+  border: 1px solid rgb(0 82 155 / 44%);
   border-radius: 999px;
   box-shadow:
     0 1px 0 rgb(255 255 255 / 50%) inset,
-    0 8px 18px rgb(17 24 39 / 8%);
+    0 8px 18px rgb(0 40 79 / 10%);
   min-height: 50px;
   transition:
     border-color 0.16s ease-out,
@@ -1207,10 +1207,10 @@ header .nav-search-panel .search-bar-result .product-discovery-product-list__foo
 
 header .search-view-all .dropin-button:hover,
 header .nav-search-panel .search-bar-result .product-discovery-product-list__footer button:hover {
-  border-color: rgb(var(--nav-live-search-accent-rgb) / 26%);
+  border-color: rgb(var(--nav-live-search-accent-rgb) / 58%);
   box-shadow:
     0 1px 0 rgb(255 255 255 / 60%) inset,
-    0 10px 20px rgb(17 24 39 / 10%);
+    0 10px 22px rgb(0 40 79 / 14%);
 }
 
 header .search-view-all .dropin-button:focus-visible,
@@ -1224,12 +1224,12 @@ header .nav-search-panel .search-bar-result::-webkit-scrollbar {
 }
 
 header .nav-search-panel .search-bar-result::-webkit-scrollbar-track {
-  background: rgb(255 255 255 / 44%);
+  background: rgb(235 243 252 / 70%);
   border-radius: 999px;
 }
 
 header .nav-search-panel .search-bar-result::-webkit-scrollbar-thumb {
-  background: rgb(148 163 184 / 56%);
+  background: rgb(92 113 137 / 60%);
   border: 2px solid rgb(255 255 255 / 75%);
   border-radius: 999px;
 }

@@ -107,9 +107,9 @@
 .cart-list > li,
 .cart-list li {
     display: flex !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     gap: 14px !important;
-    padding: 16px 22px !important;
+    padding: 14px 22px !important;
     border-top: 1px solid var(--cmco-line, #dde6f0) !important;
     border-bottom: none !important;
     position: relative !important;
@@ -308,7 +308,7 @@
     display: flex !important;
     align-items: baseline !important;
     justify-content: space-between !important;
-    padding: 16px 22px 0 !important;
+    padding: 14px 22px 0 !important;
     margin-bottom: 12px !important;
     border-top: none !important;
 }
