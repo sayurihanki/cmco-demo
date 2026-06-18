@@ -8,6 +8,7 @@ import {
 } from '../../blocks/product-details/product-details.config-table-utils.mjs';
 import {
   addConfigTableRowToCart,
+  canBuildConfigTableCartItem,
   loadConfigTableCommerceContext,
 } from '../../blocks/product-details/product-details.config-table-commerce.mjs';
 import { getCompassConfigTableBinding } from './compass.config.mjs';
@@ -147,6 +148,33 @@ function getConfigTableKey(row) {
   return row.dataset.compassConfigTable || '';
 }
 
+function isConfigTableRowMapped(context, row) {
+  return Boolean(context && canBuildConfigTableCartItem(context, row));
+}
+
+function getConfigTableMappingMessage(context, mappedCount) {
+  if (mappedCount > 0) {
+    return {
+      status: 'success',
+      text: `${mappedCount} shackle options are linked to Commerce and ready for cart.`,
+    };
+  }
+
+  if (['unavailable', 'unsupported-endpoint'].includes(context?.coreStatus)) {
+    return {
+      status: 'info',
+      text: 'Configuration rows are visible, but Commerce option UIDs still need to be configured before cart actions are available.',
+    };
+  }
+
+  return {
+    status: context?.coreError ? 'error' : 'info',
+    text: context?.coreError
+      ? 'Unable to verify Commerce option mappings right now.'
+      : 'Configuration rows are visible, but Commerce option UIDs still need to be mapped.',
+  };
+}
+
 function initCompassPage(page) {
   const table = page.querySelector('.compass-table');
   const rows = Array.from(table?.querySelectorAll('tbody tr') || []);
@@ -262,6 +290,7 @@ function initCompassPage(page) {
     }
 
     configTable.tBodies[0].replaceChildren(...tableState.rows.map((row) => {
+      const isMapped = isConfigTableRowMapped(activeCommerceContext, row);
       const tr = document.createElement('tr');
       tr.className = configState.selectedId === row.id ? 'selected' : '';
       tr.addEventListener('click', () => {
@@ -280,7 +309,7 @@ function initCompassPage(page) {
         <td class="compass-config-right"><span class="compass-config-stock ${getStockClass(row.qty)}">${row.qty || '-'}</span></td>
         <td class="compass-config-center"><span class="compass-config-lead ${getLeadClass(row.lt)}">${row.lt}d</span></td>
         <td class="compass-config-right">${formatMoney(row.price)}</td>
-        <td class="compass-config-right"><span class="compass-config-actions"><input class="compass-config-qty" type="number" min="1" value="${configState.quantities[row.id] || 1}" aria-label="Quantity for ${row.id}"><button class="compass-config-add" type="button">Add to cart</button></span></td>
+        <td class="compass-config-right"><span class="compass-config-actions"><input class="compass-config-qty" type="number" min="1" value="${configState.quantities[row.id] || 1}" aria-label="Quantity for ${row.id}"><button class="compass-config-add" type="button"${activeCommerceContext && !isMapped ? ' title="This option still needs Commerce mapping before it can be added to cart."' : ''}>Add to cart</button></span></td>
       `;
 
       const quantityInput = tr.querySelector('.compass-config-qty');
@@ -305,6 +334,10 @@ function initCompassPage(page) {
           quantityInput.value = String(quantity);
 
           const context = await ensureCommerceContext(activeConfigRecord);
+          if (!isConfigTableRowMapped(context, row)) {
+            throw new Error('This option still needs Commerce mapping before it can be added to cart.');
+          }
+
           await addConfigTableRowToCart(context, row, quantity);
           configMessage.textContent = `${row.id} added to cart.`;
           configMessage.dataset.status = 'success';
@@ -391,21 +424,15 @@ function initCompassPage(page) {
     try {
       const context = await ensureCommerceContext(record);
       const mappedCount = activeTableData.rows.filter((row) => (
-        context.variantMap.has(String(row.id || '').trim().toLowerCase())
-        || context.optionMap.has(String(row.id || '').trim().toLowerCase())
+        isConfigTableRowMapped(context, row)
       )).length;
+      const mappingMessage = getConfigTableMappingMessage(context, mappedCount);
 
-      if (mappedCount === 0 && context.coreError) {
-        configMessage.textContent = `Commerce options are not fully mapped yet. ${context.coreError.message}`;
-        configMessage.dataset.status = 'error';
-      } else {
-        configMessage.textContent = mappedCount > 0
-          ? `${mappedCount} shackle options are linked to Commerce and ready for cart.`
-          : 'Configuration rows are visible, but Commerce option UIDs still need to be mapped.';
-        configMessage.dataset.status = mappedCount > 0 ? 'success' : 'error';
-      }
+      configMessage.textContent = mappingMessage.text;
+      configMessage.dataset.status = mappingMessage.status;
+      renderConfigTable();
     } catch (error) {
-      configMessage.textContent = error?.message || 'Unable to load Commerce configuration options.';
+      configMessage.textContent = 'Unable to load Commerce configuration options.';
       configMessage.dataset.status = 'error';
     }
   }

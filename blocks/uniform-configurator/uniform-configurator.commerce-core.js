@@ -1,6 +1,12 @@
 import { getConfigValue, getHeaders } from '@dropins/tools/lib/aem/configs.js';
 import { CORE_FETCH_GRAPHQL } from '../../scripts/commerce.js';
 import { normalizeCoreCustomizableProduct } from './uniform-configurator.commerce.js';
+import {
+  CORE_CUSTOMIZABLE_STATUSES,
+  classifyCoreCustomizableFailure,
+  getCoreEndpointUnsupportedResult,
+  isSameCommerceEndpoint,
+} from './uniform-configurator.commerce-core-status.js';
 
 const CORE_CUSTOMIZABLE_PRODUCT_QUERY = `
   query UniformConfiguratorCoreProduct($sku: String!) {
@@ -95,16 +101,19 @@ function getErrorMessage(errors = []) {
 
 export async function fetchCoreCustomizableCommerceProduct(sku) {
   const coreEndpoint = String(await getConfigValue('commerce-core-endpoint') || '').trim();
+  const commerceEndpoint = String(await getConfigValue('commerce-endpoint') || '').trim();
 
   if (!coreEndpoint) {
     return {
       product: null,
-      error: buildCoreCustomizableError(
-        `The configured commerce-endpoint resolves "${sku}" as a SimpleProductView without customizable option metadata. `
-        + 'This package uses Magento Admin customizable options on a simple product, so the site also needs a real '
-        + 'commerce-core-endpoint to load the option UIDs required for add-to-cart.',
-      ),
+      error: null,
+      status: CORE_CUSTOMIZABLE_STATUSES.UNAVAILABLE,
+      message: `Commerce option UIDs are not available for "${sku}" because commerce-core-endpoint is not configured.`,
     };
+  }
+
+  if (isSameCommerceEndpoint(coreEndpoint, commerceEndpoint)) {
+    return getCoreEndpointUnsupportedResult(coreEndpoint);
   }
 
   CORE_FETCH_GRAPHQL.setEndpoint(coreEndpoint);
@@ -121,23 +130,47 @@ export async function fetchCoreCustomizableCommerceProduct(sku) {
       variables: { sku },
     });
   } catch (error) {
+    const classification = classifyCoreCustomizableFailure(error?.message, coreEndpoint);
+    if (classification.status !== CORE_CUSTOMIZABLE_STATUSES.ERROR) {
+      return {
+        product: null,
+        error: null,
+        status: classification.status,
+        message: classification.message,
+      };
+    }
+
     return {
       product: null,
       error: buildCoreCustomizableError(
-        error?.message || 'Unable to query the configured commerce-core-endpoint.',
+        classification.errorMessage || error?.message || 'Unable to query the configured commerce-core-endpoint.',
         coreEndpoint,
       ),
+      status: CORE_CUSTOMIZABLE_STATUSES.ERROR,
+      message: 'Unable to query the configured commerce-core-endpoint.',
     };
   }
 
   if (Array.isArray(payload?.errors) && payload.errors.length > 0) {
+    const errorMessage = getErrorMessage(payload.errors);
+    const classification = classifyCoreCustomizableFailure(errorMessage, coreEndpoint);
+    if (classification.status !== CORE_CUSTOMIZABLE_STATUSES.ERROR) {
+      return {
+        product: null,
+        error: null,
+        status: classification.status,
+        message: classification.message,
+      };
+    }
+
     return {
       product: null,
       error: buildCoreCustomizableError(
-        getErrorMessage(payload.errors)
-        || 'The configured commerce-core-endpoint rejected the customizable options query.',
+        errorMessage || 'The configured commerce-core-endpoint rejected the customizable options query.',
         coreEndpoint,
       ),
+      status: CORE_CUSTOMIZABLE_STATUSES.ERROR,
+      message: 'The configured commerce-core-endpoint rejected the customizable options query.',
     };
   }
 
@@ -150,11 +183,15 @@ export async function fetchCoreCustomizableCommerceProduct(sku) {
         `The commerce-core-endpoint did not return a customizable product payload for SKU "${sku}".`,
         coreEndpoint,
       ),
+      status: CORE_CUSTOMIZABLE_STATUSES.ERROR,
+      message: `The commerce-core-endpoint did not return a customizable product payload for SKU "${sku}".`,
     };
   }
 
   return {
     product: normalizeCoreCustomizableProduct(product),
     error: null,
+    status: CORE_CUSTOMIZABLE_STATUSES.READY,
+    message: '',
   };
 }

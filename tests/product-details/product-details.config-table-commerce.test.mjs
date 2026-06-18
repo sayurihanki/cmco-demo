@@ -5,6 +5,7 @@ import {
   buildConfigTableCartItem,
   canBuildConfigTableCartItem,
 } from '../../blocks/product-details/product-details.config-table-cart-utils.mjs';
+import { getProductDetailsConfigTableData } from '../../blocks/product-details/product-details.config-table-data.mjs';
 /* eslint-enable import/extensions */
 
 test('buildConfigTableCartItem uses variant selections when available', () => {
@@ -56,4 +57,21 @@ test('buildConfigTableCartItem rejects rows without backend option UIDs', () => 
   );
   assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G' }), false);
   assert.equal(canBuildConfigTableCartItem(context, { id: 'M345G', optionValueUid: 'uid-345g' }), false);
+});
+
+test('CM Anchor Shackles table data keeps all visible variants independent of commerce mapping', () => {
+  const tableData = getProductDetailsConfigTableData('cm-anchor-shackles');
+  const context = {
+    parentSku: 'CM Anchor Shackles',
+    variantMap: new Map(),
+    optionMap: new Map(),
+    coreStatus: 'unsupported-endpoint',
+    coreMessage: 'Commerce option UIDs are not available.',
+  };
+
+  assert.equal(tableData.rows.length, 24);
+  assert.equal(
+    tableData.rows.filter((row) => canBuildConfigTableCartItem(context, row)).length,
+    0,
+  );
 });

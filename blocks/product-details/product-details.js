@@ -60,6 +60,7 @@ import {
 } from './product-details.config-table-utils.mjs';
 import {
   addConfigTableRowToCart,
+  buildConfigTableCartItem,
   canBuildConfigTableCartItem,
   loadConfigTableCommerceContext,
 } from './product-details.config-table-commerce.mjs';
@@ -381,38 +382,72 @@ function createConfigTableStatus() {
   };
 }
 
-function formatVariantOptionLabel(row) {
-  const sizeLabel = row?.size ? `${row.size}"` : row?.id || 'Variant';
-  const finishLabel = row?.finish || '';
-
-  return finishLabel ? `${sizeLabel} - ${finishLabel}` : sizeLabel;
-}
-
 function buildVariantOptionSummary(row) {
   if (!row) {
     return '';
   }
 
   const parts = [
-    row.id ? `Option SKU ${row.id}` : '',
+    row.id || '',
     row.wll ? `${formatConfigTableNumber(row.wll)} lbs WLL` : '',
+    row.size ? `${row.size}"` : '',
     row.pin || '',
     row.finish || '',
+    row.qty ? `${formatConfigTableNumber(row.qty)} in stock` : 'Made to order',
+    row.lt ? `${row.lt}d lead time` : '',
     Number.isFinite(row.price) ? formatConfigTableMoney(row.price) : '',
   ].filter(Boolean);
 
   return parts.join(' / ');
 }
 
-function getFallbackVariantOptionUID(row = {}) {
-  return row.optionUID
-    || row.optionUid
-    || row.optionValueUID
-    || row.optionValueUid
-    || row.valueUID
-    || row.valueUid
-    || row.uid
-    || '';
+function getConfigTableRowKey(row = {}) {
+  return String(row?.id || '').trim().toLowerCase();
+}
+
+function getBuyBoxConfigTableRows(tableData, commerceContext) {
+  if (!tableData?.rows?.length || !commerceContext) {
+    return [];
+  }
+
+  return tableData.rows
+    .filter((row) => canBuildConfigTableCartItem(commerceContext, row))
+    .map((row) => {
+      const key = getConfigTableRowKey(row);
+      const variantPayload = commerceContext.variantMap.get(key);
+      const optionUID = commerceContext.optionMap.get(key);
+
+      return {
+        ...row,
+        optionsUIDs: variantPayload?.optionsUIDs || (optionUID ? [optionUID] : []),
+      };
+    });
+}
+
+function createFallbackOptionSelect({
+  id,
+  label,
+  values,
+  value,
+  formatValue = String,
+  disabled = false,
+  onChange,
+}) {
+  const field = createElement('label', 'product-details__fallback-options-field', { for: id });
+  const labelText = createElement('span', 'product-details__fallback-options-field-label');
+  labelText.textContent = label;
+
+  const select = createElement('select', 'product-details__fallback-options-select', { id });
+  select.disabled = disabled;
+  select.append(new Option('Select', ''));
+  values.forEach((optionValue) => {
+    select.append(new Option(formatValue(optionValue), String(optionValue)));
+  });
+  select.value = values.some((optionValue) => String(optionValue) === String(value)) ? String(value) : '';
+  select.addEventListener('change', () => onChange(select.value));
+
+  field.append(labelText, select);
+  return field;
 }
 
 function renderFallbackVariantSelector(container, rows = [], onChange = () => {}) {
@@ -430,49 +465,103 @@ function renderFallbackVariantSelector(container, rows = [], onChange = () => {}
   container.hidden = false;
 
   const wrapper = createElement('div', 'product-details__fallback-options');
-  const label = createElement('label', 'product-details__fallback-options-label', {
-    for: 'product-details-fallback-variant',
-  });
-  label.textContent = rows[0]?.desc || 'Variant';
-
-  const select = createElement('select', 'product-details__fallback-options-select', {
-    id: 'product-details-fallback-variant',
-  });
-  select.append(new Option('Select an option', ''));
-
-  rows.forEach((row) => {
-    select.append(new Option(formatVariantOptionLabel(row), row.id));
-  });
-
-  const helper = createElement('p', 'product-details__fallback-options-helper');
-  helper.textContent = 'Choose the shackle option for this product.';
+  const title = createElement('p', 'product-details__fallback-options-label');
+  title.textContent = 'Customizable shackle options';
 
   const summary = createElement('p', 'product-details__fallback-options-summary');
   summary.hidden = true;
 
   const state = {
-    selectedId: '',
+    filters: {
+      wll: '',
+      size: '',
+      pin: '',
+      finish: '',
+    },
+  };
+
+  const keys = ['wll', 'size', 'pin', 'finish'];
+  const labels = {
+    wll: 'Working Load Limit',
+    size: 'Size',
+    pin: 'Pin Type',
+    finish: 'Finish',
+  };
+  const formatters = {
+    wll: (value) => `${formatConfigTableNumber(value)} lbs`,
+    size: (value) => `${value}"`,
+    pin: String,
+    finish: String,
+  };
+
+  const getMatchingRows = (ignoredKey = '') => rows.filter((row) => keys.every((key) => (
+    key === ignoredKey || !state.filters[key] || String(row[key]) === String(state.filters[key])
+  )));
+
+  const getValues = (key) => {
+    const values = getMatchingRows(key)
+      .map((row) => row[key])
+      .filter((value) => value !== undefined && value !== null && value !== '');
+    const unique = [...new Set(values)];
+
+    return key === 'wll'
+      ? unique.sort((a, b) => Number(a) - Number(b))
+      : unique.sort((a, b) => String(a).localeCompare(String(b)));
   };
 
   const sync = () => {
-    const selectedRow = rows.find((row) => row.id === state.selectedId) || null;
+    const selectedRow = keys.every((key) => state.filters[key])
+      ? rows.find((row) => keys.every((key) => (
+        String(row[key]) === String(state.filters[key])
+      ))) || null
+      : null;
     const summaryText = buildVariantOptionSummary(selectedRow);
     summary.textContent = summaryText;
     summary.hidden = !summaryText;
     onChange(selectedRow);
   };
 
-  select.addEventListener('change', () => {
-    state.selectedId = select.value;
-    sync();
-  });
+  const renderControls = () => {
+    wrapper.replaceChildren(title);
 
-  wrapper.append(label, select, helper, summary);
+    const controls = createElement('div', 'product-details__fallback-options-controls');
+    keys.forEach((key) => {
+      const values = getValues(key);
+      const hasCurrentValue = values.some((value) => (
+        String(value) === String(state.filters[key])
+      ));
+      if (state.filters[key] && !hasCurrentValue) {
+        state.filters[key] = '';
+      }
+
+      controls.append(createFallbackOptionSelect({
+        id: `product-details-fallback-${key}`,
+        label: labels[key],
+        values,
+        value: state.filters[key],
+        formatValue: formatters[key],
+        disabled: values.length === 0,
+        onChange: (value) => {
+          state.filters[key] = value;
+          renderControls();
+        },
+      }));
+    });
+
+    wrapper.append(controls, summary);
+    sync();
+  };
+
   container.append(wrapper);
+  renderControls();
 
   return {
     hasOptions: true,
-    getSelectedRow: () => rows.find((row) => row.id === state.selectedId) || null,
+    getSelectedRow: () => (keys.every((key) => state.filters[key])
+      ? rows.find((row) => keys.every((key) => (
+        String(row[key]) === String(state.filters[key])
+      ))) || null
+      : null),
   };
 }
 
@@ -501,7 +590,12 @@ function syncConfigTableSortHeaders(table, state) {
   });
 }
 
-async function renderProductDetailsConfigTable(container, tableData, parentSku = '') {
+async function renderProductDetailsConfigTable(
+  container,
+  tableData,
+  parentSku = '',
+  commerceContextPromise = null,
+) {
   if (!container || !tableData?.rows?.length) return;
 
   container.hidden = true;
@@ -511,15 +605,15 @@ async function renderProductDetailsConfigTable(container, tableData, parentSku =
 
   let commerceContext = null;
   try {
-    commerceContext = await loadConfigTableCommerceContext(normalizedParentSku);
+    commerceContext = commerceContextPromise
+      ? await commerceContextPromise
+      : await loadConfigTableCommerceContext(normalizedParentSku);
   } catch (error) {
     console.warn('product-details: unable to load backend options for config table.', error);
     return;
   }
 
-  const rows = tableData.rows.filter((row) => (
-    canBuildConfigTableCartItem(commerceContext, row)
-  ));
+  const { rows } = tableData;
 
   if (rows.length === 0) {
     console.warn(
@@ -733,12 +827,19 @@ async function renderProductDetailsConfigTable(container, tableData, parentSku =
       const add = createElement('button', 'product-details__config-table-add');
       add.type = 'button';
       add.textContent = 'Add';
+      if (!canBuildConfigTableCartItem(commerceContext, row)) {
+        add.title = 'This option still needs Commerce mapping before it can be added to cart.';
+      }
       add.addEventListener('click', async (event) => {
         event.stopPropagation();
         add.disabled = true;
         add.textContent = 'Adding';
 
         try {
+          if (!canBuildConfigTableCartItem(commerceContext, row)) {
+            throw new Error('This option still needs Commerce mapping before it can be added to cart.');
+          }
+
           const selectedQuantity = normalizeProductDetailsConfigTableQuantity(quantity.value);
           state.quantities[row.id] = selectedQuantity;
 
@@ -1195,11 +1296,22 @@ export default async function decorate(block) {
   block.dataset.presentation = config.presentation;
   block.dataset.mediaView = 'photos';
 
+  const configTableData = config.configTableEnabled
+    ? getProductDetailsConfigTableData(config.configTableFamily)
+    : null;
+  const configTableCommerceContextPromise = config.configTableEnabled && product?.sku
+    ? loadConfigTableCommerceContext(product.sku).catch((error) => {
+      console.warn('product-details: unable to load backend options for shackle configuration.', error);
+      return null;
+    })
+    : Promise.resolve(null);
+
   if (config.configTableEnabled) {
     renderProductDetailsConfigTable(
       $configTable,
-      getProductDetailsConfigTableData(config.configTableFamily),
+      configTableData,
       product?.sku,
+      configTableCommerceContextPromise,
     );
   }
 
@@ -1346,7 +1458,11 @@ export default async function decorate(block) {
     renderMediaSelectors();
   };
 
-  const fallbackVariantRows = [];
+  const configTableCommerceContext = await configTableCommerceContextPromise;
+  const fallbackVariantRows = getBuyBoxConfigTableRows(
+    configTableData,
+    configTableCommerceContext,
+  );
 
   const syncDerivedContent = (nextProduct = product) => {
     const productTitle = getProductTitle(nextProduct, $header);
@@ -1686,17 +1802,18 @@ export default async function decorate(block) {
               throw new Error('Please select a shackle option before adding to cart.');
             }
 
-            const selectedOptionUID = getFallbackVariantOptionUID(selectedRow);
-            if (!selectedOptionUID) {
+            if (!configTableCommerceContext) {
               throw new Error('The selected shackle option is not available from the backend for this product.');
             }
 
             const { addProductsToCart } = await import('@dropins/storefront-cart/api.js');
-            await addProductsToCart([{
-              sku: product.sku,
-              quantity: values.quantity || 1,
-              optionsUIDs: [selectedOptionUID],
-            }]);
+            await addProductsToCart([
+              buildConfigTableCartItem(
+                configTableCommerceContext,
+                selectedRow,
+                values.quantity || 1,
+              ),
+            ]);
             return;
           }
 

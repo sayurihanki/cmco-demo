@@ -75,6 +75,8 @@ export async function loadConfigTableCommerceContext(parentSku) {
     variantMap,
     optionMap,
     coreError: coreResult?.error || null,
+    coreStatus: coreResult?.status || '',
+    coreMessage: coreResult?.message || '',
   };
 }
 
