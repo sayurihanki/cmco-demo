@@ -81,6 +81,13 @@ export function buildConfigTableCartItem(context, row, quantity = 1) {
     };
   }
 
+  if (context.parentSkuFallbackAllowed) {
+    return {
+      sku: context.parentSku,
+      quantity: qty,
+    };
+  }
+
   throw buildMissingConfigTableOptionError(row, context);
 }
 
@@ -103,5 +110,5 @@ export function canBuildConfigTableCartItem(context, row) {
     return true;
   }
 
-  return context.optionMap.has(rowKey);
+  return context.optionMap.has(rowKey) || Boolean(context.parentSkuFallbackAllowed);
 }
