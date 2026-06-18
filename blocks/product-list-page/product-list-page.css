@@ -430,17 +430,17 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
   max-width: 100%;
 }
 
 /* Target img broadly from the container so it works regardless of intermediate wrapper structure */
 .block.product-list-page .dropin-product-item-card__image-container img {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 26rem;
   object-fit: contain;
-  object-position: center;
   transition: transform 0.35s ease;
 }
 
