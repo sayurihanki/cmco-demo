@@ -14,4 +14,51 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe.
  ****************************************************************** */
-/* stylelint-disable no-empty-source */
+
+body.my-account .commerce-company-profile-wrapper {
+    width: 100%;
+}
+
+body.my-account .commerce-company-profile .dropin-header-container {
+    margin-bottom: var(--spacing-small);
+}
+
+body.my-account .commerce-company-profile .dropin-header-container__title {
+    color: var(--cmco-blue-ink);
+}
+
+body.my-account .commerce-company-profile .dropin-card {
+    border: 1px solid var(--glass-border-subtle);
+    border-radius: calc(var(--shape-border-radius-2) + 2px);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur-xs) var(--glass-saturate);
+    box-shadow: 0 6px 18px rgb(0 40 100 / 7%);
+    overflow: hidden;
+}
+
+body.my-account .commerce-company-profile .dropin-card .dropin-card {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+body.my-account .commerce-company-profile .dropin-card .dropin-card__content {
+    padding: var(--spacing-medium);
+}
+
+body.my-account .commerce-company-profile svg {
+    color: var(--cmco-blue-ink);
+}
+
+body.my-account .commerce-company-profile .dropin-button--primary {
+    background: var(--main-color-accent);
+    border-color: var(--main-color-accent);
+    color: var(--cmco-white);
+}
+
+body.my-account .commerce-company-profile .dropin-button--primary:hover,
+body.my-account .commerce-company-profile .dropin-button--primary:focus-visible {
+    background: var(--cmco-blue-bright);
+    border-color: var(--cmco-blue-bright);
+}

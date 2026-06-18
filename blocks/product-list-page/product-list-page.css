@@ -410,7 +410,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 48rem;
+  height: 30rem;
   padding: 1rem;
   overflow: hidden;
   border-radius: var(--plp-card-radius) var(--plp-card-radius) 0 0;
