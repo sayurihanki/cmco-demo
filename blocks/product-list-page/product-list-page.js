@@ -165,11 +165,29 @@ function createProductPriceContent(product) {
 function bindDummyFilters(panel) {
   const toggles = [...panel.querySelectorAll('[data-dummy-filter]')];
   const countLabel = panel.querySelector('.search__dummy-filter-count');
+  const resultCount = panel.querySelector('[data-dummy-result-count]');
+  const shipCount = panel.querySelector('[data-dummy-ship-count]');
+  const summary = panel.querySelector('[data-dummy-summary]');
   const clearButton = panel.querySelector('[data-dummy-clear]');
 
   const updateCount = () => {
-    const activeCount = toggles.filter((toggle) => toggle.getAttribute('aria-pressed') === 'true').length;
-    countLabel.textContent = `${activeCount} active`;
+    const activeToggles = toggles.filter((toggle) => toggle.getAttribute('aria-pressed') === 'true');
+    const activeCount = activeToggles.length;
+    const matchReduction = activeToggles.reduce((total, toggle) => (
+      total + (parseInt(toggle.dataset.dummyImpact, 10) || 0)
+    ), 0);
+    const shipLift = activeToggles.reduce((total, toggle) => (
+      total + (parseInt(toggle.dataset.dummyShip, 10) || 0)
+    ), 0);
+    const estimatedMatches = Math.max(2, 7 - Math.min(matchReduction, 5));
+    const estimatedShip = Math.min(estimatedMatches, Math.max(1, 3 + shipLift));
+
+    countLabel.textContent = activeCount === 1 ? '1 active' : `${activeCount} active`;
+    resultCount.textContent = estimatedMatches;
+    shipCount.textContent = estimatedShip;
+    summary.textContent = activeCount > 0
+      ? `${estimatedMatches} demo matches tuned by ${activeCount} filter${activeCount === 1 ? '' : 's'}`
+      : 'Select a few filters to shape the demo shortlist.';
     panel.classList.toggle('search__dummy-filters--active', activeCount > 0);
   };
 
@@ -230,50 +248,93 @@ export default async function decorate(block) {
               <div class="search__dummy-filter-hero">
                 <span class="search__dummy-filter-count" aria-live="polite">0 active</span>
                 <strong>Refined equipment match</strong>
-                <p>Shortlist hoisting gear by capacity, finish, and availability.</p>
+                <p data-dummy-summary>Select a few filters to shape the demo shortlist.</p>
                 <div class="search__dummy-filter-metrics" aria-label="Filter summary">
-                  <span><b>7</b> products</span>
-                  <span><b>3</b> fast ship</span>
+                  <span><b data-dummy-result-count>7</b> matches</span>
+                  <span><b data-dummy-ship-count>3</b> fast ship</span>
                 </div>
               </div>
               <div class="search__dummy-filter-group">
                 <div class="search__dummy-filter-group-heading">
-                  <h3>Capacity range</h3>
+                  <h3>Product type</h3>
+                  <span>Multiple</span>
+                </div>
+                <div class="search__dummy-filter-stack search__dummy-filter-stack--type">
+                  <button type="button" data-dummy-filter data-dummy-impact="1" aria-pressed="true">
+                    <span>Anchor shackles</span>
+                    <em>7</em>
+                  </button>
+                  <button type="button" data-dummy-filter data-dummy-impact="1" aria-pressed="false">
+                    <span>Chain hoists</span>
+                    <em>4</em>
+                  </button>
+                  <button type="button" data-dummy-filter data-dummy-impact="2" aria-pressed="false">
+                    <span>Lever tools</span>
+                    <em>3</em>
+                  </button>
+                </div>
+              </div>
+              <div class="search__dummy-filter-group">
+                <div class="search__dummy-filter-group-heading">
+                  <h3>Capacity</h3>
                   <span>Rated load</span>
                 </div>
                 <div class="search__dummy-filter-grid">
-                  <button type="button" data-dummy-filter aria-pressed="true">Light duty</button>
-                  <button type="button" data-dummy-filter aria-pressed="false">1 ton</button>
-                  <button type="button" data-dummy-filter aria-pressed="false">2 ton</button>
-                  <button type="button" data-dummy-filter aria-pressed="false">Heavy lift</button>
+                  <button type="button" data-dummy-filter data-dummy-impact="0" aria-pressed="true">Light duty</button>
+                  <button type="button" data-dummy-filter data-dummy-impact="1" aria-pressed="false">1 ton</button>
+                  <button type="button" data-dummy-filter data-dummy-impact="1" aria-pressed="false">2 ton</button>
+                  <button type="button" data-dummy-filter data-dummy-impact="2" aria-pressed="false">Heavy lift</button>
                 </div>
               </div>
               <div class="search__dummy-filter-group search__dummy-filter-group--summary">
                 <div class="search__dummy-filter-group-heading">
-                  <h3>Details</h3>
-                  <span>Shop signals</span>
+                  <h3>Finish</h3>
+                  <span>Material</span>
                 </div>
                 <div class="search__dummy-filter-stack">
-                  <button type="button" data-dummy-filter aria-pressed="true">
+                  <button type="button" data-dummy-filter data-dummy-impact="0" aria-pressed="true">
                     <span>
                       <i class="search__dummy-filter-swatch search__dummy-filter-swatch--galv"></i>
                       Galvanized finish
                     </span>
                     <em>7</em>
                   </button>
-                  <button type="button" data-dummy-filter aria-pressed="false">
+                  <button type="button" data-dummy-filter data-dummy-impact="1" aria-pressed="false">
+                    <span>
+                      <i class="search__dummy-filter-swatch search__dummy-filter-swatch--alloy"></i>
+                      Alloy steel
+                    </span>
+                    <em>4</em>
+                  </button>
+                </div>
+              </div>
+              <div class="search__dummy-filter-group search__dummy-filter-group--summary">
+                <div class="search__dummy-filter-group-heading">
+                  <h3>Availability</h3>
+                  <span>Fulfillment</span>
+                </div>
+                <div class="search__dummy-filter-stack">
+                  <button type="button" data-dummy-filter data-dummy-impact="1" data-dummy-ship="2" aria-pressed="false">
                     <span>Ready to ship</span>
                     <em>5</em>
                   </button>
+                  <button type="button" data-dummy-filter data-dummy-impact="0" aria-pressed="false">
+                    <span>Quote eligible</span>
+                    <em>7</em>
+                  </button>
                 </div>
-                <div class="search__dummy-price-card">
-                  <div class="search__dummy-price-label">
-                    <span class="search__dummy-price-label-text">Configured price</span>
-                    <strong>$2.8K - $4.3K</strong>
-                  </div>
-                  <div class="search__dummy-price-track" aria-hidden="true">
-                    <span class="search__dummy-price-range"></span>
-                  </div>
+              </div>
+              <div class="search__dummy-filter-group search__dummy-price-card">
+                <div class="search__dummy-price-label">
+                  <span class="search__dummy-price-label-text">Configured price</span>
+                  <strong>$2.8K - $4.3K</strong>
+                </div>
+                <div class="search__dummy-price-track" aria-hidden="true">
+                  <span class="search__dummy-price-range"></span>
+                </div>
+                <div class="search__dummy-price-options">
+                  <button type="button" class="search__dummy-price-option" data-dummy-filter data-dummy-impact="1" aria-pressed="false">Under $3K</button>
+                  <button type="button" class="search__dummy-price-option" data-dummy-filter data-dummy-impact="1" aria-pressed="false">Best value</button>
                 </div>
               </div>
               <button type="button" class="search__dummy-filter-reset" data-dummy-clear>Reset filters</button>

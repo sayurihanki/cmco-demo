@@ -454,6 +454,10 @@ body.page-category-plp main .default-content-wrapper > h1 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.block.product-list-page .search__dummy-filter-stack--type {
+  gap: 0.7rem;
+}
+
 .block.product-list-page .search__dummy-filters [data-dummy-filter] {
   min-width: 0;
   border: 0;
@@ -528,6 +532,10 @@ body.page-category-plp main .default-content-wrapper > h1 {
   background: linear-gradient(135deg, #d8dee5, #f7fafc 48%, #9eacb8);
 }
 
+.block.product-list-page .search__dummy-filter-swatch--alloy {
+  background: linear-gradient(135deg, #7c8794, #d5dbe1 52%, #5f6b76);
+}
+
 .block.product-list-page .search__dummy-filters [data-dummy-filter][aria-pressed="true"] {
   background:
     linear-gradient(135deg, rgb(0 82 155 / 94%), rgb(0 102 189 / 92%)),
@@ -560,7 +568,6 @@ body.page-category-plp main .default-content-wrapper > h1 {
 .block.product-list-page .search__dummy-price-card {
   display: grid;
   gap: 1.2rem;
-  padding-top: 0.2rem;
 }
 
 .block.product-list-page .search__dummy-price-track {
@@ -601,6 +608,18 @@ body.page-category-plp main .default-content-wrapper > h1 {
   font-family: var(--plp-font-display);
   font-size: 1.45rem;
   line-height: 1;
+}
+
+.block.product-list-page .search__dummy-price-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.block.product-list-page .search__dummy-price-option {
+  min-height: 3.8rem;
+  padding: 0.75rem 0.7rem;
+  font-weight: 700;
 }
 
 .block.product-list-page .search__dummy-filter-reset {
