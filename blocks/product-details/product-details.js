@@ -1110,6 +1110,67 @@ async function renderInlineError(error, alertContainer) {
   return inlineAlert;
 }
 
+function setProductRecommendationsRecId(block) {
+  if (!block || block.classList.contains('product-recommendations--shell')) {
+    return;
+  }
+
+  const recIdRow = [...block.children].find(
+    (row) => toClassName(row.firstElementChild?.textContent || '') === 'recid',
+  );
+
+  if (recIdRow?.children[1]) {
+    recIdRow.children[1].textContent = PRODUCT_RECOMMENDATIONS_REC_ID;
+    return;
+  }
+
+  const row = document.createElement('div');
+  const key = document.createElement('div');
+  const value = document.createElement('div');
+  key.textContent = 'recId';
+  value.textContent = PRODUCT_RECOMMENDATIONS_REC_ID;
+  row.append(key, value);
+  block.append(row);
+}
+
+function ensureProductRecommendationsBlock(block) {
+  const main = block.closest('main');
+  if (!main) {
+    return null;
+  }
+
+  const existingBlock = main.querySelector('.product-recommendations');
+  if (existingBlock) {
+    setProductRecommendationsRecId(existingBlock);
+    return existingBlock;
+  }
+
+  const section = document.createElement('div');
+  section.className = 'section';
+  section.dataset.sectionStatus = 'initialized';
+
+  const wrapper = document.createElement('div');
+  const recommendationsBlock = buildBlock('product-recommendations', [
+    ['recId', PRODUCT_RECOMMENDATIONS_REC_ID],
+  ]);
+
+  wrapper.append(recommendationsBlock);
+  section.append(wrapper);
+  main.append(section);
+
+  decorateBlock(recommendationsBlock);
+  loadBlock(recommendationsBlock)
+    .then(() => {
+      section.dataset.sectionStatus = 'loaded';
+      section.style.display = null;
+    })
+    .catch((error) => {
+      console.error('product-details: failed to load product recommendations block', error);
+    });
+
+  return recommendationsBlock;
+}
+
 export default async function decorate(block) {
   let product = events.lastPayload('pdp/data') ?? null;
   // bug: the pdp sends an object with event data even if product is not found.
@@ -1373,6 +1434,7 @@ export default async function decorate(block) {
   );
   const relatedTabLink = $tabLinks.find((link) => link.dataset.target === PDP_SECTION_IDS.RELATED);
 
+  ensureProductRecommendationsBlock(block);
   let relatedVisible = Boolean(document.querySelector('.product-recommendations'));
 
   const syncOptionalCards = () => {
