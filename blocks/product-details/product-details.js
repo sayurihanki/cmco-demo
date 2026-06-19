@@ -32,7 +32,13 @@ import {
   checkIsAuthenticated,
   fetchPlaceholders, getProductLink, rootLink, setJsonLd,
 } from '../../scripts/commerce.js';
-import { readBlockConfig } from '../../scripts/aem.js';
+import {
+  buildBlock,
+  decorateBlock,
+  loadBlock,
+  readBlockConfig,
+  toClassName,
+} from '../../scripts/aem.js';
 
 // Initializers
 import { IMAGES_SIZES } from '../../scripts/initializers/pdp.js';
@@ -264,6 +270,8 @@ const PDP_SECTION_IDS = Object.freeze({
   SPECIFICATIONS: 'pdp-specifications',
   RELATED: 'pdp-related',
 });
+
+const PRODUCT_RECOMMENDATIONS_REC_ID = '8b2285ef-3637-4fdc-8e3d-9df6118c88b9';
 
 const CONFIG_TABLE_COLUMNS = Object.freeze([
   { key: 'id', label: 'Long Item #', sortable: true },
