@@ -162,12 +162,42 @@ function createProductPriceContent(product) {
     : createSimplePriceContent(product);
 }
 
+function bindDummyFilters(panel) {
+  const toggles = [...panel.querySelectorAll('[data-dummy-filter]')];
+  const countLabel = panel.querySelector('.search__dummy-filter-count');
+  const clearButton = panel.querySelector('[data-dummy-clear]');
+
+  const updateCount = () => {
+    const activeCount = toggles.filter((toggle) => toggle.getAttribute('aria-pressed') === 'true').length;
+    countLabel.textContent = `${activeCount} active`;
+    panel.classList.toggle('search__dummy-filters--active', activeCount > 0);
+  };
+
+  toggles.forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const isPressed = toggle.getAttribute('aria-pressed') === 'true';
+      toggle.setAttribute('aria-pressed', String(!isPressed));
+      updateCount();
+    });
+  });
+
+  clearButton.addEventListener('click', () => {
+    toggles.forEach((toggle) => toggle.setAttribute('aria-pressed', 'false'));
+    updateCount();
+  });
+
+  updateCount();
+}
+
 export default async function decorate(block) {
   const labels = await fetchPlaceholders();
   const config = readBlockConfig(block);
   const pageSize = parseInt(config.pagesize, 10) || 9;
   const blockId = `product-list-page-${Math.random().toString(36).slice(2, 9)}`;
   const searchState = getSearchStateFromUrl(new URL(window.location.href));
+  const isCategoryPage = Boolean(config.urlpath);
+
+  document.body.classList.toggle('page-category-plp', isCategoryPage);
 
   let latestRequest = normalizeSearchRequest({
     request: searchState,
@@ -196,6 +226,58 @@ export default async function decorate(block) {
                 Close
               </button>
             </div>
+            <div class="search__dummy-filters" aria-label="Popular product filters">
+              <div class="search__dummy-filter-hero">
+                <span class="search__dummy-filter-count" aria-live="polite">0 active</span>
+                <strong>Refined equipment match</strong>
+                <p>Shortlist hoisting gear by capacity, finish, and availability.</p>
+                <div class="search__dummy-filter-metrics" aria-label="Filter summary">
+                  <span><b>7</b> products</span>
+                  <span><b>3</b> fast ship</span>
+                </div>
+              </div>
+              <div class="search__dummy-filter-group">
+                <div class="search__dummy-filter-group-heading">
+                  <h3>Capacity range</h3>
+                  <span>Rated load</span>
+                </div>
+                <div class="search__dummy-filter-grid">
+                  <button type="button" data-dummy-filter aria-pressed="true">Light duty</button>
+                  <button type="button" data-dummy-filter aria-pressed="false">1 ton</button>
+                  <button type="button" data-dummy-filter aria-pressed="false">2 ton</button>
+                  <button type="button" data-dummy-filter aria-pressed="false">Heavy lift</button>
+                </div>
+              </div>
+              <div class="search__dummy-filter-group search__dummy-filter-group--summary">
+                <div class="search__dummy-filter-group-heading">
+                  <h3>Details</h3>
+                  <span>Shop signals</span>
+                </div>
+                <div class="search__dummy-filter-stack">
+                  <button type="button" data-dummy-filter aria-pressed="true">
+                    <span>
+                      <i class="search__dummy-filter-swatch search__dummy-filter-swatch--galv"></i>
+                      Galvanized finish
+                    </span>
+                    <em>7</em>
+                  </button>
+                  <button type="button" data-dummy-filter aria-pressed="false">
+                    <span>Ready to ship</span>
+                    <em>5</em>
+                  </button>
+                </div>
+                <div class="search__dummy-price-card">
+                  <div class="search__dummy-price-label">
+                    <span class="search__dummy-price-label-text">Configured price</span>
+                    <strong>$2.8K - $4.3K</strong>
+                  </div>
+                  <div class="search__dummy-price-track" aria-hidden="true">
+                    <span class="search__dummy-price-range"></span>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="search__dummy-filter-reset" data-dummy-clear>Reset filters</button>
+            </div>
             <div class="search__facets"></div>
           </div>
         </aside>
@@ -223,6 +305,7 @@ export default async function decorate(block) {
   const $facetsBackdrop = fragment.querySelector('.search__facets-backdrop');
   const $facetsDrawer = fragment.querySelector('.search__facets-drawer');
   const $facetsClose = fragment.querySelector('.search__facets-close');
+  const $dummyFilters = fragment.querySelector('.search__dummy-filters');
   const $facets = fragment.querySelector('.search__facets');
   const $productSort = fragment.querySelector('.search__product-sort');
   const $productList = fragment.querySelector('.search__product-list');
@@ -230,7 +313,8 @@ export default async function decorate(block) {
 
   block.innerHTML = '';
   block.appendChild(fragment);
-  block.classList.toggle('product-list-page--category', Boolean(config.urlpath));
+  block.classList.toggle('product-list-page--category', isCategoryPage);
+  bindDummyFilters($dummyFilters);
 
   if (config.urlpath) {
     block.dataset.urlpath = config.urlpath;

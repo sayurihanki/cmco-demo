@@ -10,6 +10,8 @@ import {
   CUSTOMER_PO_RULE_FORM_PATH,
   CUSTOMER_PO_RULE_DETAILS_PATH,
   rootLink,
+  rootLinkWithParams,
+  hasAuthPermissionsPayload,
 } from '../../scripts/commerce.js';
 
 // Initialize
@@ -29,12 +31,22 @@ const redirectToAccountDashboard = () => {
  */
 const renderPurchaseOrderApprovalRulesList = async (
   blockElement,
-  permissions = {},
+  permissions = null,
 ) => {
   const isB2BEnabled = getConfigValue('commerce-b2b-enabled');
+
+  if (!isB2BEnabled) {
+    redirectToAccountDashboard();
+    return;
+  }
+
+  if (!hasAuthPermissionsPayload(permissions)) {
+    return;
+  }
+
   const hasAccess = permissions.admin || permissions[PO_PERMISSIONS.VIEW_RULES];
 
-  if (!isB2BEnabled || !hasAccess) {
+  if (!hasAccess) {
     redirectToAccountDashboard();
     return;
   }
@@ -43,8 +55,14 @@ const renderPurchaseOrderApprovalRulesList = async (
     skeletonRowCount: 5,
     withWrapper: false,
     routeCreateApprovalRule: () => rootLink(CUSTOMER_PO_RULE_FORM_PATH),
-    routeEditApprovalRule: (ruleRef) => rootLink(`${CUSTOMER_PO_RULE_FORM_PATH}?ruleRef=${ruleRef}`),
-    routeApprovalRuleDetails: (ruleRef) => rootLink(`${CUSTOMER_PO_RULE_DETAILS_PATH}?ruleRef=${ruleRef}`),
+    routeEditApprovalRule: (ruleRef) => rootLinkWithParams(
+      CUSTOMER_PO_RULE_FORM_PATH,
+      { ruleRef },
+    ),
+    routeApprovalRuleDetails: (ruleRef) => rootLinkWithParams(
+      CUSTOMER_PO_RULE_DETAILS_PATH,
+      { ruleRef },
+    ),
   })(blockElement);
 };
 

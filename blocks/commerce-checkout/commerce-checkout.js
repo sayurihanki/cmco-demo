@@ -58,7 +58,12 @@ import {
   SHIPPING_FORM_NAME,
   TERMS_AND_CONDITIONS_FORM_NAME,
 } from './constants.js';
-import { rootLink, CUSTOMER_PO_DETAILS_PATH, ORDER_DETAILS_PATH } from '../../scripts/commerce.js';
+import {
+  rootLink,
+  rootLinkWithParams,
+  CUSTOMER_PO_DETAILS_PATH,
+  ORDER_DETAILS_PATH,
+} from '../../scripts/commerce.js';
 
 // Initializers
 import '../../scripts/initializers/account.js';
@@ -338,7 +343,7 @@ export default async function decorate(block) {
     sessionStorage.removeItem(SHIPPING_ADDRESS_DATA_KEY);
     sessionStorage.removeItem(BILLING_ADDRESS_DATA_KEY);
 
-    const url = rootLink(`${CUSTOMER_PO_DETAILS_PATH}?poRef=${poData?.uid}`);
+    const url = rootLinkWithParams(CUSTOMER_PO_DETAILS_PATH, { poRef: poData?.uid });
 
     window.history.pushState({}, '', url);
 

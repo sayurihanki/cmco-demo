@@ -59,7 +59,7 @@ import {
   PURCHASE_ORDER_FORM_NAME,
   TERMS_AND_CONDITIONS_FORM_NAME,
 } from './constants.js';
-import { CUSTOMER_PO_DETAILS_PATH, rootLink } from '../../scripts/commerce.js';
+import { CUSTOMER_PO_DETAILS_PATH, rootLink, rootLinkWithParams } from '../../scripts/commerce.js';
 
 // Success block entry points
 import { renderCheckoutSuccess, preloadCheckoutSuccess } from '../commerce-checkout-success/commerce-checkout-success.js';
@@ -248,7 +248,7 @@ export default async function decorate(block) {
     // Clear address form data
     sessionStorage.removeItem(BILLING_ADDRESS_DATA_KEY);
 
-    const url = rootLink(`${CUSTOMER_PO_DETAILS_PATH}?poRef=${poData?.uid}`);
+    const url = rootLinkWithParams(CUSTOMER_PO_DETAILS_PATH, { poRef: poData?.uid });
 
     window.history.pushState({}, '', url);
 

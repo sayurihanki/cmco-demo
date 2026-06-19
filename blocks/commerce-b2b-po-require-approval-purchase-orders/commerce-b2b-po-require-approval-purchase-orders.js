@@ -9,6 +9,8 @@ import {
   CUSTOMER_ACCOUNT_PATH,
   CUSTOMER_PO_DETAILS_PATH,
   rootLink,
+  rootLinkWithParams,
+  hasAuthPermissionsPayload,
 } from '../../scripts/commerce.js';
 
 // Initialize
@@ -28,9 +30,18 @@ const redirectToAccountDashboard = () => {
  */
 const renderRequireApprovalPurchaseOrders = async (
   blockElement,
-  permissions = {},
+  permissions = null,
 ) => {
   const isB2BEnabled = getConfigValue('commerce-b2b-enabled');
+
+  if (!isB2BEnabled) {
+    redirectToAccountDashboard();
+    return;
+  }
+
+  if (!hasAuthPermissionsPayload(permissions)) {
+    return;
+  }
 
   /**
    * Redirect only if the customer lacks access to all PO containers
@@ -39,7 +50,7 @@ const renderRequireApprovalPurchaseOrders = async (
   const hasAccessToPurchaseOrders = permissions.admin
     || permissions[PO_PERMISSIONS.PO_ALL];
 
-  if (!isB2BEnabled || !hasAccessToPurchaseOrders) {
+  if (!hasAccessToPurchaseOrders) {
     redirectToAccountDashboard();
     return;
   }
@@ -65,7 +76,7 @@ const renderRequireApprovalPurchaseOrders = async (
       { text: '20', value: '20', selected: false },
       { text: '30', value: '30', selected: false },
     ],
-    routePurchaseOrderDetails: (poRef) => `${CUSTOMER_PO_DETAILS_PATH}?poRef=${poRef}`,
+    routePurchaseOrderDetails: (poRef) => rootLinkWithParams(CUSTOMER_PO_DETAILS_PATH, { poRef }),
   })(blockElement);
 };
 

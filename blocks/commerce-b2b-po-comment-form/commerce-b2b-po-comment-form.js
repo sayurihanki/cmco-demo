@@ -8,6 +8,7 @@ import {
   CUSTOMER_LOGIN_PATH,
   CUSTOMER_ACCOUNT_PATH,
   rootLink,
+  hasAuthPermissionsPayload,
 } from '../../scripts/commerce.js';
 
 // Initialize
@@ -25,11 +26,21 @@ const redirectToAccountDashboard = () => {
  * Initializes and decorates the Purchase Order Comment Form block
  * Redirects unauthenticated users and handles permission updates
  */
-const renderPurchaseOrderCommentForm = async (blockElement, permissions = {}) => {
+const renderPurchaseOrderCommentForm = async (blockElement, permissions = null) => {
   const isB2BEnabled = getConfigValue('commerce-b2b-enabled');
+
+  if (!isB2BEnabled) {
+    redirectToAccountDashboard();
+    return;
+  }
+
+  if (!hasAuthPermissionsPayload(permissions)) {
+    return;
+  }
+
   const hasAccess = permissions.admin || permissions[PO_PERMISSIONS.VIEW_CUSTOMER];
 
-  if (!isB2BEnabled || !hasAccess) {
+  if (!hasAccess) {
     redirectToAccountDashboard();
     return;
   }

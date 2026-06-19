@@ -83,10 +83,14 @@
 .cart-mini-cart__products {
     overflow-y: auto;
     max-height: 288px;
+    padding-top: 10px;
+    box-sizing: border-box;
 }
 
 .cart-mini-cart__products::-webkit-scrollbar { width: 3px; }
+
 .cart-mini-cart__products::-webkit-scrollbar-track { background: transparent; }
+
 .cart-mini-cart__products::-webkit-scrollbar-thumb {
     background: var(--cmco-blue-line, #c4d7ee);
     border-radius: 2px;
@@ -120,6 +124,10 @@
 .cart-list > li:hover,
 .cart-list li:hover {
     background: var(--cmco-paper, #f4f7fb) !important;
+}
+
+.cart-mini-cart__products .cart-list > li:first-child {
+    border-top: none !important;
 }
 
 /* ── Thumbnail ───────────────────────────────────────────────────────── */

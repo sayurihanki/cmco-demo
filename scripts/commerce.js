@@ -397,6 +397,33 @@ export function rootLink(link) {
 }
 
 /**
+ * Decorates a localized link with URL-encoded query parameters.
+ * @param {string} link url to be localized
+ * @param {Record<string, string>} params query parameters
+ * @returns {string} - The localized link with query parameters
+ */
+export function rootLinkWithParams(link, params = {}) {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.set(key, value);
+    }
+  });
+
+  const query = searchParams.toString();
+  return rootLink(query ? `${link}?${query}` : link);
+}
+
+/**
+ * Checks whether the auth drop-in has emitted a permissions payload.
+ * @param {object | null | undefined} permissions
+ * @returns {boolean}
+ */
+export function hasAuthPermissionsPayload(permissions) {
+  return Boolean(permissions && typeof permissions === 'object');
+}
+
+/**
  * Decorates Columns Template to the main element.
  * @param {Element} doc The document element
  */
