@@ -1,4 +1,5 @@
 import { getCookie } from '@dropins/tools/lib.js';
+import { events } from '@dropins/tools/event-bus.js';
 import * as authApi from '@dropins/storefront-auth/api.js';
 import { render as authRenderer } from '@dropins/storefront-auth/render.js';
 import { SignIn } from '@dropins/storefront-auth/containers/SignIn.js';
@@ -6,6 +7,7 @@ import {
   CUSTOMER_FORGOTPASSWORD_PATH,
   rootLink,
 } from '../../scripts/commerce.js';
+import renderCompanyToggle from './renderCompanyToggle.js';
 
 function handleLogout(redirections) {
   const shouldRedirect = Object.entries(redirections).some(([currentPath, redirectPath]) => {
@@ -102,10 +104,14 @@ export function renderAuthDropdown(navTools) {
       authDropDownMenuList.style.display = 'block';
       authDropinContainer.style.display = 'none';
       loginButton.textContent = `Hi, ${getUserNameCookie}`;
+      renderCompanyToggle(authDropDownMenuList).catch(console.error);
     } else {
       authDropDownPanel.classList.remove('nav-auth-menu-panel--authenticated');
       authDropDownMenuList.style.display = 'none';
       authDropinContainer.style.display = 'block';
+      authDropDownMenuList
+        .querySelector('.company-toggle-menu-item')
+        ?.remove();
       loginButton.innerHTML = `
       <svg
           width="25"
@@ -121,4 +127,5 @@ export function renderAuthDropdown(navTools) {
   };
 
   updateDropDownUI();
+  events.on('authenticated', updateDropDownUI, { eager: true });
 }
