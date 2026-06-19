@@ -20,7 +20,7 @@ import { render as wishlistRender } from '@dropins/storefront-wishlist/render.js
 
 // Block-level
 import { readBlockConfig } from '../../scripts/aem.js';
-import { fetchPlaceholders, getProductLink } from '../../scripts/commerce.js';
+import { fetchPlaceholders, getProductLink, getProductSku } from '../../scripts/commerce.js';
 
 // Initializers
 import '../../scripts/initializers/recommendations.js';
@@ -282,7 +282,9 @@ export default async function decorate(block) {
     }
   }
 
-  const context = {};
+  const context = {
+    currentSku: currentsku || getProductSku(),
+  };
   // Debounced loader to prevent excessive API calls
   function debouncedLoadRecommendation(forceReload = false) {
     if (loadTimeout) {
@@ -366,5 +368,7 @@ export default async function decorate(block) {
       });
     });
     inViewObserver.observe(section);
+  } else {
+    debouncedLoadRecommendation(false);
   }
 }
