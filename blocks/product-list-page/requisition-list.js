@@ -49,7 +49,10 @@ function createRequisitionListRenderer(labels) {
       quantity: 1,
       beforeAddProdToReqList: () => {
         const url = rootLink(`/products/${product.urlKey}/${product.sku}`.toLowerCase());
-        if (product.typename !== 'SimpleProductView') {
+        if (
+          product.typename !== 'SimpleProductView'
+          || product.inputOptions?.some((option) => option.required)
+        ) {
           sessionStorage.setItem('requisitionListRedirect', JSON.stringify({
             message: labels.Global?.SelectProductOptionsBeforeRequisition || 'Please select product options before adding it to a requisition list',
           }));

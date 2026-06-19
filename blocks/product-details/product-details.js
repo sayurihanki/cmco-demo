@@ -1734,7 +1734,7 @@ export default async function decorate(block) {
             await renderFunction(
               variantSelectorContainer,
               currentProductData,
-              currentProductData.optionUIDs,
+              { optionsUIDs: currentProductData.optionUIDs },
             );
 
             ctx.onChange(async (nextState) => {
@@ -1743,7 +1743,7 @@ export default async function decorate(block) {
               await renderFunction(
                 variantSelectorContainer,
                 currentProductData,
-                currentProductData.optionUIDs,
+                { optionsUIDs: currentProductData.optionUIDs },
               );
             });
           },

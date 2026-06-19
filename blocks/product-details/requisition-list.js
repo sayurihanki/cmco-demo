@@ -25,37 +25,30 @@ import { Icon, InLineAlert, provider as UI } from '@dropins/tools/components.js'
 import { h } from '@dropins/tools/preact.js';
 import { events } from '@dropins/tools/event-bus.js';
 import { render as rlRenderer } from '@dropins/storefront-requisition-list/render.js';
+import * as pdpApi from '@dropins/storefront-pdp/api.js';
 import {
   RequisitionListSelector,
-} from '@dropins/storefront-requisition-list/containers/RequisitionListSelector.js';
-import * as pdpApi from '@dropins/storefront-pdp/api.js';
+} from './requisition-list-selector.js';
 import { checkIsAuthenticated } from '../../scripts/commerce.js';
 
 // Initialize dropins
 import '../../scripts/initializers/company.js';
 import '../../scripts/initializers/requisition-list.js';
+/* eslint-disable import/extensions */
+import {
+  buildRequisitionListSelectorProps,
+  validateRequiredRequisitionListOptions,
+} from './requisition-list.utils.mjs';
+/* eslint-enable import/extensions */
 
 /**
  * Validates if all required product options are selected
  * @param {Object} product - Product data
- * @param {Array|null} selectedOptions - Selected option UIDs
+ * @param {Object} values - Current PDP configuration values
  * @returns {boolean} True if validation passes (all required options selected)
  */
-function validateRequiredOptions(product, selectedOptions) {
-  const productOptions = product?.options || [];
-  const isBundle = product?.isBundle || false;
-  const isArray = Array.isArray(selectedOptions);
-  const selectedOptionsCount = isArray ? selectedOptions.length : 0;
-
-  // For bundle products: check only required options
-  // For configurable/other products: ALL options must be selected
-  const optionsToValidate = isBundle
-    ? productOptions.filter((opt) => opt.required)
-    : productOptions;
-  const requiredOptionsCount = optionsToValidate.length;
-
-  // Returns true if all required options are selected
-  return requiredOptionsCount === 0 || selectedOptionsCount >= requiredOptionsCount;
+function validateRequiredOptions(product, values) {
+  return validateRequiredRequisitionListOptions(product, values);
 }
 
 /**
@@ -74,7 +67,7 @@ export function createRequisitionListRenderer({
   return async function renderRequisitionListSelectorIfEnabled(
     $container,
     product,
-    currentOptions = null,
+    currentValues = {},
   ) {
     const isAuthenticated = checkIsAuthenticated();
     if (!isAuthenticated) {
@@ -82,8 +75,14 @@ export function createRequisitionListRenderer({
       return null;
     }
 
+    const {
+      quantity,
+      selectedOptions,
+      enteredOptions,
+    } = buildRequisitionListSelectorProps(product, currentValues);
+
     // Automatically dismiss alert if all required options are now selected
-    if (inlineAlert && validateRequiredOptions(product, currentOptions)) {
+    if (inlineAlert && validateRequiredOptions(product, currentValues)) {
       inlineAlert.remove();
       inlineAlert = null;
     }
@@ -91,11 +90,12 @@ export function createRequisitionListRenderer({
     // Render RequisitionListSelector with beforeAddProdToReqList validation if B2B is enabled
     return rlRenderer.render(RequisitionListSelector, {
       sku: product.sku,
-      quantity: product?.quantity || pdpApi.getProductConfigurationValues()?.quantity || 1,
-      selectedOptions: currentOptions,
+      quantity,
+      selectedOptions,
+      enteredOptions,
       beforeAddProdToReqList: async () => {
         // Check if all required product options are selected
-        const needsOptionSelection = !validateRequiredOptions(product, currentOptions);
+        const needsOptionSelection = !validateRequiredOptions(product, currentValues);
 
         if (needsOptionSelection) {
           // Show inline alert
@@ -163,17 +163,20 @@ function setupRequisitionListEventHandlers({
     const urlOptionsUIDs = urlParams.get('optionsUIDs');
 
     // Determine selected options
-    let optionUIDs = null;
+    const currentValues = {
+      ...configValues,
+      optionsUIDs: null,
+    };
     if (configValues?.optionsUIDs?.length > 0) {
-      optionUIDs = configValues.optionsUIDs;
+      currentValues.optionsUIDs = configValues.optionsUIDs;
     } else if (urlOptionsUIDs === '') {
-      optionUIDs = null;
+      currentValues.optionsUIDs = null;
     }
     // Re-render requisition list component with updated options
     await renderFunction(
       $requisitionListSelector,
       product,
-      optionUIDs,
+      currentValues,
     );
   }, { eager: true });
 }
@@ -276,7 +279,10 @@ export async function initializeRequisitionList({
   await renderFunction(
     $requisitionListSelector,
     product,
-    optionUIDs,
+    {
+      ...(isGridOrdering ? {} : pdpApi.getProductConfigurationValues()),
+      optionsUIDs: optionUIDs,
+    },
   );
 
   // Show redirect notification if applicable (only for main PDP)
