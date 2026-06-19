@@ -38,3 +38,27 @@ test('normalizeCompanyMenuData keeps the current company visible when it is miss
     },
   );
 });
+
+test('normalizeCompanyMenuData removes duplicated company names from Commerce options', () => {
+  assert.deepEqual(
+    normalizeCompanyMenuData({
+      currentCompany: { id: 'west-active', name: 'Hanks Industrial West Region' },
+      customerCompanies: [
+        { value: 'supply-a', text: 'Hanks Industrial Supply' },
+        { value: 'west-a', text: 'Hanks Industrial West Region' },
+        { value: 'east-a', text: 'Hanks Industrial East Region' },
+        { value: 'supply-b', text: 'Hanks Industrial Supply' },
+        { value: 'west-active', text: 'Hanks Industrial West Region' },
+        { value: 'east-b', text: 'Hanks Industrial East Region' },
+      ],
+    }),
+    {
+      currentCompany: { id: 'west-active', name: 'Hanks Industrial West Region' },
+      companies: [
+        { id: 'supply-a', name: 'Hanks Industrial Supply' },
+        { id: 'east-a', name: 'Hanks Industrial East Region' },
+        { id: 'west-active', name: 'Hanks Industrial West Region' },
+      ],
+    },
+  );
+});
