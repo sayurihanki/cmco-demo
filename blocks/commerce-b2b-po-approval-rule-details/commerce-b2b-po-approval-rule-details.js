@@ -32,9 +32,8 @@ const redirectToApprovalRulesList = () => {
  * Redirects unauthenticated users and handles permission updates
  */
 const renderApprovalRuleDetails = async (blockElement, permissions = null) => {
-  const isB2BEnabled = getConfigValue('commerce-b2b-enabled');
-
-  if (!isB2BEnabled) {
+  const b2bEnabled = getConfigValue('commerce-b2b-enabled');
+  if (b2bEnabled === false || b2bEnabled === 'false') {
     redirectToAccountDashboard();
     return;
   }
