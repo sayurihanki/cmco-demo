@@ -186,8 +186,8 @@ function bindDummyFilters(panel) {
     resultCount.textContent = estimatedMatches;
     shipCount.textContent = estimatedShip;
     summary.textContent = activeCount > 0
-      ? `${estimatedMatches} demo matches tuned by ${activeCount} filter${activeCount === 1 ? '' : 's'}`
-      : 'Select a few filters to shape the demo shortlist.';
+      ? `${estimatedMatches} matches · ${activeCount} filter${activeCount === 1 ? '' : 's'}`
+      : 'Choose filters to refine this demo.';
     panel.classList.toggle('search__dummy-filters--active', activeCount > 0);
   };
 

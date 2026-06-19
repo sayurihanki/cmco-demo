@@ -5,10 +5,16 @@ import { tryRenderAemAssetsImage } from '@dropins/tools/lib/aem/assets.js';
 import { getConfigValue } from '@dropins/tools/lib/aem/configs.js';
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-import { fetchPlaceholders, getProductLink, rootLink } from '../../scripts/commerce.js';
+import {
+  checkIsAuthenticated,
+  fetchPlaceholders,
+  getProductLink,
+  rootLink,
+} from '../../scripts/commerce.js';
 
 import renderAuthCombine from './renderAuthCombine.js';
 import { renderAuthDropdown } from './renderAuthDropdown.js';
+import { createCompanySwitcherMount } from './companySwitcherMount.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -843,8 +849,14 @@ export default async function decorate(block) {
   renderAuthDropdown(navTools);
 
   /** Company Switcher */
-  const isAuthenticated = events.lastPayload('authenticated');
-  if (isAuthenticated && getConfigValue('commerce-companies-enabled') === true) {
-    await (await import('./renderCompanySwitcher.js')).default(navTools);
-  }
+  const companySwitcherMount = createCompanySwitcherMount({
+    navTools,
+    events,
+    getCompaniesEnabled: () => getConfigValue('commerce-companies-enabled'),
+    isAuthenticated: checkIsAuthenticated,
+    renderCompanySwitcher: async (toolsElement) => (
+      (await import('./renderCompanySwitcher.js')).default(toolsElement)
+    ),
+  });
+  await companySwitcherMount.start();
 }

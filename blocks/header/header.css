@@ -993,6 +993,35 @@ header nav .nav-tools-wrapper > button {
   width: 40px;
 }
 
+header nav .company-switcher-wrapper {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 220px;
+}
+
+header nav .company-switcher-inline {
+  min-width: 0;
+  width: 100%;
+}
+
+header nav .company-switcher-inline:empty {
+  display: none;
+}
+
+header nav .company-switcher-wrapper:has(.company-switcher-inline:empty) {
+  display: none;
+}
+
+header nav .company-switcher-inline .dropin-picker {
+  min-width: 150px;
+  width: 100%;
+}
+
+header nav .company-switcher-inline select {
+  max-width: 100%;
+}
+
 header nav .nav-tools button.nav-cart-button {
   background-image: url('../../icons/cart.svg');
   background-repeat: no-repeat;
